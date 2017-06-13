@@ -25,7 +25,7 @@ $(function () {
             "angelocardona85@gmail.com",
             "Website Contact Form: " + name,
             "You have received a new message from your website contact form.\n\nHere are the details:\n\nName: " +
-            name + "\n\nEmail: " + email_address + "\n\nPhone: "+phone+"\n\nMessage:\n"+message,
+            firstName + "\n\nEmail: " + email + "\n\nPhone: "+phone+"\n\nMessage:\n"+message,
             {token: "b1deecdb-642b-43a4-af0b-a750c2811454"});
 
             //Email.send("cardonaangelo@hotmail.com",
