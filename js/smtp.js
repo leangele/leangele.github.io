@@ -13,9 +13,15 @@ Email = {
     ajax: function (a) {
         var b = Email.createCORSRequest("GET", a);
         b.onload = function () {
-            var a = b.responseText;
-            console.log(a)
-        }, b.send()
+            swal("Good job!", "Mail sent!", "success");
+        };
+        b.onerror = function () {
+
+            swal("Oops...", "Something went wrong!" + b.responseText, "error");
+        };
+        b.send();
+
+
     },
     createCORSRequest: function (a, b) {
         var c = new XMLHttpRequest;
