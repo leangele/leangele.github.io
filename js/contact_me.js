@@ -21,12 +21,21 @@ $(function () {
                 firstName = name.split(' ').slice(0, -1).join(' ');
             }
             console.log("Is here");
-            Email.send("from@you.com",
-                "angelocardona85@gmail.com",
-                "Website Contact Form: " + name,
-                "You have received a new message from your website contact form.\n\nHere are the details:\n\nName: " +
-                 name + "\n\nEmail: " + email_address + "\n\nPhone: "+phone+"\n\nMessage:\n"+message,
-                 {token: "b1deecdb-642b-43a4-af0b-a750c2811454"});
+            Email.send("cardonaangelo@hotmail.com",
+            "angelocardona85@gmail.com",
+            "Website Contact Form: " + name,
+            "You have received a new message from your website contact form.\n\nHere are the details:\n\nName: " +
+            name + "\n\nEmail: " + email_address + "\n\nPhone: "+phone+"\n\nMessage:\n"+message,
+            {token: "b1deecdb-642b-43a4-af0b-a750c2811454"});
+
+            //Email.send("cardonaangelo@hotmail.com",
+            //"to@them.com",
+            //"This is a subject",
+            //"this is the body",
+            //"smtp.yourisp.com",
+            //"username",
+            //"password");
+
 
         },
         filter: function () {
