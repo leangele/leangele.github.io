@@ -84,7 +84,7 @@
 		<div class="container" id="maincontent" tabindex="-1">
 			<div class="row">
 				<div class="col-lg-12">
-					<img class="img-responsive" src="img/profile.png" alt="">
+					<img class="img-responsive" id="profile" src="" alt="">
 					<div class="intro-text">
 						<h1 class="name">Angelo Cardona</h1>
 						<h3>Rocking Coding!</h3>
@@ -234,9 +234,9 @@
 								<i class="fa fa-search-plus fa-3x"></i>
 							</div>
 						</div>
-							<div class="relatives">
-						<img src="img/portfolio/submarine.png" class="img-responsive" alt="Submarine">
-						<p class="absolutes-text " style="text-align: center">Intersoft</p>
+						<div class="relatives">
+							<img src="img/portfolio/submarine.png" class="img-responsive" alt="Submarine">
+							<p class="absolutes-text " style="text-align: center">Intersoft</p>
 						</div>
 					</a>
 				</div>
@@ -664,12 +664,24 @@
 	<script src="js/smtp.js"></script>
 	<script src="js/sweetalert-dev.js"></script>
 	<script>
-		jQuery(document).ready(function () {
-			jQuery('.skillbar').each(function () {
-				jQuery(this).find('.skillbar-bar').animate({
-					width: jQuery(this).attr('data-percent')
+		$(document).ready(function () {
+			$('.skillbar').each(function () {
+				$(this).find('.skillbar-bar').animate({
+					width: $(this).attr('data-percent')
 				}, 6000);
 			});
+			var day = new Date();
+			var today = day.getDay();
+			var hour = day.getHours();
+			console.log(hour);
+			if ((hour >= 8 && hour < 12) || (hour > 14 && hour < 15)) {
+				console.log("entro 1");
+				$("#profile").attr("src", "img/profile1.png")
+			} else {
+				console.log("entro 2");
+				$("#profile").attr("src", "img/profile.png")
+
+			}
 		});
 	</script>
 
