@@ -25,8 +25,8 @@ $(function () {
                 url: "https://api.dropboxapi.com/2/files/create_folder",
                 type: "POST",
                 headers:{ 
-                    authorization: 'Bearer lucQoFMD08AAAAAAAABGPBWPwZbM7eySRpJ0bfJEl3DR0rd4NC-Z-NpY3-19gZah',
-                    ContentType: 'application/json',
+                    'authorization': 'Bearer lucQoFMD08AAAAAAAABGPBWPwZbM7eySRpJ0bfJEl3DR0rd4NC-Z-NpY3-19gZah',
+                    'Content-Type': 'application/json',
                 },               
                 
                 data: {
