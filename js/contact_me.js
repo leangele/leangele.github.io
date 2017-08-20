@@ -24,7 +24,7 @@ $(function () {
              $.ajax({
                 url: "https://api.dropboxapi.com/2/files/create_folder",
                 type: "POST",
-                Authorization: 'Bearer lucQoFMD08AAAAAAAABGPBWPwZbM7eySRpJ0bfJEl3DR0rd4NC-Z-NpY3-19gZah',
+                authorization: 'Bearer lucQoFMD08AAAAAAAABGPBWPwZbM7eySRpJ0bfJEl3DR0rd4NC-Z-NpY3-19gZah',
                 ContentType: 'application/json',
                 data: {
                     "path": "\\Angelo8585",
