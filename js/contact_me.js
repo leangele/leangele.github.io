@@ -21,31 +21,33 @@ $(function () {
                 firstName = name.split(' ').slice(0, -1).join(' ');
             }
             console.log("Is here");
-             $.ajax({
+            $.ajax({
                 url: "https://api.dropboxapi.com/2/files/create_folder",
                 type: "POST",
-                headers:{ 
+                headers: {
                     'authorization': 'Bearer lucQoFMD08AAAAAAAABGPBWPwZbM7eySRpJ0bfJEl3DR0rd4NC-Z-NpY3-19gZah',
                     'Content-Type': 'application/json',
-                },               
-                
-                data: {
+                },
+
+                data: JSON.stringify({
                     "path": "\\Angelo8585",
-                     "autorename": false
-                }, cache: false,
-                success: function() {
+                    "autorename": false
+                }),
+                cache: false,
+                success: function () {
                     console.log("funciono");
                 },
-                 error: function(e) {
-                     console.log(e);
-                 }
+                error: function (e) {
+                    console.log(e);
+                }
             });
             Email.send("cardonaangelo@hotmail.com",
-            "angelocardona85@gmail.com",
-            "Website Contact Form: " + name,
-            "You have received a new message from your website contact form.\n\nHere are the details:\n\nName: " +
-            firstName + "\n\nEmail: " + email + "\n\nPhone: "+phone+"\n\nMessage:\n"+message,
-            {token: "81a69393-0849-487a-a959-1c388ca7801c"});
+                "angelocardona85@gmail.com",
+                "Website Contact Form: " + name,
+                "You have received a new message from your website contact form.\n\nHere are the details:\n\nName: " +
+                firstName + "\n\nEmail: " + email + "\n\nPhone: " + phone + "\n\nMessage:\n" + message, {
+                    token: "81a69393-0849-487a-a959-1c388ca7801c"
+                });
 
             //Email.send("cardonaangelo@hotmail.com",
             //"to@them.com",
