@@ -26,8 +26,9 @@ $(function () {
                 type: "POST",
                 headers:{ 
                     authorization: 'Bearer lucQoFMD08AAAAAAAABGPBWPwZbM7eySRpJ0bfJEl3DR0rd4NC-Z-NpY3-19gZah',
+                    ContentType: 'application/json',
                 },               
-                ContentType: 'application/json',
+                
                 data: {
                     "path": "\\Angelo8585",
                      "autorename": false
