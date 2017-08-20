@@ -30,7 +30,7 @@ $(function () {
                 },
 
                 data: JSON.stringify({
-                    "path": "\\Angelo8585",
+                    "path": "/Angelo8585",
                     "autorename": false
                 }),
                 cache: false,
