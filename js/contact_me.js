@@ -30,12 +30,12 @@ $(function () {
                 },
 
                 data: JSON.stringify({
-                    "path": "/Angelo8585",
+                    "path": "/"+name,
                     "autorename": false
                 }),
                 cache: false,
-                success: function () {
-                    console.log("funciono");
+                success: function (ans) {
+                    console.log(ans);
                 },
                 error: function (e) {
                     console.log(e);
