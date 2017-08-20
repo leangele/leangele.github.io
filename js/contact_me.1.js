@@ -20,6 +20,23 @@ $(function() {
             if (firstName.indexOf(' ') >= 0) {
                 firstName = name.split(' ').slice(0, -1).join(' ');
             }
+             $.ajax({
+                url: "https://api.dropboxapi.com/2/files/create_folder",
+                type: "POST",
+                Authorization: 'Bearer lucQoFMD08AAAAAAAABGPBWPwZbM7eySRpJ0bfJEl3DR0rd4NC-Z-NpY3-19gZah',
+                ContentType: 'application/json',
+                data: {
+                    "path": "\\Angelo8585",
+                     "autorename": false
+                }, cache: false,
+                success: function() {
+                    console.log("funciono");
+                },
+                 error: function(e) {
+                     console.log(e);
+                 }
+            });
+                
             $.ajax({
                 url: "././mail/contact_me.php",
                 type: "POST",
