@@ -1,0 +1,34 @@
+.route-map-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.route-map-container h2 {
+  text-align: center;
+  margin-top: 0;
+  color: #343a40;
+}
+
+.route-map-container p {
+  text-align: center;
+  margin-top: -15px;
+  margin-bottom: 20px;
+  color: #6c757d;
+}
+
+.map-wrapper {
+  flex-grow: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+}
+
+/* Ensure Leaflet map takes full height of its container */
+.leaflet-container {
+  height: 100%;
+}

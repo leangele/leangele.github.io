@@ -1,0 +1,400 @@
+/* Admin.css */
+
+/* Define variables for a consistent theme */
+:root {
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --secondary-color: #6c757d;
+  --secondary-hover: #5a6268;
+  --success-color: #28a745;
+  --success-hover: #218838;
+  --warning-color: #ffc107;
+  --warning-hover: #e0a800;
+  --danger-color: #dc3545;
+  --danger-hover: #c82333;
+  --info-color: #17a2b8;
+  --info-hover: #138496;
+  --light-bg: #f8f9fa;
+  --white-bg: #ffffff;
+  --border-color: #dee2e6;
+  --text-color: #343a40;
+  --text-muted: #6c757d;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.admin-panel {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 25px;
+  background-color: var(--light-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.admin-panel h2,
+.admin-edit h2 {
+  text-align: center;
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 15px;
+}
+
+/* Pistas List */
+.pistas-list {
+  margin-top: 30px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden; /* Clips the children to the border-radius */
+  background-color: var(--white-bg);
+}
+
+.pista-item {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+}
+
+.pista-item:hover {
+  background-color: #f1f3f5;
+}
+
+.pista-item.is-dragging {
+  background-color: #e6f7ff; /* Fondo azul claro al arrastrar */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+  transform: rotate(2deg); /* Pequeña rotación para efecto visual */
+}
+
+.drag-handle {
+  cursor: grab;
+  padding: 0 10px;
+  color: var(--text-muted);
+  font-size: 1.2em;
+}
+
+.pista-item:last-child {
+  border-bottom: none;
+}
+
+.pista-item-content {
+  flex-grow: 1;
+  color: var(--text-color);
+  font-size: 0.95em;
+  cursor: default;
+}
+
+.pista-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pista-item-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.pista-item-actions button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.pista-item-actions button:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.pista-item-actions button:nth-of-type(1) {
+  /* mostrar */
+  background-color: var(--info-color);
+  color: white;
+}
+.pista-item-actions button:nth-of-type(1):hover:not(:disabled) {
+  background-color: var(--info-hover);
+}
+
+.pista-item-actions .move-btn {
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 1em;
+  padding: 4px 8px;
+  line-height: 1;
+}
+.pista-item-actions .move-btn:hover:not(:disabled) {
+  background-color: var(--secondary-hover);
+}
+
+.pista-item-actions button:nth-of-type(2) {
+  /* Editar - This selector is now for the move up button */
+  background-color: var(--warning-color);
+  color: var(--text-color);
+}
+.pista-item-actions button:nth-of-type(2):hover:not(:disabled) {
+  background-color: var(--warning-hover);
+}
+
+.pista-item-actions button:nth-of-type(3) {
+  /* Eliminar - This selector is now for the move down button */
+  background-color: var(--danger-color);
+  color: white;
+}
+.pista-item-actions button:nth-of-type(3):hover:not(:disabled) {
+  background-color: var(--danger-hover);
+}
+
+/* Admin Edit Form */
+.admin-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 30px;
+  background-color: var(--white-bg);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.admin-edit label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9em;
+}
+
+.admin-input {
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  font-size: 1em;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.admin-edit textarea.admin-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.admin-edit .form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.admin-edit .form-actions button {
+  flex-grow: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.admin-edit .form-actions button:first-of-type {
+  /* Guardar */
+  background-color: var(--success-color);
+  color: white;
+}
+.admin-edit .form-actions button:first-of-type:hover {
+  background-color: var(--success-hover);
+}
+
+.admin-edit .form-actions button:last-of-type {
+  /* Cancelar */
+  background-color: var(--secondary-color);
+  color: white;
+}
+.admin-edit .form-actions button:last-of-type:hover {
+  background-color: var(--secondary-hover);
+}
+
+/* Map in Edit Form */
+.edit-map-container {
+  margin-top: 10px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* "Agregar Pista" button */
+.admin-panel > button {
+  margin-top: 25px;
+  padding: 12px 25px;
+  background-color: var(--info-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-panel > button:hover {
+  background-color: var(--info-hover);
+}
+
+/* Preview Modal Styles */
+.preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.preview-modal-content {
+  position: relative;
+  background-color: var(--white-bg);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.preview-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.preview-modal-close:hover {
+  color: var(--text-color);
+}
+
+.preview-modal-body {
+  margin-top: 20px;
+}
+
+.preview-image {
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  object-fit: cover;
+}
+
+.preview-modal-body p {
+  margin-bottom: 12px;
+  font-size: 1em;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.preview-modal-body p strong {
+  color: var(--text-color);
+}
+
+.preview-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.preview-modal-actions button {
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.preview-modal-actions button:first-of-type { /* Editar */
+  background-color: var(--warning-color);
+  color: var(--text-color);
+}
+.preview-modal-actions button:first-of-type:hover {
+  background-color: var(--warning-hover);
+}
+
+.preview-modal-actions button:last-of-type { /* Eliminar */
+  background-color: var(--danger-color);
+  color: white;
+}
+.preview-modal-actions button:last-of-type:hover {
+  background-color: var(--danger-hover);
+}
+
+.pista-item:hover .pista-preview-popup {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(10px);
+}
+
+.pista-preview-popup h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+}
+
+.pista-preview-popup p {
+  margin-bottom: 8px;
+  font-size: 0.9em;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.pista-preview-popup p strong {
+  color: var(--text-color);
+}
+
+.pista-preview-popup .popup-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin-top: 15px;
+  display: block;
+}

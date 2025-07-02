@@ -1,0 +1,416 @@
+.scavenger-hunt-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    /* background-color will be inherited from body */
+}
+
+.scavenger-hunt-container h1 {
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+}
+
+.pista-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: var(--box-shadow);
+    background-color: var(--bg-primary);
+    transition: transform 0.2s ease-in-out;
+}
+
+.pista-card:hover {
+    transform: translateY(-5px);
+}
+
+.pista-card h2 {
+    color: var(--danger-color);
+    border-bottom: 2px solid var(--warning-color);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.acertijo {
+    font-style: italic;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.pista-info {
+    background-color: var(--bg-tertiary);
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    font-size: 0.9em;
+}
+
+.pista-info p {
+    margin: 5px 0;
+}
+
+.botones-pista {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.botones-pista button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.2s;
+    background-color: var(--info-color);
+}
+
+.botones-pista button:hover {
+    transform: scale(1.05);
+    background-color: #31b0d5;
+}
+
+.ayuda-respuesta {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    animation: fadeIn 0.5s;
+}
+
+.ayuda-respuesta.ayuda {
+    background-color: rgba(40, 167, 69, 0.15);
+    border-left: 5px solid var(--success-color);
+    color: var(--text-primary);
+}
+
+.ayuda-respuesta.respuesta {
+    background-color: rgba(23, 162, 184, 0.15);
+    border-left: 5px solid var(--info-color);
+    color: var(--text-primary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* New styles for input and feedback */
+.input-section {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.input-section input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.input-section button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--success-color);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.input-section button:hover:not(:disabled) {
+    background-color: var(--success-hover);
+    transform: scale(1.02);
+}
+
+.input-section button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.feedback-message {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    animation: fadeIn 0.5s;
+}
+
+.feedback-message.correct {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.feedback-message.incorrect {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.final-message {
+    text-align: center;
+    font-size: 1.5em;
+    color: var(--success-color);
+    margin-top: 50px;
+    padding: 20px;
+    background-color: var(--bg-tertiary);
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+/* Ensure buttons for help/answer are still styled correctly */
+.botones-pista {
+    margin-top: 20px; /* Add some space above these buttons */
+    justify-content: center; /* Center the buttons */
+}
+
+/* New styles for "Estoy perdido" section */
+.lost-help-section {
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px dashed var(--warning-color);
+    border-radius: 10px;
+    background-color: rgba(255, 193, 7, 0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    animation: fadeIn 0.5s;
+}
+
+.lost-help-section h3 {
+    color: var(--danger-color);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.lost-help-section p {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+
+.lost-help-section .input-section {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.lost-help-section .input-section button {
+    background-color: var(--warning-color);
+}
+
+.lost-help-section .input-section button:hover:not(:disabled) {
+    background-color: var(--warning-hover);
+}
+
+.revealed-info {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    animation: fadeIn 0.7s;
+}
+
+.revealed-info h4 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.revealed-info p {
+    margin-bottom: 10px;
+    text-align: left; /* Align text left within this section */
+    color: var(--text-primary);
+}
+
+.location-image-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.location-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.image-caption {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.map-container {
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures map corners are rounded */
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+}
+
+.map-caption {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    font-style: italic;
+    text-align: center;
+}
+
+/* New styles for input and feedback */
+.input-section {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.input-section input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.input-section button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--success-color);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.input-section button:hover:not(:disabled) {
+    background-color: var(--success-hover);
+    transform: scale(1.02);
+}
+
+.input-section button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.feedback-message {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    animation: fadeIn 0.5s;
+}
+
+.feedback-message.correct {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.feedback-message.incorrect {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.final-message {
+    text-align: center;
+    font-size: 1.5em;
+    color: var(--success-color);
+    margin-top: 50px;
+    padding: 20px;
+    background-color: var(--bg-tertiary);
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+/* Ensure buttons for help/answer are still styled correctly */
+.botones-pista {
+    margin-top: 20px; /* Add some space above these buttons */
+}
+
+/* New Dropdown Styles */
+.pista-selector-container {
+  margin-bottom: 25px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.pista-selector-container label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.pista-selector-container select {
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.pista-selector-container select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Styles for locked/disabled pista options in the dropdown */
+.pista-selector-container select option:disabled {
+  color: #b0b0b0;
+  font-style: italic;
+  /* Note: Advanced styling like 'blur' is not supported on <option> elements in most browsers. */
+}
+
+body.dark-theme .pista-selector-container select option:disabled {
+  color: #666;
+  background-color: var(--bg-tertiary);
+}
+
+/* New styles for completion info */
+.completion-info-box {
+  background-color: rgba(40, 167, 69, 0.1);
+  border: 2px solid var(--success-color);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  animation: fadeIn 0.5s;
+}
+
+.completion-info-box h3 {
+  margin-top: 0;
+  color: var(--success-color);
+  font-size: 1.2em;
+}
+
+.completion-info-box p {
+  margin: 8px 0;
+  color: var(--text-primary);
+}
