@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "acertijo": "angelo dario cardona tobonrio gigante y dinosaurios en mi interior. ¿Dónde estoy?",
+    "ayuda": "Cerca de la Universidad de Antioquia, mi fachada es roja y distintiva.",
+    "coordenadas": "6.2715° N, 75.5660° W",
+    "palabraSeguridad": "Dinosaurio",
+    "respuesta": "Explora",
+    "imageUrl": "https://via.placeholder.com/300x200/FF0000/FFFFFF?text=Explora"
+  },
+  {
+    "id": 2,
+    "acertijo": "angelo cardona un refugio de flora y fauna en medio del bullicio. ¿Qué lugar soy?",
+    "ayuda": "Al lado del Parque Explora, tengo un lago y muchas iguanas.",
+    "coordenadas": "6.2698° N, 75.5638° W",
+    "palabraSeguridad": "Orquídea",
+    "respuesta": "Botánico",
+    "imageUrl": "https://via.placeholder.com/300x200/00FF00/FFFFFF?text=Jardin+Botanico"
+  },
+  {
+    "id": 3,
+    "acertijo": "En la cima de un cerro, replico un pueblo antioqueño del pasado, con vistas panorámicas de la ciudad moderna. ¿Cómo me llamo?",
+    "ayuda": "Estoy en el Cerro Nutibara.",
+    "coordenadas": "6.2359° N, 75.5796° W",
+    "palabraSeguridad": "Tradición",
+    "respuesta": "Pueblito",
+    "imageUrl": "https://via.placeholder.com/300x200/0000FF/FFFFFF?text=Pueblito+Paisa"
+  },
+  {
+    "id": 4,
+    "acertijo": "Mis habitantes son de bronce, voluminosos y siempre están posando para las fotos. Estoy rodeado de arte y cultura. ¿Qué plaza soy?",
+    "ayuda": "Fernando Botero donó mis esculturas.",
+    "coordenadas": "6.2518° N, 75.5678° W",
+    "palabraSeguridad": "Gorda",
+    "respuesta": "Botero",
+    "imageUrl": "https://via.placeholder.com/300x200/FFFF00/000000?text=Plaza+Botero"
+  },
+  {
+    "id": 5,
+    "acertijo": "Vuelo sobre los árboles para llevarte a un parque de aire puro y naturaleza. No soy un pájaro, pero te doy alas para escapar de la ciudad. ¿Qué soy?",
+    "ayuda": "Conecto la estación Santo Domingo con el Parque Arví.",
+    "coordenadas": "6.2997° N, 75.5238° W",
+    "palabraSeguridad": "Góndola",
+    "respuesta": "Metrocable",
+    "imageUrl": "https://via.placeholder.com/300x200/FF00FF/FFFFFF?text=Metrocable" 
+  },
+  {
+    "id": 6,
+    "acertijo": "Mis paredes cuentan historias de transformación a través del graffiti y el hip-hop. Mis escaleras no son comunes, son eléctricas y me llevan al cielo. ¿Qué comuna soy?",
+    "ayuda": "Famosa por sus escaleras eléctricas al aire libre.",
+    "coordenadas": "6.2555° N, 75.6109° W",
+    "palabraSeguridad": "Resiliencia",
+    "respuesta": "Trece",
+    "imageUrl": "https://via.placeholder.com/300x200/00FFFF/000000?text=Comuna+13"
+  },
+  {
+    "id": 7,
+    "acertijo": "Soy el corazón de la fiesta en El Poblado, rodeado de restaurantes, bares y vida nocturna. De día soy tranquilo, pero de noche me transformo. ¿Dónde te diviertes?",
+    "ayuda": "Es el epicentro de la vida nocturna en la zona rosa de Medellín.",
+    "coordenadas": "6.2094° N, 75.5683° W",
+    "palabraSeguridad": "Fiesta",
+    "respuesta": "Lleras",
+    "imageUrl": "https://via.placeholder.com/300x200/800000/FFFFFF?text=Parque+Lleras"
+  },
+  {
+    "id": 8,
+    "acertijo": "Guardo los tesoros de Botero y otros grandes artistas. Mi fachada da a una plaza llena de esculturas voluminosas. ¿Qué museo soy?",
+    "ayuda": "Estoy justo en frente de la Plaza Botero.",
+    "coordenadas": "6.2523° N, 75.5683° W",
+    "palabraSeguridad": "Pintura",
+    "respuesta": "Antioquia",
+    "imageUrl": "https://via.placeholder.com/300x200/808000/FFFFFF?text=Museo+de+Antioquia"
+  },
+  {
+    "id": 9,
+    "acertijo": "Soy el coloso de la 70, donde la pasión se viste de verde o de rojo. Aquí se gritan goles y se celebran campeonatos. ¿Cuál es mi nombre?",
+    "ayuda": "Es el principal estadio de fútbol de la ciudad.",
+    "coordenadas": "6.2572° N, 75.5911° W",
+    "palabraSeguridad": "Gol",
+    "respuesta": "Atanasio",
+    "imageUrl": "https://via.placeholder.com/300x200/808000/FFFFFF?text=Museo+de+Antioquia"
+  },
+  {
+    "id": 10,
+    "acertijo": "Bajo las estrellas, proyecto películas al aire libre. Tengo un planetario y dos casas de la música. Soy un lugar para soñar y aprender. ¿Cómo me llamo?",
+    "ayuda": "Estoy al lado del Planetario de Medellín y cerca del Parque Explora.",
+    "coordenadas": "6.2705° N, 75.5650° W",
+    "palabraSeguridad": "Estrella",
+    "respuesta": "Deseos",
+    "imageUrl": "https://via.placeholder.com/300x200/808000/FFFFFF?text=Museo+de+Antioquia"
+  }
+]
