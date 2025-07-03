@@ -15,7 +15,8 @@ L.Icon.Default.mergeOptions({
 
 const Pistas = () => {
   const [currentPistaIndex, setCurrentPistaIndex] = useState(0);
-  const recipientEmail = "angelocardona85@gmail.com"; // Configurable email
+  // Use environment variables for configuration. Default values are fallbacks.
+  const recipientEmail = process.env.REACT_APP_RECIPIENT_EMAIL || "angelocardona85@gmail.com";
   const [inputValue, setInputValue] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [showHelp, setShowHelp] = useState(false);
@@ -65,11 +66,19 @@ const Pistas = () => {
       processAndSetPistas(loadedPistas);
     } else {
       const params = new URLSearchParams(window.location.search);
-      const pistasFile = params.get("pistas") || "gs145ka"; // Default to 'gs145ka'
+      // Use environment variable for the default file, falling back to a hardcoded value.
+      const pistasFile = params.get("pistas") || process.env.REACT_APP_DEFAULT_PISTAS_FILE || "gs145ka";
 
-      fetch(`/${pistasFile}.json`)
+      // Prepend PUBLIC_URL to fetch from the public folder correctly, even when deployed to a sub-path.
+      const fetchUrl = `${process.env.PUBLIC_URL || ''}/data/${pistasFile}.json`;
+
+      // For debugging, log the full URL being requested during local development.
+      console.log(`Fetching from local URL: ${window.location.origin}${fetchUrl}`);
+
+      fetch(fetchUrl)
         .then((response) => response.json())
         .then((pistasData) => {
+          console.log("Pistas cargadas:", pistasData);
           processAndSetPistas(pistasData);
         })
         .catch((error) => console.error("Error al cargar las pistas:", error));
