@@ -117,23 +117,32 @@ const App = () => {
     </div>
   );
 
-  // Show a loading state until the check is complete
-  if (isRegistered === null) {
-    return <div className="loading-screen">{themeSwitcher}Cargando...</div>;
-  }
+  // Determine content and container class based on registration status
+  let content;
+  let containerClassName;
 
-  // If not registered, force the registration screen.
-  if (isRegistered === false) {
-    return (
-      <div className="initial-registro-wrapper">
-        {themeSwitcher}
-        <Registro onRegistrationComplete={() => setIsRegistered(true)} />
+  if (isRegistered === null) {
+    containerClassName = "loading-screen";
+    content = "Cargando...";
+  } else if (isRegistered === false) {
+    containerClassName = "initial-registro-wrapper";
+    content = <Registro onRegistrationComplete={() => setIsRegistered(true)} />;
+  } else {
+    containerClassName = "app-container";
+    content = (
+      <div className="main-content">
+        {currentView === "pistas" && <Pistas />}
+        {currentView === "admin" && <Admin />}
+        {currentView === "map" && <RouteMap />}
+        {currentView === "registro" && (
+          <Registro onRegistrationComplete={() => setCurrentView("pistas")} />
+        )}
       </div>
     );
   }
 
   return (
-    <div className="app-container">
+    <div className={containerClassName}>
       {themeSwitcher}
       <button onClick={toggleMenu} className="menu-toggle-button">
         ☰
@@ -150,14 +159,7 @@ const App = () => {
         handleResetClick={handleResetClick}
       />
 
-      <div className="main-content">
-        {currentView === "pistas" && <Pistas />}
-        {currentView === "admin" && <Admin />}
-        {currentView === "map" && <RouteMap />}
-        {currentView === "registro" && (
-          <Registro onRegistrationComplete={() => setCurrentView("pistas")} />
-        )}
-      </div>
+      {content}
 
       {showPasswordPopup && (
         <div className="admin-popup">
