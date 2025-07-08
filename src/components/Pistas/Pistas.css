@@ -1,3 +1,11 @@
+/* This style ensures the theme toggle button is always in the top right corner */
+.theme-toggle-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050; /* Aumentado para estar sobre otros posibles elementos */
+}
+
 .scavenger-hunt-container {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     max-width: 800px;
@@ -55,6 +63,7 @@
 .botones-pista {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap; /* Para que los botones se apilen en pantallas pequeñas */
     margin-bottom: 15px;
 }
 
@@ -413,4 +422,35 @@ body.dark-theme .pista-selector-container select option:disabled {
 .completion-info-box p {
   margin: 8px 0;
   color: var(--text-primary);
+}
+
+/* --- Media Queries para Responsividad Móvil --- */
+
+@media (max-width: 768px) {
+  .scavenger-hunt-container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .scavenger-hunt-container h1 {
+    font-size: 1.8em; /* Reducir tamaño del título principal */
+  }
+
+  .pista-card h2 {
+    font-size: 1.3em;
+  }
+
+  .input-section {
+    flex-direction: column; /* Apilar el input y el botón */
+  }
+
+  .input-section input,
+  .input-section button {
+    width: 90%; /* Ocupar todo el ancho */
+  }
+
+  .theme-toggle-button {
+    top: 10px;
+    right: 10px;
+  }
 }

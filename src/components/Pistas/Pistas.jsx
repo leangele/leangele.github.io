@@ -16,16 +16,20 @@ L.Icon.Default.mergeOptions({
 const Pistas = () => {
   const [currentPistaIndex, setCurrentPistaIndex] = useState(0);
   // Use environment variables for configuration. Default values are fallbacks.
-  const recipientEmail = process.env.REACT_APP_RECIPIENT_EMAIL || "angelocardona85@gmail.com";
+  const recipientEmail =
+    process.env.REACT_APP_RECIPIENT_EMAIL || "angelocardona85@gmail.com";
   const [inputValue, setInputValue] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [showHelp, setShowHelp] = useState(false);
+  const [isTranslatorOpen, setIsTranslatorOpen] = useState(false);
 
   // Nuevos estados para la funcionalidad "Estoy perdido"
   const [showLostHelp, setShowLostHelp] = useState(false);
   const [lostSecurityWordInput, setLostSecurityWordInput] = useState("");
   const [lostFeedbackMessage, setLostFeedbackMessage] = useState("");
   const [showLostInfo, setShowLostInfo] = useState(false);
+  const [usedBasicHelp, setUsedBasicHelp] = useState(false); // Nuevo estado para ayuda
+  const [usedLostHelp, setUsedLostHelp] = useState(false); // Nuevo estado para "estoy perdido"
   const [allPistas, setAllPistas] = useState([]); // Nuevo estado para todas las pistas ordenadas
   const [completionInfo, setCompletionInfo] = useState(null); // State for completion info of the current pista
 
@@ -67,13 +71,20 @@ const Pistas = () => {
     } else {
       const params = new URLSearchParams(window.location.search);
       // Use environment variable for the default file, falling back to a hardcoded value.
-      const pistasFile = params.get("pistas") || process.env.REACT_APP_DEFAULT_PISTAS_FILE || "gs145ka";
+      const pistasFile =
+        params.get("pistas") ||
+        process.env.REACT_APP_DEFAULT_PISTAS_FILE ||
+        "gs145ka";
 
       // Prepend PUBLIC_URL to fetch from the public folder correctly, even when deployed to a sub-path.
-      const fetchUrl = `${process.env.PUBLIC_URL || ''}/data/${pistasFile}.json`;
+      const fetchUrl = `${
+        process.env.PUBLIC_URL || ""
+      }/data/${pistasFile}.json`;
 
       // For debugging, log the full URL being requested during local development.
-      console.log(`Fetching from local URL: ${window.location.origin}${fetchUrl}`);
+      console.log(
+        `Fetching from local URL: ${window.location.origin}${fetchUrl}`
+      );
 
       fetch(fetchUrl)
         .then((response) => response.json())
@@ -133,29 +144,55 @@ const Pistas = () => {
     let seconds = totalSeconds % 60;
 
     const parts = [];
-    if (hours > 0) parts.push(`${hours} hora${hours !== 1 ? 's' : ''}`);
-    if (minutes > 0) parts.push(`${minutes} minuto${minutes !== 1 ? 's' : ''}`);
-    if (seconds > 0 || parts.length === 0) parts.push(`${seconds} segundo${seconds !== 1 ? 's' : ''}`); // Ensure seconds are always shown if no other units
+    if (hours > 0) parts.push(`${hours} hora${hours !== 1 ? "s" : ""}`);
+    if (minutes > 0) parts.push(`${minutes} minuto${minutes !== 1 ? "s" : ""}`);
+    if (seconds > 0 || parts.length === 0)
+      parts.push(`${seconds} segundo${seconds !== 1 ? "s" : ""}`); // Ensure seconds are always shown if no other units
 
-    return parts.join(', ');
+    return parts.join(", ");
   };
 
-  // New function to send email for each completed pista
-  const sendPistaCompletionEmail = (pista, teamInfo, completionTime, startTime, lastCompletionTime) => {
+  const sendPistaCompletionEmail = (
+    pista,
+    teamInfo,
+    completionTime,
+    startTime,
+    lastCompletionTime,
+    usedBasicHelp,
+    usedLostHelp
+  ) => {
     const totalDurationMs = completionTime.getTime() - startTime.getTime();
     const totalDurationFormatted = formatDuration(totalDurationMs);
 
-    const pistaDurationMs = completionTime.getTime() - lastCompletionTime.getTime();
+    const pistaDurationMs =
+      completionTime.getTime() - lastCompletionTime.getTime();
     const pistaDurationFormatted = formatDuration(pistaDurationMs);
+
+    let helpUsedMessage = "";
+    if (usedBasicHelp && usedLostHelp) {
+      helpUsedMessage =
+        "Se utilizó la Ayuda Básica y la ayuda de 'Estoy Perdido'.";
+    } else if (usedBasicHelp) {
+      helpUsedMessage = "Se utilizó la Ayuda Básica.";
+    } else if (usedLostHelp) {
+      helpUsedMessage = "Se utilizó la ayuda de 'Estoy Perdido'.";
+    }
+
+    const helpUsedInfo = helpUsedMessage
+      ? `<li><strong>Ayuda Solicitada:</strong> ${helpUsedMessage}</li>`
+      : "";
 
     const subject = `Pista ${pista.id} Completada por ${teamInfo.nombreEquipo}`;
     const body = `
-      <p>El equipo "${teamInfo.nombreEquipo}" ha completado la Pista #${pista.id}: "${pista.acertijo.substring(0, 50)}..."</p>
+      <p>El equipo "${teamInfo.nombreEquipo}" ha completado la Pista #${
+      pista.id
+    }: "${pista.acertijo.substring(0, 50)}..."</p>
       <h3>Detalles de la Completación:</h3>
       <ul>
         <li><strong>Equipo:</strong> ${teamInfo.nombreEquipo}</li>
         <li><strong>Pista Completada:</strong> #${pista.id}</li>
         <li><strong>Tiempo para esta pista:</strong> ${pistaDurationFormatted}</li>
+        ${helpUsedInfo}
         <li><strong>Hora de Completación:</strong> ${completionTime.toLocaleString(
           "es-CO",
           { timeZone: "America/Bogota" }
@@ -194,12 +231,17 @@ const Pistas = () => {
       const completionTime = new Date(); // Time when this specific pista is completed
 
       // Get the last completion time to calculate time between clues
-      const lastCompletionTimeStr = localStorage.getItem("lastPistaCompletionTime");
+      const lastCompletionTimeStr = localStorage.getItem(
+        "lastPistaCompletionTime"
+      );
       // If it's the first clue, the "last completion" was the start of the race.
-      const lastCompletionTime = lastCompletionTimeStr ? new Date(lastCompletionTimeStr) : startTime;
+      const lastCompletionTime = lastCompletionTimeStr
+        ? new Date(lastCompletionTimeStr)
+        : startTime;
 
       const totalDurationMs = completionTime.getTime() - startTime.getTime();
-      const pistaDurationMs = completionTime.getTime() - lastCompletionTime.getTime();
+      const pistaDurationMs =
+        completionTime.getTime() - lastCompletionTime.getTime();
 
       // Ensure pistaCompletionTimes array exists
       if (!teamInfo.pistaCompletionTimes) {
@@ -215,10 +257,21 @@ const Pistas = () => {
       });
 
       // Send email for this pista completion
-      sendPistaCompletionEmail(currentPista, teamInfo, completionTime, startTime, lastCompletionTime); // teamInfo is passed for email content
+      sendPistaCompletionEmail(
+        currentPista,
+        teamInfo,
+        completionTime,
+        startTime,
+        lastCompletionTime,
+        usedBasicHelp,
+        usedLostHelp
+      ); // teamInfo is passed for email content
 
       // IMPORTANT: Update the last completion time in localStorage for the next clue
-      localStorage.setItem("lastPistaCompletionTime", completionTime.toISOString());
+      localStorage.setItem(
+        "lastPistaCompletionTime",
+        completionTime.toISOString()
+      );
 
       // Proceed to the next pista
       setFeedbackMessage("¡Correcto! Pasando a la siguiente pista...");
@@ -238,6 +291,8 @@ const Pistas = () => {
         setShowLostHelp(false);
         setLostSecurityWordInput("");
         setLostFeedbackMessage("");
+        setUsedBasicHelp(false);
+        setUsedLostHelp(false);
         setShowLostInfo(false);
 
         // Save the updated teamInfo with new pista completion data
@@ -249,12 +304,14 @@ const Pistas = () => {
   };
 
   const toggleHelp = () => {
-    setShowHelp((prev) => !prev);
+    setShowHelp(true);
+    setUsedBasicHelp(true);
   };
 
   // Nuevas funciones para "Estoy perdido"
   const toggleLostHelp = () => {
-    setShowLostHelp((prev) => !prev);
+    setShowLostHelp(true);
+    setUsedLostHelp(true);
     // Resetear estados al abrir/cerrar la sección de ayuda extra
     setLostSecurityWordInput("");
     setLostFeedbackMessage("");
@@ -312,7 +369,9 @@ const Pistas = () => {
 
   // Determine the number of completed pistas to control the dropdown
   const teamInfoStringForDropdown = localStorage.getItem("teamInfo");
-  const teamInfoForDropdown = teamInfoStringForDropdown ? JSON.parse(teamInfoStringForDropdown) : {};
+  const teamInfoForDropdown = teamInfoStringForDropdown
+    ? JSON.parse(teamInfoStringForDropdown)
+    : {};
   const maxAllowedIndex = teamInfoForDropdown.pistaCompletionTimes?.length || 0;
 
   return (
@@ -391,11 +450,11 @@ const Pistas = () => {
 
         {!completionInfo && (
           <div className="botones-pista">
-            <button onClick={toggleHelp}>
-              {showHelp ? "Ocultar Ayuda" : "Mostrar Ayuda"}
+            <button onClick={toggleHelp} disabled={showHelp}>
+              Mostrar Ayuda
             </button>
-            <button onClick={toggleLostHelp}>
-              {showLostHelp ? "Cerrar Ayuda Extra" : "Estoy perdido"}
+            <button onClick={toggleLostHelp} disabled={showLostHelp}>
+              Estoy perdido
             </button>
           </div>
         )}

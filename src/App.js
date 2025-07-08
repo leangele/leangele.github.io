@@ -4,6 +4,7 @@ import Admin from "./components/Admin/Admin"; // Importa el componente Admin
 import RouteMap from "./components/RouteMap/RouteMap"; // Importar el nuevo componente de mapa
 import Registro from "./components/Registro/Registro"; // Importar el nuevo componente de registro
 import ResetPopup from "./components/ResetPopup/ResetPopup";
+import NavigationMenu from "./components/NavigationMenu/NavigationMenu";
 import "./App.css";
 
 // Helper function to read a cookie
@@ -138,39 +139,16 @@ const App = () => {
         ☰
       </button>
 
-      <div className={`left-panel ${isMenuOpen ? "open" : ""}`}>
-        {currentView !== "pistas" && (
-          <button onClick={() => handleMenuClick(handleGoToPistas)}>
-            Carrera de Observación
-          </button>
-        )}
-        {currentView !== "admin" && (
-          <button
-            onClick={() => handleMenuClick(() => handleProtectedViewClick("admin"))}
-          >
-            Configurar
-          </button>
-        )}
-        {currentView !== "map" && (
-          <button
-            onClick={() => handleMenuClick(() => handleProtectedViewClick("map"))}
-          >
-            Mapa de Ruta
-          </button>
-        )}
-        {currentView !== "registro" && (
-          <button onClick={() => handleMenuClick(() => setCurrentView("registro"))}>
-            Modificar Registro
-          </button>
-        )}
-        <button
-          className="reset-button"
-          onClick={() => handleMenuClick(handleResetClick)}
-        >
-          Reiniciar Carrera
-        </button>
-      </div>
-      {isMenuOpen && <div className="overlay" onClick={toggleMenu}></div>}
+      <NavigationMenu
+        isOpen={isMenuOpen}
+        onClose={toggleMenu}
+        currentView={currentView}
+        onMenuClick={handleMenuClick}
+        handleGoToPistas={handleGoToPistas}
+        handleProtectedViewClick={handleProtectedViewClick}
+        setCurrentView={setCurrentView}
+        handleResetClick={handleResetClick}
+      />
 
       <div className="main-content">
         {currentView === "pistas" && <Pistas />}

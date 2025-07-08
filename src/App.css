@@ -1,4 +1,4 @@
-/* App.css */
+  /* App.css */
 
 :root {
   --bg-primary: #ffffff;
@@ -42,6 +42,7 @@ body.dark-theme {
 
 body {
   background-color: var(--bg-secondary);
+  color: var(--text-primary);
   transition: background-color 0.3s ease;
 }
 
@@ -50,27 +51,74 @@ body {
   height: 100vh;
 }
 
-.left-panel {
-  width: 200px;
+.menu-toggle-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1002; /* Above overlay and menu */
   background-color: var(--bg-tertiary);
-  padding: 20px;
-  border-right: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--box-shadow);
+}
+
+.left-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: var(--bg-primary);
+  padding: 80px 20px 20px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1001;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Align to top */
-  gap: 15px; /* Add space between buttons */
+  gap: 15px;
+}
+
+.left-panel.open {
+  transform: translateX(0);
+}
+
+/* Full-screen menu on mobile devices */
+@media (max-width: 768px) {
+  .left-panel {
+    width: 100%;
+    align-items: center; /* Center the buttons horizontally */
+  }
+
+  .left-panel button {
+    text-align: center;
+    width: 90%; /* Adjust width to create margins */
+  }
+
+  .input-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .left-panel button {
-  padding: 10px 15px;
+  width: 100%;
+  padding: 12px 15px;
   background-color: var(--accent-color);
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: 100%;
-  box-sizing: border-box;
+
+  font-size: 1em;
 }
 
 .left-panel button:hover {
@@ -79,18 +127,52 @@ body {
 
 .left-panel button.reset-button {
   background-color: var(--danger-color);
-  margin-top: auto; /* Push to the bottom */
-  margin-bottom: 0;
 }
 
-.left-panel button.reset-button:hover {
-  background-color: var(--danger-hover);
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
 .main-content {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto; /* Add scroll if content overflows */
+}
+
+/* Styles for Pistas component inputs */
+.input-section {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.input-section input[type="text"] {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1em;
+  min-width: 0; /* Prevents input from overflowing flex container */
+}
+
+.input-section button {
+  padding: 10px 15px;
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  white-space: nowrap;
 }
 
 .admin-popup {
