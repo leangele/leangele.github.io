@@ -3,7 +3,16 @@ import Pistas from "./components/Pistas/Pistas";
 import Admin from "./components/Admin/Admin"; // Importa el componente Admin
 import RouteMap from "./components/RouteMap/RouteMap"; // Importar el nuevo componente de mapa
 import Registro from "./components/Registro/Registro"; // Importar el nuevo componente de registro
+import ResetPopup from "./components/ResetPopup/ResetPopup";
 import "./App.css";
+
+// Helper function to read a cookie
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
 
 const App = () => {
   // 'pistas', 'admin', or 'map'
@@ -15,7 +24,7 @@ const App = () => {
   const [isRegistered, setIsRegistered] = useState(null); // Use null for loading state
   const [theme, setTheme] = useState("light");
   const [showResetPopup, setShowResetPopup] = useState(false);
-  const [resetConfirmationInput, setResetConfirmationInput] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Passwords should be stored securely, e.g., in environment variables
   const SHARED_PASSWORD = "gs145ka";
@@ -30,8 +39,8 @@ const App = () => {
       setIsRegistered(false);
     }
 
-    // Cargar el tema guardado desde localStorage
-    const savedTheme = localStorage.getItem("theme");
+    // Cargar el tema guardado desde la cookie
+    const savedTheme = getCookie("theme");
     if (savedTheme) {
       setTheme(savedTheme);
     }
@@ -39,11 +48,20 @@ const App = () => {
 
   useEffect(() => {
     // Apply theme class to the body element
-    document.body.className = "";
-    document.body.classList.add(`${theme}-theme`);
-    // Guardar el tema actual en localStorage
-    localStorage.setItem("theme", theme);
+    document.body.classList.remove("light-theme", "dark-theme");
+    document.body.classList.add(`${theme}-theme`); // 'light-theme' or 'dark-theme'
+    // Guardar el tema actual en una cookie (válida por 1 año)
+    document.cookie = `theme=${theme}; max-age=31536000; path=/`;
   }, [theme]);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleMenuClick = (action) => {
+    action();
+    setIsMenuOpen(false); // Close menu on selection
+  };
 
   const handleGoToPistas = () => {
     setCurrentView("pistas");
@@ -79,20 +97,14 @@ const App = () => {
   };
 
   const handleResetConfirm = () => {
-    if (resetConfirmationInput === "si") {
-      localStorage.removeItem("teamInfo");
-      localStorage.removeItem("lastPistaCompletionTime");
-      setIsRegistered(false); // This will force the app to the registration screen
-      setShowResetPopup(false);
-      setResetConfirmationInput("");
-    } else {
-      alert("Debes escribir 'si' para confirmar.");
-    }
+    localStorage.removeItem("teamInfo");
+    localStorage.removeItem("lastPistaCompletionTime");
+    setIsRegistered(false); // This will force the app to the registration screen
+    setShowResetPopup(false);
   };
 
   const closeResetPopup = () => {
     setShowResetPopup(false);
-    setResetConfirmationInput("");
   };
 
   const themeSwitcher = (
@@ -122,30 +134,43 @@ const App = () => {
   return (
     <div className="app-container">
       {themeSwitcher}
+      <button onClick={toggleMenu} className="menu-toggle-button">
+        ☰
+      </button>
 
-      <div className="left-panel">
+      <div className={`left-panel ${isMenuOpen ? "open" : ""}`}>
         {currentView !== "pistas" && (
-          <button onClick={handleGoToPistas}>Carrera de Observación</button>
+          <button onClick={() => handleMenuClick(handleGoToPistas)}>
+            Carrera de Observación
+          </button>
         )}
         {currentView !== "admin" && (
-          <button onClick={() => handleProtectedViewClick("admin")}>
+          <button
+            onClick={() => handleMenuClick(() => handleProtectedViewClick("admin"))}
+          >
             Configurar
           </button>
         )}
         {currentView !== "map" && (
-          <button onClick={() => handleProtectedViewClick("map")}>
+          <button
+            onClick={() => handleMenuClick(() => handleProtectedViewClick("map"))}
+          >
             Mapa de Ruta
           </button>
         )}
         {currentView !== "registro" && (
-          <button onClick={() => setCurrentView("registro")}>
+          <button onClick={() => handleMenuClick(() => setCurrentView("registro"))}>
             Modificar Registro
           </button>
         )}
-        <button className="reset-button" onClick={handleResetClick}>
+        <button
+          className="reset-button"
+          onClick={() => handleMenuClick(handleResetClick)}
+        >
           Reiniciar Carrera
         </button>
       </div>
+      {isMenuOpen && <div className="overlay" onClick={toggleMenu}></div>}
 
       <div className="main-content">
         {currentView === "pistas" && <Pistas />}
@@ -178,25 +203,11 @@ const App = () => {
         </div>
       )}
 
-      {showResetPopup && (
-        <div className="admin-popup">
-          <div className="popup-content">
-            <h2>Confirmar Reinicio</h2>
-            <p>
-              Esta acción borrará todo el progreso del equipo actual. Para
-              confirmar, escribe <strong>si</strong> en el campo de abajo.
-            </p>
-            <input
-              type="text"
-              placeholder="Escribe 'si' para confirmar"
-              value={resetConfirmationInput}
-              onChange={(e) => setResetConfirmationInput(e.target.value)}
-            />
-            <button onClick={handleResetConfirm}>Confirmar Reinicio</button>
-            <button onClick={closeResetPopup}>Cancelar</button>
-          </div>
-        </div>
-      )}
+      <ResetPopup
+        show={showResetPopup}
+        onConfirm={handleResetConfirm}
+        onCancel={closeResetPopup}
+      />
     </div>
   );
 };
