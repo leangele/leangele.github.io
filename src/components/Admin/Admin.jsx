@@ -12,24 +12,24 @@ const Admin = () => {
   useEffect(() => {
     const storedPistas = localStorage.getItem("pistas");
     if (storedPistas) {
-      // Asegurarse de que las pistas cargadas tengan la propiedad 'order' y estén ordenadas
+      // Ensure loaded clues have an 'order' property and are sorted
       const loadedPistas = JSON.parse(storedPistas);
       setPistas(loadedPistas.sort((a, b) => a.order - b.order));
     } else {
-      // Si no hay pistas en localStorage, cargarlas desde el archivo JSON
+      // If there are no clues in localStorage, load them from the JSON file
       const params = new URLSearchParams(window.location.search);
       const pistasFile = params.get("pistas") || "gs145ka"; // Default to 'gs145ka'
 
-      fetch(`/${pistasFile}.json`) // Apunta al archivo JSON (dinámico o por defecto)
+      fetch(`/${pistasFile}.json`) // Points at the JSON file (from the URL param or the default)
         .then((response) => response.json())
         .then((pistasData) => {
-          // Inicializar 'order' para las pistas por defecto
+          // Initialize 'order' for the default clues
           const initialPistas = pistasData.map((pista, index) => ({
             ...pista,
-            order: index, // Asignar el índice como orden inicial
+            order: index, // Use the index as the initial order
           }));
           setPistas(initialPistas);
-          // Guardar las pistas iniciales en localStorage
+          // Save the initial clues in localStorage
           localStorage.setItem("pistas", JSON.stringify(initialPistas));
         })
         .catch((error) =>
@@ -65,7 +65,7 @@ const Admin = () => {
   };
 
   const savePista = () => {
-    // TODO: Validar los datos del editedPista
+    // TODO: Validate editedPista data
 
     if (editedPista.id) {
       const updatedPistas = pistas.map((p) =>
@@ -73,11 +73,11 @@ const Admin = () => {
       );
       updatePistas(updatedPistas);
     } else {
-      const newId = Date.now(); // Generar un ID único para la nueva pista (simple, para producción usar UUID)
+      const newId = Date.now(); // Generate a unique id for the new clue (simple; use a UUID in production)
       const newPista = {
         ...editedPista,
         id: newId,
-        order: pistas.length, // Asignar orden al final de la lista
+        order: pistas.length, // Place it at the end of the list
       };
       updatePistas([...pistas, newPista]);
     }
@@ -88,7 +88,7 @@ const Admin = () => {
   const deletePista = (id) => {
     if (window.confirm("¿Estás seguro de eliminar esta pista?")) {
       const updatedPistas = pistas.filter((p) => p.id !== id);
-      updatePistas(updatedPistas); // Re-indexará el orden de las restantes
+      updatePistas(updatedPistas); // Re-index the remaining clues
     }
   };
 
@@ -110,11 +110,11 @@ const Admin = () => {
     setPreviewPista(null);
   };
 
-  // Función para manejar el arrastre y soltado
+  // Handle drag and drop
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
-    // Si no hay destino o se soltó en la misma posición
+    // No destination, or dropped in the same position
     if (!destination || source.index === destination.index) {
       return;
     }
@@ -123,7 +123,7 @@ const Admin = () => {
     const [reorderedItem] = newPistas.splice(source.index, 1);
     newPistas.splice(destination.index, 0, reorderedItem);
 
-    updatePistas(newPistas); // Actualiza el estado y re-indexa el orden
+    updatePistas(newPistas); // Update state and re-index order
   };
 
   if (isEditing) {
@@ -266,8 +266,8 @@ const Admin = () => {
               >
                 {pistas.map((pista, index) => (
                   <Draggable
-                    key={pista.id} // Usar el ID como key
-                    draggableId={String(pista.id)} // draggableId debe ser un string
+                    key={pista.id} // Use the id as the key
+                    draggableId={String(pista.id)} // draggableId must be a string
                     index={index}
                   >
                     {(provided, snapshot) => (
@@ -282,7 +282,7 @@ const Admin = () => {
                           className="drag-handle"
                           {...provided.dragHandleProps}
                         >
-                          &#x2630; {/* Icono de hamburguesa para arrastrar */}
+                          &#x2630; {/* Drag handle */}
                         </div>
                         <div className="pista-item-content">
                           <span>
@@ -316,7 +316,7 @@ const Admin = () => {
                   </Draggable>
                 ))}
                 {provided.placeholder}{" "}
-                {/* Importante para el espacio al arrastrar */}
+                {/* Placeholder space while dragging */}
               </div>
             )}
           </Droppable>

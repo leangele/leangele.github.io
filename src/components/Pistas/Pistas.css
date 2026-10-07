@@ -3,7 +3,7 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 1050; /* Aumentado para estar sobre otros posibles elementos */
+  z-index: 1050; /* Raised so it sits above other elements */
 }
 
 .scavenger-hunt-container {
@@ -63,7 +63,7 @@
 .botones-pista {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap; /* Para que los botones se apilen en pantallas pequeñas */
+    flex-wrap: wrap; /* Stack buttons on small screens */
     margin-bottom: 15px;
 }
 
@@ -424,7 +424,7 @@ body.dark-theme .pista-selector-container select option:disabled {
   color: var(--text-primary);
 }
 
-/* --- Media Queries para Responsividad Móvil --- */
+/* --- Media queries for mobile layout --- */
 
 @media (max-width: 768px) {
   .scavenger-hunt-container {
@@ -433,7 +433,7 @@ body.dark-theme .pista-selector-container select option:disabled {
   }
 
   .scavenger-hunt-container h1 {
-    font-size: 1.8em; /* Reducir tamaño del título principal */
+    font-size: 1.8em; /* Smaller main title */
   }
 
   .pista-card h2 {
@@ -441,12 +441,12 @@ body.dark-theme .pista-selector-container select option:disabled {
   }
 
   .input-section {
-    flex-direction: column; /* Apilar el input y el botón */
+    flex-direction: column; /* Stack the input and the button */
   }
 
   .input-section input,
   .input-section button {
-    width: 90%; /* Ocupar todo el ancho */
+    width: 90%; /* Use most of the width */
   }
 
   .theme-toggle-button {

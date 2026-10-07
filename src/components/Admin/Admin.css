@@ -69,9 +69,9 @@
 }
 
 .pista-item.is-dragging {
-  background-color: #e6f7ff; /* Fondo azul claro al arrastrar */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
-  transform: rotate(2deg); /* Pequeña rotación para efecto visual */
+  background-color: #e6f7ff; /* Light blue background while dragging */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+  transform: rotate(2deg); /* Slight rotation for a visual effect */
 }
 
 .drag-handle {
@@ -119,7 +119,7 @@
 }
 
 .pista-item-actions button:nth-of-type(1) {
-  /* mostrar */
+  /* show */
   background-color: var(--info-color);
   color: white;
 }
@@ -139,7 +139,7 @@
 }
 
 .pista-item-actions button:nth-of-type(2) {
-  /* Editar - This selector is now for the move up button */
+  /* edit - This selector is now for the move up button */
   background-color: var(--warning-color);
   color: var(--text-color);
 }
@@ -148,7 +148,7 @@
 }
 
 .pista-item-actions button:nth-of-type(3) {
-  /* Eliminar - This selector is now for the move down button */
+  /* delete - This selector is now for the move down button */
   background-color: var(--danger-color);
   color: white;
 }
@@ -212,7 +212,7 @@
 }
 
 .admin-edit .form-actions button:first-of-type {
-  /* Guardar */
+  /* save */
   background-color: var(--success-color);
   color: white;
 }
@@ -221,7 +221,7 @@
 }
 
 .admin-edit .form-actions button:last-of-type {
-  /* Cancelar */
+  /* cancel */
   background-color: var(--secondary-color);
   color: white;
 }
@@ -238,7 +238,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* "Agregar Pista" button */
+/* "Add clue" button */
 .admin-panel > button {
   margin-top: 25px;
   padding: 12px 25px;
@@ -349,7 +349,7 @@
   transition: background-color 0.2s ease;
 }
 
-.preview-modal-actions button:first-of-type { /* Editar */
+.preview-modal-actions button:first-of-type { /* edit */
   background-color: var(--warning-color);
   color: var(--text-color);
 }
@@ -357,7 +357,7 @@
   background-color: var(--warning-hover);
 }
 
-.preview-modal-actions button:last-of-type { /* Eliminar */
+.preview-modal-actions button:last-of-type { /* delete */
   background-color: var(--danger-color);
   color: white;
 }

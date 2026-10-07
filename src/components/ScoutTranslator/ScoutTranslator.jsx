@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./ScoutTranslator.css";
 
-// --- Lógica de las Claves ---
+// --- Key logic ---
 
 const ciphers = {
   murcielago: {
@@ -99,11 +99,11 @@ const ciphers = {
       0: "-----",
       " ": "/",
     },
-    decodeMap: {}, // Se genera dinámicamente
+    decodeMap: {}, // Generated dynamically
   },
 };
 
-// Generar el mapa de decodificación de Morse
+// Build the Morse decode map
 for (const key in ciphers.morse.encodeMap) {
   ciphers.morse.decodeMap[ciphers.morse.encodeMap[key]] = key;
 }
@@ -140,7 +140,7 @@ const ScoutTranslator = () => {
   const [selectedCipher, setSelectedCipher] = useState("murcielago");
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
-  const [direction, setDirection] = useState("encode"); // 'encode' o 'decode'
+  const [direction, setDirection] = useState("encode"); // 'encode' or 'decode'
 
   useEffect(() => {
     if (inputText === "") {

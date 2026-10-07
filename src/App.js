@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Pistas from "./components/Pistas/Pistas";
-import Admin from "./components/Admin/Admin"; // Importa el componente Admin
-import RouteMap from "./components/RouteMap/RouteMap"; // Importar el nuevo componente de mapa
-import Registro from "./components/Registro/Registro"; // Importar el nuevo componente de registro
+import Admin from "./components/Admin/Admin"; // Admin component
+import RouteMap from "./components/RouteMap/RouteMap"; // Route map component
+import Registro from "./components/Registro/Registro"; // Registration component
 import ResetPopup from "./components/ResetPopup/ResetPopup";
 import NavigationMenu from "./components/NavigationMenu/NavigationMenu";
+import MultiplicationGame from "./components/MultiplicationGame/MultiplicationGame";
 import "./App.css";
 
 // Helper function to read a cookie
@@ -15,7 +16,15 @@ const getCookie = (name) => {
   return null;
 };
 
-const App = () => {
+const getPistasId = () => {
+  const value = new URLSearchParams(window.location.search).get("pistas");
+  if (!value || !value.trim()) {
+    return null;
+  }
+  return value.trim();
+};
+
+const HuntApp = () => {
   // 'pistas', 'admin', or 'map'
   const [currentView, setCurrentView] = useState("pistas"); // 'pistas', 'admin', 'map', 'registro'
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -31,7 +40,7 @@ const App = () => {
   const SHARED_PASSWORD = "gs145ka";
 
   useEffect(() => {
-    // Comprobar si ya hay información de equipo en localStorage al cargar la app
+    // Check for saved team info in localStorage when the app loads
     // This check runs only once after the component mounts.
     const teamInfo = localStorage.getItem("teamInfo");
     if (teamInfo) {
@@ -40,7 +49,7 @@ const App = () => {
       setIsRegistered(false);
     }
 
-    // Cargar el tema guardado desde la cookie
+    // Load the saved theme from the cookie
     const savedTheme = getCookie("theme");
     if (savedTheme) {
       setTheme(savedTheme);
@@ -51,7 +60,7 @@ const App = () => {
     // Apply theme class to the body element
     document.body.classList.remove("light-theme", "dark-theme");
     document.body.classList.add(`${theme}-theme`); // 'light-theme' or 'dark-theme'
-    // Guardar el tema actual en una cookie (válida por 1 año)
+    // Save the current theme in a cookie (valid for 1 year)
     document.cookie = `theme=${theme}; max-age=31536000; path=/`;
   }, [theme]);
 
@@ -190,6 +199,14 @@ const App = () => {
       />
     </div>
   );
+};
+
+const App = () => {
+  const pistasId = getPistasId();
+  if (!pistasId) {
+    return <MultiplicationGame />;
+  }
+  return <HuntApp />;
 };
 
 export default App;

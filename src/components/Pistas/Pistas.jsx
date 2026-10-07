@@ -23,14 +23,14 @@ const Pistas = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [isTranslatorOpen, setIsTranslatorOpen] = useState(false);
 
-  // Nuevos estados para la funcionalidad "Estoy perdido"
+  // State for the "I'm lost" feature
   const [showLostHelp, setShowLostHelp] = useState(false);
   const [lostSecurityWordInput, setLostSecurityWordInput] = useState("");
   const [lostFeedbackMessage, setLostFeedbackMessage] = useState("");
   const [showLostInfo, setShowLostInfo] = useState(false);
-  const [usedBasicHelp, setUsedBasicHelp] = useState(false); // Nuevo estado para ayuda
-  const [usedLostHelp, setUsedLostHelp] = useState(false); // Nuevo estado para "estoy perdido"
-  const [allPistas, setAllPistas] = useState([]); // Nuevo estado para todas las pistas ordenadas
+  const [usedBasicHelp, setUsedBasicHelp] = useState(false); // Tracks whether basic help was used
+  const [usedLostHelp, setUsedLostHelp] = useState(false); // Tracks whether the "I'm lost" help was used
+  const [allPistas, setAllPistas] = useState([]); // All clues in display order
   const [completionInfo, setCompletionInfo] = useState(null); // State for completion info of the current pista
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const Pistas = () => {
       );
       setAllPistas(sortedPistas);
 
-      // 2. Determinar el índice de la pista inicial basado en el progreso guardado
+      // 2. Set the starting clue index from saved progress
       const teamInfoString = localStorage.getItem("teamInfo");
       if (teamInfoString) {
         const teamInfo = JSON.parse(teamInfoString);
@@ -124,7 +124,7 @@ const Pistas = () => {
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
-    setFeedbackMessage(""); // Limpiar feedback al escribir
+    setFeedbackMessage(""); // Clear feedback while typing
   };
 
   const handleDropdownChange = (event) => {
@@ -308,11 +308,11 @@ const Pistas = () => {
     setUsedBasicHelp(true);
   };
 
-  // Nuevas funciones para "Estoy perdido"
+  // Handlers for "I'm lost"
   const toggleLostHelp = () => {
     setShowLostHelp(true);
     setUsedLostHelp(true);
-    // Resetear estados al abrir/cerrar la sección de ayuda extra
+    // Reset state when opening or closing the extra-help section
     setLostSecurityWordInput("");
     setLostFeedbackMessage("");
     setShowLostInfo(false);
@@ -352,7 +352,7 @@ const Pistas = () => {
     );
   }
 
-  // Función para parsear coordenadas para Leaflet
+  // Parse coordinates for Leaflet
   const parseCoordinates = (coordString) => {
     const parts = coordString.match(
       /(\d+\.\d+)°\s*([NS]),\s*(\d+\.\d+)°\s*([EW])/

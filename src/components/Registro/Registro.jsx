@@ -16,7 +16,7 @@ const Registro = ({ onRegistrationComplete }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Correo configurable
+  // Configurable email
   const recipientEmail = "angelocardona85@gmail.com";
 
   useEffect(() => {
@@ -126,27 +126,27 @@ const Registro = ({ onRegistrationComplete }) => {
       return;
     }
 
-    // Usar la fecha existente si se está editando, de lo contrario, crear una nueva
+    // Use the existing date when editing; otherwise create a new one
     const registrationTime = existingRegistrationDate
       ? new Date(existingRegistrationDate)
       : new Date();
 
     const dataToSave = {
       ...teamInfo,
-      photo, // Guardar la imagen en base64
+      photo, // Store the image as base64
       pistaCompletionTimes: teamInfo.pistaCompletionTimes, // Ensure this is carried over
-      fechaRegistro: registrationTime.toISOString(), // Guarda la fecha en formato ISO 8601
+      fechaRegistro: registrationTime.toISOString(), // Store the date in ISO 8601 format
     };
 
-    // Guardar la información en localStorage
+    // Save the information in localStorage
     localStorage.setItem("teamInfo", JSON.stringify(dataToSave));
 
-    // Solo enviar correo en el registro inicial, no en la modificación
+    // Send email only on the initial registration, not on an update
     if (!isEditing) {
-      // Limpiar el tiempo de la última pista para un nuevo inicio de carrera
+      // Clear the last clue time for a new race start
       localStorage.removeItem("lastPistaCompletionTime");
 
-      // Construir y abrir el cliente de correo
+      // Build and open the mail client
       const subject = `Registro de Equipo: ${teamInfo.nombreEquipo}`;
       const body = `
   <p>Se ha registrado un nuevo equipo para la carrera de observación.</p>
@@ -171,7 +171,7 @@ const Registro = ({ onRegistrationComplete }) => {
       window.location.href = mailtoLink;
     }
     else {
-      // Enviar correo de modificación
+      // Send the update email
       const modificationTime = new Date();
       const originalCreationDate = new Date(existingRegistrationDate);
 
@@ -202,7 +202,7 @@ const Registro = ({ onRegistrationComplete }) => {
       window.location.href = mailtoLink;
     }
 
-    // Notificar al componente App que el registro está completo
+    // Notify the App component that registration is complete
     onRegistrationComplete();
   };
 

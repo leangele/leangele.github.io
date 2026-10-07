@@ -1,4 +1,4 @@
-/* Botón flotante para abrir el traductor */
+/* Floating button to open the translator */
 .translator-toggle-button {
     position: fixed;
     bottom: 20px;
@@ -14,7 +14,7 @@
     font-size: 1rem;
 }
 
-/* Contenedor principal del traductor cuando está abierto */
+/* Main translator container when open */
 .translator-container {
     position: fixed;
     bottom: 20px;
