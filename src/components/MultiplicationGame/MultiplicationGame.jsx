@@ -13,7 +13,6 @@ import { getCreature } from "./CharacterSvg";
 import "./MultiplicationGame.css";
 import "../../adventure-game.css";
 
-const SLIDE_MS = 400;
 const SOUND_STORAGE_KEY = "multiplication-game-sound";
 const GRAPHIC_STYLE_KEY = "multiplication-game-style";
 const BEST_TIME_KEY = "multiplication-game-best-times";
@@ -33,7 +32,7 @@ export const readStoredGraphicStyle = (configuredStyle) => {
   } catch (error) {
     // Private browsing can block storage.
   }
-  return configuredStyle === "fantasy" ? "fantasy" : "pixel";
+  return configuredStyle;
 };
 
 export const musicPhaseFor = ({ hasStarted, playMode, isFinished, won }) => {
@@ -158,7 +157,12 @@ export const levelFromTableQuery = (gameConfig, search = "") => {
   const raw = params.get("table") ?? params.get("tabla");
   const table = Number(raw);
 
-  if (!raw || !Number.isInteger(table) || table < 1 || table > 10) {
+  if (
+    !raw ||
+    !Number.isInteger(table) ||
+    table < gameConfig.minTable ||
+    table > gameConfig.maxTable
+  ) {
     return configured;
   }
 
@@ -173,8 +177,8 @@ export const levelFromTableQuery = (gameConfig, search = "") => {
     id: table,
     label: `Times Table ${table}`,
     multiplier: table,
-    minFactor: configured?.minFactor ?? 1,
-    maxFactor: configured?.maxFactor ?? 10,
+    minFactor: configured.minFactor,
+    maxFactor: configured.maxFactor,
   };
 };
 
@@ -193,13 +197,13 @@ const readStoredSound = (configSounds) => {
   return configSounds !== false;
 };
 
-const slideDuration = () => {
+const slideDuration = (slideMs) => {
   if (typeof window.matchMedia !== "function") {
-    return SLIDE_MS;
+    return slideMs;
   }
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ? 0
-    : SLIDE_MS;
+    : slideMs;
 };
 
 const shuffle = (items) => {
@@ -214,7 +218,7 @@ const shuffle = (items) => {
   return result;
 };
 
-const createOptions = (answer, multiplier, count = 4) => {
+const createOptions = (answer, multiplier, count) => {
   const step = multiplier > 0 ? multiplier : 1;
   const options = new Set([answer]);
   let distance = 1;
@@ -244,7 +248,7 @@ const levelFactors = (level) =>
     (_, index) => level.minFactor + index
   );
 
-const questionFromFactor = (level, factor, optionCount = 4) => {
+const questionFromFactor = (level, factor, optionCount) => {
   const answer = level.multiplier * factor;
   return {
     multiplier: level.multiplier,
@@ -254,12 +258,12 @@ const questionFromFactor = (level, factor, optionCount = 4) => {
   };
 };
 
-export const createQuestions = (level, count) => {
+export const createQuestions = (level, count, optionCount) => {
   const factors = levelFactors(level);
   const seen = new Set();
   return shuffle(factors)
     .slice(0, Math.min(count, factors.length))
-    .map((factor) => questionFromFactor(level, factor))
+    .map((factor) => questionFromFactor(level, factor, optionCount))
     .filter((question) => {
       const key = `${question.multiplier}×${question.factor}`;
       if (seen.has(key)) {
@@ -270,16 +274,16 @@ export const createQuestions = (level, count) => {
     });
 };
 
-export const createAdvanceQuestions = (level, count) => {
+export const createAdvanceQuestions = (level, count, optionCount, minTable) => {
   const pool = [];
-  for (let multiplier = 1; multiplier < level.multiplier; multiplier += 1) {
+  for (let multiplier = minTable; multiplier < level.multiplier; multiplier += 1) {
     const table = {
       multiplier,
       minFactor: level.minFactor,
       maxFactor: level.maxFactor,
     };
     levelFactors(table).forEach((factor) => {
-      const question = questionFromFactor(table, factor);
+      const question = questionFromFactor(table, factor, optionCount);
       const key = `${question.multiplier}×${question.factor}`;
       if (!pool.some((item) => `${item.multiplier}×${item.factor}` === key)) {
         pool.push(question);
@@ -292,8 +296,8 @@ export const createAdvanceQuestions = (level, count) => {
   return shuffle(pool).slice(0, Math.min(count, pool.length));
 };
 
-export const createOrderedQuestions = (level) =>
-  levelFactors(level).map((factor) => questionFromFactor(level, factor, 2));
+export const createOrderedQuestions = (level, optionCount) =>
+  levelFactors(level).map((factor) => questionFromFactor(level, factor, optionCount));
 
 const MultiplicationGame = () => {
   const [config, setConfig] = useState(null);
@@ -312,7 +316,7 @@ const MultiplicationGame = () => {
   const [heroId, setHeroId] = useState("hunter");
   const [combat, setCombat] = useState(null);
   const [soundOn, setSoundOn] = useState(true);
-  const [graphicStyle, setGraphicStyle] = useState("pixel");
+  const [graphicStyle, setGraphicStyle] = useState(null);
   const [roundTimeMs, setRoundTimeMs] = useState(0);
   const [bestTimeMs, setBestTimeMs] = useState(null);
   const [beatRecord, setBeatRecord] = useState(false);
@@ -320,7 +324,7 @@ const MultiplicationGame = () => {
   const [bestSetAt, setBestSetAt] = useState(null);
   const [liveRoundMs, setLiveRoundMs] = useState(0);
   const soundOnRef = useRef(true);
-  const graphicStyleRef = useRef("pixel");
+  const graphicStyleRef = useRef(null);
   const playModeRef = useRef("battle");
   const pendingAdvance = useRef(null);
   const answerElapsedRef = useRef(0);
@@ -489,10 +493,10 @@ const MultiplicationGame = () => {
       finishOrAdvance(wasCorrect);
       setCombat(null);
       setSlidePhase("enter");
-    }, slideDuration());
+    }, slideDuration(config?.slideMs));
 
     return () => window.clearTimeout(timer);
-  }, [slidePhase, finishOrAdvance]);
+  }, [slidePhase, finishOrAdvance, config?.slideMs]);
 
   useEffect(() => {
     if (slidePhase !== "enter") {
@@ -502,9 +506,9 @@ const MultiplicationGame = () => {
     const timer = window.setTimeout(() => {
       questionShownAtRef.current = performance.now();
       setSlidePhase("shown");
-    }, slideDuration());
+    }, slideDuration(config?.slideMs));
     return () => window.clearTimeout(timer);
-  }, [slidePhase]);
+  }, [slidePhase, config?.slideMs]);
 
   useEffect(() => {
     if (
@@ -567,7 +571,7 @@ const MultiplicationGame = () => {
   }, [questionIndex, questions.length]);
 
   const startRound = (mode) => {
-    if (mode === "advance" && level.multiplier < 2) {
+    if (mode === "advance" && level.multiplier <= config.minTable) {
       return;
     }
     unlockGameAudio();
@@ -585,10 +589,15 @@ const MultiplicationGame = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setQuestions(
       mode === "practice"
-        ? createOrderedQuestions(level)
+        ? createOrderedQuestions(level, config.practiceAnswerChoices)
         : mode === "advance"
-          ? createAdvanceQuestions(level, config.questionsPerLevel)
-          : createQuestions(level, config.questionsPerLevel)
+          ? createAdvanceQuestions(
+              level,
+              config.questionsPerLevel,
+              config.answerChoices,
+              config.minTable
+            )
+          : createQuestions(level, config.questionsPerLevel, config.answerChoices)
     );
     setQuestionIndex(0);
     setScore(0);
@@ -752,10 +761,11 @@ const MultiplicationGame = () => {
     </div>
   );
   const stageClass = `math-game math-game--stage math-game--style-${graphicStyle} math-game--realm-${creature.id}`;
+  const stageStyle = { "--slide-ms": `${config.slideMs}ms` };
 
   if (!hasStarted) {
     return (
-      <main className={stageClass} onPointerDown={playSelectMusic}>
+      <main className={stageClass} style={stageStyle} onPointerDown={playSelectMusic}>
         {soundToggle}
         <AdventureScene
           mode="select"
@@ -785,7 +795,7 @@ const MultiplicationGame = () => {
                 type="button"
                 className="advance-button"
                 onClick={() => startRound("advance")}
-                disabled={level.multiplier < 2}
+                disabled={level.multiplier <= config.minTable}
               >
                 Advance
               </button>
@@ -809,7 +819,7 @@ const MultiplicationGame = () => {
     const practicing = playMode === "practice";
     const answersStillHidden = missedQuestions.some((item) => !item.revealed);
     return (
-      <main className={stageClass}>
+      <main className={stageClass} style={stageStyle}>
         {soundToggle}
         <AdventureScene
           mode={won ? "victory" : "defeat"}
@@ -882,7 +892,7 @@ const MultiplicationGame = () => {
   }
 
   return (
-    <main className={stageClass}>
+    <main className={stageClass} style={stageStyle}>
       {soundToggle}
       <AdventureScene
         mode="battle"

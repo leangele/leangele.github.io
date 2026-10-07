@@ -441,7 +441,7 @@ export const setAudioGraphicStyle = (style) => {
 
 export const getAudioGraphicStyle = () => currentStyle;
 
-export const passedChallenge = (score, total, passPercent = 70) => {
+export const passedChallenge = (score, total, passPercent) => {
   if (!total) {
     return false;
   }

@@ -870,12 +870,12 @@
 }
 
 .slide-panel--exit {
-  animation: slide-out-left 400ms ease forwards;
+  animation: slide-out-left var(--slide-ms) ease forwards;
   pointer-events: none;
 }
 
 .slide-panel--enter {
-  animation: slide-in-right 400ms ease both;
+  animation: slide-in-right var(--slide-ms) ease both;
   pointer-events: none;
 }
 

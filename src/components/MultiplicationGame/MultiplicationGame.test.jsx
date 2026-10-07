@@ -18,6 +18,13 @@ const config = {
   subtitle: "Practice the times tables.",
   questionsPerLevel: 5,
   secondsPerQuestion: 5,
+  passPercent: 70,
+  slideMs: 400,
+  answerChoices: 4,
+  practiceAnswerChoices: 2,
+  minTable: 1,
+  maxTable: 10,
+  graphicStyle: "pixel",
   levels: [
     {
       id: 2,
@@ -111,7 +118,10 @@ test("shows the total answer time and announces a faster replay", async () => {
 });
 
 test("lists a times table in factor order for practice", () => {
-  const questions = createOrderedQuestions(config.levels[0]);
+  const questions = createOrderedQuestions(
+    config.levels[0],
+    config.practiceAnswerChoices
+  );
 
   expect(questions.map((question) => question.factor)).toEqual([
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -536,7 +546,7 @@ test("keeps questions and wrong answers unique", () => {
     minFactor: 1,
     maxFactor: 10,
   };
-  const questions = createQuestions(level, 8);
+  const questions = createQuestions(level, 8, 4);
   const prompts = questions.map(
     (question) => `${question.multiplier}×${question.factor}`
   );
@@ -548,7 +558,7 @@ test("keeps questions and wrong answers unique", () => {
     expect(question.options.filter((option) => option === question.answer)).toHaveLength(1);
   });
 
-  const advance = createAdvanceQuestions({ ...level, id: 3 }, 8);
+  const advance = createAdvanceQuestions({ ...level, id: 3 }, 8, 4, 1);
   const advancePrompts = advance.map(
     (question) => `${question.multiplier}×${question.factor}`
   );
@@ -563,7 +573,7 @@ test("builds advance questions only from lower tables", () => {
     minFactor: 1,
     maxFactor: 10,
   };
-  const questions = createAdvanceQuestions(table, 5);
+  const questions = createAdvanceQuestions(table, 5, 4, 1);
 
   expect(questions).toHaveLength(5);
   expect(
@@ -581,14 +591,16 @@ test("builds advance questions only from lower tables", () => {
     )
   ).toBe(true);
 
-  const pool = createAdvanceQuestions(table, 100);
+  const pool = createAdvanceQuestions(table, 100, 4, 1);
   expect(pool).toHaveLength(20);
   expect(pool.some((question) => question.multiplier === 3)).toBe(false);
-  expect(createAdvanceQuestions({ ...table, multiplier: 1 }, 5)).toEqual([]);
+  expect(createAdvanceQuestions({ ...table, multiplier: 1 }, 5, 4, 1)).toEqual([]);
   expect(
     createAdvanceQuestions(
       { ...table, multiplier: 2, minFactor: 1, maxFactor: 2 },
-      5
+      5,
+      4,
+      1
     )
   ).toHaveLength(2);
   expect(formatRecordStamp(new Date(2026, 9, 7, 8, 9))).toBe(
