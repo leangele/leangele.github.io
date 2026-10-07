@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="dragonGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/><stop offset="60%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <radialGradient id="eyeGrad" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#eab308"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="50" cy="92" rx="40" ry="8" fill="rgba(0,0,0,0.35)"/>
+  <path d="M30 45 Q8 20 2 40 Q15 50 24 55 Z" fill="#991b1b" stroke="#450a0a" stroke-width="2"/>
+  <path d="M70 45 Q92 20 98 40 Q85 50 76 55 Z" fill="#991b1b" stroke="#450a0a" stroke-width="2"/>
+  <ellipse cx="50" cy="62" rx="30" ry="26" fill="url(#dragonGrad)" stroke="#450a0a" stroke-width="2.5"/>
+  <path d="M40 55 Q50 50 60 55 Q50 82 40 55 Z" fill="#fde047" opacity="0.9" stroke="#ca8a04" stroke-width="1.5"/>
+  <line x1="42" y1="62" x2="58" y2="62" stroke="#ca8a04" stroke-width="1.5"/>
+  <line x1="44" y1="70" x2="56" y2="70" stroke="#ca8a04" stroke-width="1.5"/>
+  <path d="M36 28 Q30 8 22 14 Q30 22 36 32 Z" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+  <path d="M64 28 Q70 8 78 14 Q70 22 64 32 Z" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+  <path d="M32 34 C32 18 68 18 68 34 C68 46 60 52 50 52 C40 52 32 46 32 34 Z" fill="url(#dragonGrad)" stroke="#450a0a" stroke-width="2.5"/>
+  <ellipse cx="42" cy="34" rx="5" ry="4" fill="url(#eyeGrad)" stroke="#713f12" stroke-width="1"/>
+  <ellipse cx="58" cy="34" rx="5" ry="4" fill="url(#eyeGrad)" stroke="#713f12" stroke-width="1"/>
+  <ellipse cx="42" cy="34" rx="1.5" ry="3.5" fill="#000000"/>
+  <ellipse cx="58" cy="34" rx="1.5" ry="3.5" fill="#000000"/>
+  <polygon points="42,46 45,40 48,46" fill="#f8fafc" stroke="#475569" stroke-width="1"/>
+  <polygon points="52,46 55,40 58,46" fill="#f8fafc" stroke="#475569" stroke-width="1"/>
+  <circle cx="46" cy="42" r="1.5" fill="#450a0a"/>
+  <circle cx="54" cy="42" r="1.5" fill="#450a0a"/>
+  <circle cx="34" cy="84" r="7" fill="#991b1b" stroke="#450a0a" stroke-width="2"/>
+  <circle cx="66" cy="84" r="7" fill="#991b1b" stroke="#450a0a" stroke-width="2"/>
+</svg>
