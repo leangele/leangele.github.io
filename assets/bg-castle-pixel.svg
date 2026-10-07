@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="100%" height="100%" shape-rendering="crispEdges">
+  <!-- Silueta de Montañas Lejanas en Pixel Art 16-bit -->
+  <path d="M 0 140 L 40 110 L 80 140 L 140 90 L 200 130 L 280 80 L 360 130 L 440 90 L 520 140 L 600 100 L 600 200 L 0 200 Z" fill="#475569" opacity="0.4" />
+  <path d="M 0 150 L 60 120 L 120 150 L 220 110 L 320 150 L 420 115 L 500 150 L 600 125 L 600 200 L 0 200 Z" fill="#334155" opacity="0.5" />
+
+  <!-- Castillo Pixel Art 16-bit JRPG -->
+  <g>
+    <!-- Muralla Izquierda -->
+    <rect x="70" y="90" width="180" height="110" fill="#475569" />
+    <rect x="70" y="94" width="180" height="2" fill="#64748b" />
+    <!-- Almenas Cuadradas Muralla Izquierda -->
+    <rect x="70" y="80" width="14" height="10" fill="#334155" />
+    <rect x="94" y="80" width="14" height="10" fill="#334155" />
+    <rect x="118" y="80" width="14" height="10" fill="#334155" />
+    <rect x="142" y="80" width="14" height="10" fill="#334155" />
+    <rect x="166" y="80" width="14" height="10" fill="#334155" />
+    <rect x="190" y="80" width="14" height="10" fill="#334155" />
+    <rect x="214" y="80" width="14" height="10" fill="#334155" />
+    <rect x="236" y="80" width="14" height="10" fill="#334155" />
+
+    <!-- Muralla Derecha -->
+    <rect x="350" y="90" width="180" height="110" fill="#475569" />
+    <rect x="350" y="94" width="180" height="2" fill="#64748b" />
+    <!-- Almenas Muralla Derecha -->
+    <rect x="350" y="80" width="14" height="10" fill="#334155" />
+    <rect x="374" y="80" width="14" height="10" fill="#334155" />
+    <rect x="398" y="80" width="14" height="10" fill="#334155" />
+    <rect x="422" y="80" width="14" height="10" fill="#334155" />
+    <rect x="446" y="80" width="14" height="10" fill="#334155" />
+    <rect x="470" y="80" width="14" height="10" fill="#334155" />
+    <rect x="494" y="80" width="14" height="10" fill="#334155" />
+    <rect x="516" y="80" width="14" height="10" fill="#334155" />
+
+    <!-- Torre Bastión Izquierda -->
+    <rect x="30" y="60" width="46" height="140" fill="#334155" />
+    <rect x="28" y="56" width="50" height="6" fill="#1e293b" />
+    <!-- Almenas Torre Izquierda -->
+    <rect x="28" y="48" width="10" height="8" fill="#1e293b" />
+    <rect x="48" y="48" width="10" height="8" fill="#1e293b" />
+    <rect x="68" y="48" width="10" height="8" fill="#1e293b" />
+    <!-- Tejado Cónico Pixel Torre Izquierda -->
+    <polygon points="53,16 26,48 80,48" fill="#2563eb" />
+    <!-- Bandera Pixel -->
+    <rect x="52" y="4" width="2" height="12" fill="#d97706" />
+    <polygon points="54,4 66,8 54,12" fill="#facc15" />
+    <!-- Ventana Pixel iluminada -->
+    <rect x="48" y="74" width="10" height="14" fill="#fef08a" />
+    <rect x="50" y="76" width="6" height="10" fill="#ca8a04" />
+
+    <!-- Torre Bastión Derecha -->
+    <rect x="524" y="60" width="46" height="140" fill="#334155" />
+    <rect x="522" y="56" width="50" height="6" fill="#1e293b" />
+    <!-- Almenas Torre Derecha -->
+    <rect x="522" y="48" width="10" height="8" fill="#1e293b" />
+    <rect x="542" y="48" width="10" height="8" fill="#1e293b" />
+    <rect x="562" y="48" width="10" height="8" fill="#1e293b" />
+    <!-- Tejado Torre Derecha -->
+    <polygon points="547,16 520,48 574,48" fill="#2563eb" />
+    <!-- Bandera Pixel -->
+    <rect x="546" y="4" width="2" height="12" fill="#d97706" />
+    <polygon points="548,4 560,8 548,12" fill="#facc15" />
+    <!-- Ventana Pixel iluminada -->
+    <rect x="542" y="74" width="10" height="14" fill="#fef08a" />
+    <rect x="544" y="76" width="6" height="10" fill="#ca8a04" />
+
+    <!-- Torreón Central Principal (Gran Fortaleza 16-bit) -->
+    <rect x="240" y="46" width="120" height="154" fill="#334155" />
+    <rect x="236" y="42" width="128" height="6" fill="#1e293b" />
+    <!-- Almenas Centrales -->
+    <rect x="236" y="34" width="14" height="8" fill="#1e293b" />
+    <rect x="258" y="34" width="14" height="8" fill="#1e293b" />
+    <rect x="280" y="34" width="14" height="8" fill="#1e293b" />
+    <rect x="306" y="34" width="14" height="8" fill="#1e293b" />
+    <rect x="328" y="34" width="14" height="8" fill="#1e293b" />
+    <rect x="350" y="34" width="14" height="8" fill="#1e293b" />
+
+    <!-- Torre Central Elevada con Gran Aguja -->
+    <rect x="274" y="18" width="52" height="20" fill="#1e293b" />
+    <polygon points="300,-6 266,20 334,20" fill="#dc2626" />
+    <!-- Gran Estandarte Real -->
+    <rect x="299" y="-20" width="2" height="14" fill="#facc15" />
+    <polygon points="301,-20 318,-15 301,-10" fill="#f87171" />
+
+    <!-- Ventanales del Gran Salón -->
+    <rect x="264" y="58" width="14" height="22" fill="#fef08a" />
+    <rect x="293" y="54" width="14" height="26" fill="#fef08a" />
+    <rect x="322" y="58" width="14" height="22" fill="#fef08a" />
+
+    <!-- Gran Portón con Rastrillo -->
+    <path d="M 280 200 L 280 150 L 320 150 L 320 200 Z" fill="#0f172a" />
+    <line x1="288" y1="150" x2="288" y2="200" stroke="#facc15" stroke-width="2" />
+    <line x1="300" y1="150" x2="300" y2="200" stroke="#facc15" stroke-width="2" />
+    <line x1="312" y1="150" x2="312" y2="200" stroke="#facc15" stroke-width="2" />
+    <line x1="280" y1="165" x2="320" y2="165" stroke="#facc15" stroke-width="2" />
+    <line x1="280" y1="185" x2="320" y2="185" stroke="#facc15" stroke-width="2" />
+  </g>
+</svg>

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="stone-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8" />
+      <stop offset="45%" stop-color="#64748b" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+    <linearGradient id="stone-dark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#64748b" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+    <linearGradient id="roof-blue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="60%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="roof-red" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="60%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#991b1b" />
+    </linearGradient>
+    <linearGradient id="banner-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+    <linearGradient id="banner-red" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+    <filter id="castle-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Montañas lejanas detrás del castillo -->
+  <path d="M 0 280 Q 180 160 360 220 Q 550 140 750 200 Q 980 130 1200 210 L 1200 400 L 0 400 Z" fill="#64748b" opacity="0.35" />
+  <path d="M 0 310 Q 220 210 480 260 Q 720 180 940 240 Q 1100 200 1200 250 L 1200 400 L 0 400 Z" fill="#475569" opacity="0.45" />
+
+  <!-- Gran Castillo Medieval -->
+  <g filter="url(#castle-shadow)">
+    <!-- Muralla Izquierda (con almenas) -->
+    <rect x="140" y="190" width="360" height="210" fill="url(#stone-grad)" />
+    <!-- Almenas Muralla Izquierda -->
+    <path d="M 140 190 h 360 v -18 h -24 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -24 v 18 Z" fill="url(#stone-dark)" />
+    <!-- Detalles de piedra y saeteras -->
+    <rect x="220" y="230" width="8" height="22" rx="4" fill="#1e293b" />
+    <rect x="300" y="230" width="8" height="22" rx="4" fill="#1e293b" />
+    <rect x="380" y="230" width="8" height="22" rx="4" fill="#1e293b" />
+
+    <!-- Muralla Derecha (con almenas) -->
+    <rect x="700" y="190" width="360" height="210" fill="url(#stone-grad)" />
+    <!-- Almenas Muralla Derecha -->
+    <path d="M 700 190 h 360 v -18 h -24 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -26 v -10 h -26 v 10 h -24 v 18 Z" fill="url(#stone-dark)" />
+    <!-- Saeteras Muralla Derecha -->
+    <rect x="780" y="230" width="8" height="22" rx="4" fill="#1e293b" />
+    <rect x="860" y="230" width="8" height="22" rx="4" fill="#1e293b" />
+    <rect x="940" y="230" width="8" height="22" rx="4" fill="#1e293b" />
+
+    <!-- Torre Bastión Izquierda -->
+    <rect x="60" y="130" width="90" height="270" fill="url(#stone-grad)" />
+    <path d="M 55 130 h 100 v -20 h -20 v 10 h -20 v -10 h -20 v 10 h -20 v -10 h -20 v 20 Z" fill="url(#stone-dark)" />
+    <polygon points="105,40 50,110 160,110" fill="url(#roof-blue)" />
+    <!-- Banderín Torre Izquierda -->
+    <line x1="105" y1="40" x2="105" y2="10" stroke="#78350f" stroke-width="3" />
+    <path d="M 105 10 h 35 l -12 12 l 12 12 h -35 Z" fill="url(#banner-gold)" />
+    <!-- Ventanas iluminadas con sol -->
+    <rect x="95" y="160" width="20" height="32" rx="10" fill="#fef08a" stroke="#ca8a04" stroke-width="2" />
+    <rect x="95" y="220" width="20" height="32" rx="10" fill="#fef08a" stroke="#ca8a04" stroke-width="2" />
+
+    <!-- Torre Bastión Derecha -->
+    <rect x="1050" y="130" width="90" height="270" fill="url(#stone-grad)" />
+    <path d="M 1045 130 h 100 v -20 h -20 v 10 h -20 v -10 h -20 v 10 h -20 v -10 h -20 v 20 Z" fill="url(#stone-dark)" />
+    <polygon points="1095,40 1040,110 1150,110" fill="url(#roof-blue)" />
+    <!-- Banderín Torre Derecha -->
+    <line x1="1095" y1="40" x2="1095" y2="10" stroke="#78350f" stroke-width="3" />
+    <path d="M 1095 10 h 35 l -12 12 l 12 12 h -35 Z" fill="url(#banner-gold)" />
+    <!-- Ventanas iluminadas -->
+    <rect x="1085" y="160" width="20" height="32" rx="10" fill="#fef08a" stroke="#ca8a04" stroke-width="2" />
+    <rect x="1085" y="220" width="20" height="32" rx="10" fill="#fef08a" stroke="#ca8a04" stroke-width="2" />
+
+    <!-- Torreón Central Principal (Donjón Real) -->
+    <rect x="480" y="100" width="240" height="300" fill="url(#stone-grad)" />
+    <!-- Moldura y Almenas Centrales -->
+    <path d="M 475 100 h 250 v -22 h -24 v 12 h -26 v -12 h -26 v 12 h -26 v -12 h -26 v 12 h -26 v -12 h -26 v 12 h -26 v -12 h -24 v 22 Z" fill="url(#stone-dark)" />
+    
+    <!-- Torre Superior Central con Aguja Mayor -->
+    <rect x="535" y="50" width="130" height="50" fill="url(#stone-dark)" />
+    <polygon points="600,-15 525,50 675,50" fill="url(#roof-red)" />
+    <!-- Gran Estandarte Real Central -->
+    <line x1="600" y1="-15" x2="600" y2="-45" stroke="#f59e0b" stroke-width="4" />
+    <path d="M 600 -45 h 50 l -16 16 l 16 16 h -50 Z" fill="url(#banner-red)" />
+
+    <!-- Ventanales del Gran Salón Real -->
+    <rect x="530" y="125" width="28" height="48" rx="14" fill="#fef08a" stroke="#d97706" stroke-width="2.5" />
+    <rect x="586" y="120" width="28" height="54" rx="14" fill="#fef08a" stroke="#d97706" stroke-width="2.5" />
+    <rect x="642" y="125" width="28" height="48" rx="14" fill="#fef08a" stroke="#d97706" stroke-width="2.5" />
+
+    <!-- Gran Portón Arqueado de Entrada y Rastrillo -->
+    <path d="M 560 400 v -95 a 40 40 0 0 1 80 0 v 95 Z" fill="#1e1b4b" stroke="#78350f" stroke-width="6" />
+    <!-- Rastrillo dorado / hierro -->
+    <line x1="578" y1="305" x2="578" y2="400" stroke="#f59e0b" stroke-width="3" />
+    <line x1="600" y1="298" x2="600" y2="400" stroke="#f59e0b" stroke-width="3" />
+    <line x1="622" y1="305" x2="622" y2="400" stroke="#f59e0b" stroke-width="3" />
+    <line x1="560" y1="335" x2="640" y2="335" stroke="#f59e0b" stroke-width="3" />
+    <line x1="560" y1="365" x2="640" y2="365" stroke="#f59e0b" stroke-width="3" />
+  </g>
+</svg>
