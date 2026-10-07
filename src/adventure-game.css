@@ -1,0 +1,30 @@
+.hero-slot.attacking {
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.28));
+}
+
+.demon-figure.damaged {
+  filter: brightness(1.8) drop-shadow(0 0 16px rgba(239, 68, 68, 0.65));
+}
+
+.combat-callout.floating-miss {
+  animation: float-miss 0.8s forwards ease-out;
+}
+
+@keyframes float-miss {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.6);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -20px) scale(1.2);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -40px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -60px) scale(0.9);
+  }
+}

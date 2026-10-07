@@ -21,7 +21,9 @@ const attackClass = (id, combat) => {
 
 const HeroSlot = ({ id, pose, combat }) => (
   <div
-    className={`hero-slot hero-slot--${pose} ${attackClass(id, combat)}`}
+    className={`hero-slot hero-slot--${pose} ${attackClass(id, combat)} ${
+      combat === "hit" ? "attacking" : ""
+    }`}
     data-pose={pose}
   >
     <HeroSvg
@@ -51,10 +53,10 @@ const CreatureSlot = ({
   return (
   <div className="demon-slot">
     {mood === "laughing" && <p className="demon-speech">Try again</p>}
-    {action === "miss" && <p className="combat-callout">Miss</p>}
+    {action === "miss" && <p className="combat-callout floating-miss">Miss</p>}
     <div
       className={`demon-figure demon-figure--${mood} ${
-        action === "hit" ? "demon-figure--hit" : ""
+        action === "hit" ? "demon-figure--hit damaged" : ""
       } ${action === "miss" ? "demon-figure--dodge" : ""}`}
       data-creature={creature.id}
       data-creature-mood={mood}

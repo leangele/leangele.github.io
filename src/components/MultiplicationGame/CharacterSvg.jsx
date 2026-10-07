@@ -27,112 +27,20 @@ export const getCreature = (levelId) =>
     accent: "#ddd6fe",
   };
 
-const HeroFace = ({ expression }) => (
-  <g className={`svg-face svg-face--${expression}`}>
-    <circle cx="34" cy="36" r="2" fill="#2b2118" />
-    <circle cx="46" cy="36" r="2" fill="#2b2118" />
-    {expression === "smile" || expression === "celebrate" ? (
-      <path
-        d="M34 42c3 4 9 4 12 0"
-        fill="none"
-        stroke="#2b2118"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    ) : (
-      <path d="M36 43h8" stroke="#2b2118" strokeWidth="1.6" strokeLinecap="round" />
-    )}
-  </g>
-);
-
-export const HeroSvg = ({ id, action = "idle" }) => {
-  const expression =
-    action === "selected" || action === "celebrate" ? "celebrate" : "focused";
-
-  if (id === "knight") {
-    return (
-      <svg
-        className={`character-svg hero-svg hero-svg--knight hero-svg--${action}`}
-        viewBox="0 0 80 120"
-        aria-hidden="true"
-      >
-        <ellipse className="svg-shadow" cx="40" cy="112" rx="18" ry="4" />
-        <g className="svg-character-body">
-          <path d="M22 50c8-8 28-8 36 0v28H22z" fill="#234e70" />
-          <rect x="28" y="78" width="9" height="26" rx="3" fill="#4b5563" />
-          <rect x="43" y="78" width="9" height="26" rx="3" fill="#4b5563" />
-          <rect x="24" y="46" width="32" height="36" rx="6" fill="#d5dbe3" />
-          <path d="M26 40c0-16 28-16 28 0v10H26z" fill="#eef2f6" />
-          <rect x="32" y="34" width="16" height="5" rx="1" fill="#1f2937" />
-          <path d="M48 16c6 2 8 12 4 18" fill="none" stroke="#9a3412" strokeWidth="4" strokeLinecap="round" />
-          <g className="svg-hero-tool">
-            <path d="M6 58h20v18L16 88 6 76z" fill="#234e70" stroke="#e8b84a" strokeWidth="2" />
-            <path d="M16 62v18M8 72h16" stroke="#e8b84a" strokeWidth="2" />
-            <rect x="58" y="28" width="4" height="34" rx="1" fill="#e5e7eb" transform="rotate(18 60 46)" />
-            <rect x="54" y="58" width="12" height="3" fill="#e8b84a" />
-          </g>
-        </g>
-      </svg>
-    );
-  }
-
-  if (id === "mage") {
-    return (
-      <svg
-        className={`character-svg hero-svg hero-svg--mage hero-svg--${action}`}
-        viewBox="0 0 80 120"
-        aria-hidden="true"
-      >
-        <ellipse className="svg-shadow" cx="40" cy="112" rx="18" ry="4" />
-        <g className="svg-character-body">
-          <path d="M24 70c0-16 32-16 32 0v36H24z" fill="#5b2a86" />
-          <circle cx="40" cy="40" r="13" fill="#f3c7a1" />
-          <polygon points="40,2 54,30 26,30" fill="#4c1d95" />
-          <circle className="svg-magic-star" cx="40" cy="6" r="3.5" fill="#e8b84a" />
-          <HeroFace expression={expression} />
-          <path d="M28 46c4 6 20 6 24 0" fill="#f8f1e3" />
-          <g className="svg-hero-tool">
-            <rect x="12" y="34" width="4" height="58" rx="2" fill="#6b3f24" />
-            <circle className="svg-magic-orb" cx="14" cy="30" r="6" fill="#67e8f9" stroke="#e8b84a" strokeWidth="2" />
-          </g>
-        </g>
-      </svg>
-    );
-  }
-
-  return (
-    <svg
-      className={`character-svg hero-svg hero-svg--hunter hero-svg--${action}`}
-      viewBox="0 0 80 120"
-      aria-hidden="true"
-    >
-      <ellipse className="svg-shadow" cx="40" cy="112" rx="18" ry="4" />
-      <g className="svg-character-body">
-        <rect x="30" y="80" width="8" height="24" rx="3" fill="#6b3f24" />
-        <rect x="42" y="80" width="8" height="24" rx="3" fill="#6b3f24" />
-        <path d="M22 48c4-10 32-10 36 0v36H22z" fill="#3f6212" />
-        <path d="M26 66h28" stroke="#e8b84a" strokeWidth="4" />
-        <path d="M24 34c2-16 30-18 32 0-8-8-24-8-32 0z" fill="#365314" />
-        <circle cx="40" cy="40" r="12" fill="#f3c7a1" />
-        <HeroFace expression={expression} />
-        <g className="svg-hero-tool">
-          <path
-            d="M64 26c12 12 12 30 0 42"
-            fill="none"
-            stroke="#6b3f24"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          <path d="M64 28v38" fill="none" stroke="#f5f5f4" strokeWidth="1.5" />
-          <g className="svg-nocked-arrow">
-            <line x1="30" y1="47" x2="62" y2="47" stroke="#d6d3d1" strokeWidth="2" />
-            <polygon points="66,47 58,43 58,51" fill="#e8b84a" />
-          </g>
-        </g>
-      </g>
-    </svg>
-  );
+const heroArt = {
+  hunter: "hunter.svg",
+  knight: "knight.svg",
+  mage: "mage.svg",
 };
+
+export const HeroSvg = ({ id, action = "idle" }) => (
+  <img
+    className={`character-svg hero-svg hero-svg--${id} hero-svg--${action}`}
+    src={`${process.env.PUBLIC_URL || ""}/assets/${heroArt[id] || heroArt.hunter}`}
+    alt=""
+    draggable="false"
+  />
+);
 
 const CreatureEyes = ({ mood, single = false }) => {
   if (mood === "defeated") {

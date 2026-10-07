@@ -878,6 +878,8 @@
   .arrow-shot,
   .hero-slot--miss,
   .combat-callout,
+  .combat-callout.floating-miss,
+  img.hero-svg--selected,
   .demon-figure--defeated,
   .hero-slot--gone,
   .hero-svg--selected,
@@ -923,7 +925,9 @@
 }
 
 .hero-choice svg,
-.hero-slot svg {
+.hero-slot svg,
+.hero-choice img.hero-svg,
+.hero-slot img.hero-svg {
   width: min(100%, 108px);
   height: auto;
 }
@@ -942,6 +946,7 @@
   transform-origin: center;
 }
 
+img.hero-svg--selected,
 .hero-svg--hunter.hero-svg--selected .svg-character-body {
   animation: hunter-selected 0.75s ease;
   transform-origin: 40px 104px;
@@ -1450,7 +1455,9 @@
 
 @media (max-width: 420px) {
   .hero-choice svg,
-  .hero-slot svg {
+  .hero-slot svg,
+  .hero-choice img.hero-svg,
+  .hero-slot img.hero-svg {
     width: min(100%, 84px);
   }
 
@@ -1577,7 +1584,9 @@
   }
 
   .hero-choice svg,
-  .hero-slot svg {
+  .hero-slot svg,
+  .hero-choice img.hero-svg,
+  .hero-slot img.hero-svg {
     width: 72px;
   }
 

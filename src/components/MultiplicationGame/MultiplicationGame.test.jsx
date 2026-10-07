@@ -330,7 +330,10 @@ test("lets the player choose a hero and damages the creature on a correct answer
     "aria-pressed",
     "true"
   );
-  expect(document.querySelector(".hero-svg--mage.hero-svg--selected")).not.toBeNull();
+  expect(document.querySelector(".hero-svg--mage.hero-svg--selected")).toHaveAttribute(
+    "src",
+    expect.stringContaining("/assets/mage.svg")
+  );
 
   fireEvent.click(screen.getByRole("button", { name: "Start" }));
   await screen.findByText(/2 × \d+/);
@@ -343,7 +346,8 @@ test("lets the player choose a hero and damages the creature on a correct answer
   const [left, right] = expression.split(" × ").map(Number);
   fireEvent.click(screen.getByRole("button", { name: String(left * right) }));
 
-  expect(document.querySelector(".hero-slot--cast")).not.toBeNull();
+  expect(document.querySelector(".hero-slot--cast.attacking")).not.toBeNull();
+  expect(document.querySelector(".demon-figure.damaged")).not.toBeNull();
   expect(document.querySelector(".magic-bolt")).not.toBeNull();
   expect(document.querySelector(".hero-slot--attack")).toBeNull();
 
@@ -366,7 +370,7 @@ test("shows Miss and dodges when the answer is wrong", async () => {
     )
   );
 
-  expect(screen.getByText("Miss")).toBeInTheDocument();
+  expect(screen.getByText("Miss")).toHaveClass("floating-miss");
   expect(document.querySelector(".answer-button--wrong")).not.toBeNull();
   expect(document.querySelector(".answer-button--correct")).not.toBeNull();
   expect(document.querySelector(".demon-figure--dodge")).not.toBeNull();
@@ -384,7 +388,8 @@ test("slides the current question out before showing the next one", async () => 
   fireEvent.click(screen.getByRole("button", { name: String(left * right) }));
 
   expect(document.querySelector(".slide-panel--exit")).not.toBeNull();
-  expect(document.querySelector(".hero-slot--shoot")).not.toBeNull();
+  expect(document.querySelector(".hero-slot--shoot.attacking")).not.toBeNull();
+  expect(document.querySelector(".demon-figure.damaged")).not.toBeNull();
   expect(document.querySelector(".arrow-shot")).not.toBeNull();
   expect(document.querySelector(".hero-slot--attack")).toBeNull();
   expect(document.querySelector(".demon-figure--hit")).not.toBeNull();

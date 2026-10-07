@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { audioEngine } from "../../audioEngine";
 import {
   passedChallenge,
   playBetweenQuestions,
-  playDefeat,
-  playVictory,
   startCombatMusic,
   startSelectMusic,
   stopCombatMusic,
@@ -12,6 +11,7 @@ import {
 import AdventureScene from "./AdventureScene";
 import { getCreature } from "./CharacterSvg";
 import "./MultiplicationGame.css";
+import "../../adventure-game.css";
 
 const SLIDE_MS = 800;
 const SOUND_STORAGE_KEY = "multiplication-game-sound";
@@ -208,6 +208,7 @@ const MultiplicationGame = () => {
       .then((gameConfig) => {
         const enabled = readStoredSound(gameConfig.sounds);
         soundOnRef.current = enabled;
+        audioEngine.isMuted = !enabled;
         setSoundOn(enabled);
         setConfig(gameConfig);
         setLevel(levelFromTableQuery(gameConfig, window.location.search));
@@ -254,9 +255,9 @@ const MultiplicationGame = () => {
         if (isLastQuestion) {
           const won = passedChallenge(nextScore, total, config.passPercent);
           if (won) {
-            playVictory();
+            audioEngine.playVictoryTheme();
           } else {
-            playDefeat();
+            audioEngine.playDefeatTheme();
           }
         } else {
           playBetweenQuestions();
@@ -293,6 +294,11 @@ const MultiplicationGame = () => {
     answerElapsedRef.current += performance.now() - questionShownAtRef.current;
     pendingAdvance.current = wasCorrect;
     setCombat(wasCorrect ? "hit" : "miss");
+    if (wasCorrect) {
+      audioEngine.playAttackHit();
+    } else {
+      audioEngine.playMissSound();
+    }
     setSlidePhase("exit");
   }, []);
 
@@ -370,7 +376,7 @@ const MultiplicationGame = () => {
       if (mode === "practice") {
         startSelectMusic();
       } else {
-        startCombatMusic();
+        audioEngine.playBattleTheme();
       }
     } else {
       stopCombatMusic();
@@ -413,6 +419,7 @@ const MultiplicationGame = () => {
   const toggleSound = () => {
     const next = !soundOnRef.current;
     soundOnRef.current = next;
+    audioEngine.isMuted = !next;
     setSoundOn(next);
     try {
       window.localStorage.setItem(SOUND_STORAGE_KEY, next ? "on" : "off");
@@ -441,9 +448,9 @@ const MultiplicationGame = () => {
       config.passPercent
     );
     if (won) {
-      playVictory();
+      audioEngine.playVictoryTheme();
     } else {
-      playDefeat();
+      audioEngine.playDefeatTheme();
     }
   };
 
