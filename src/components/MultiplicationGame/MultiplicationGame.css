@@ -1503,11 +1503,23 @@ img.hero-svg--selected,
   pointer-events: none;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.28) 45%, rgba(255, 255, 255, 0) 72%);
   filter: blur(8px);
+  transition: all 400ms ease;
 }
 
 .math-game--style-pixel .demon-figure::before {
   background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.18) 48%, rgba(255, 255, 255, 0) 72%);
   filter: none;
+}
+
+/* Aura de advertencia y daño cuando el enemigo empieza a perder vida */
+.demon-figure--wounded::before {
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.65) 0%, rgba(239, 68, 68, 0.35) 45%, transparent 72%) !important;
+  animation: aura-danger-pulse 1.8s ease-in-out infinite alternate;
+}
+
+.demon-figure--critical::before {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.85) 0%, rgba(185, 28, 28, 0.45) 48%, transparent 72%) !important;
+  animation: aura-danger-pulse 0.85s ease-in-out infinite alternate;
 }
 
 .demon-figure svg {
@@ -1681,6 +1693,191 @@ img.hero-svg--selected,
 
 .demon-figure--hit {
   animation: demon-hit 0.45s ease 0.28s;
+}
+
+/* =========================================================================
+   ANIMACIONES DE DAÑO Y MOVIMIENTO AL PERDER VIDA (RESPUESTAS CORRECTAS)
+   ========================================================================= */
+
+/* Movimiento de tambaleo y jadeo al empezar a perder vida */
+.demon-figure--wounded:not(.demon-figure--hit):not(.demon-figure--dodge):not(.demon-figure--defeated) {
+  animation: enemy-wounded-stagger 1.8s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+/* Movimiento crítico: temblor acelerado e inestabilidad extrema */
+.demon-figure--critical:not(.demon-figure--hit):not(.demon-figure--dodge):not(.demon-figure--defeated) {
+  animation: enemy-critical-tremble 0.85s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+/* Cambio de color rítmico (rubor de daño y calor de batalla en Fantasía) */
+.math-game--style-fantasy .demon-figure--wounded svg {
+  animation: enemy-wounded-color 1.8s ease-in-out infinite alternate;
+}
+
+.math-game--style-fantasy .demon-figure--critical svg {
+  animation: enemy-critical-color 0.85s ease-in-out infinite alternate;
+}
+
+/* Cambio de color en Pixel Art Retro (parpadeo de daño 16 bits) */
+.math-game--style-pixel .demon-figure--wounded svg {
+  animation: pixel-enemy-wounded-color 1.8s steps(2, jump-none) infinite alternate;
+}
+
+.math-game--style-pixel .demon-figure--critical svg {
+  animation: pixel-enemy-critical-color 0.85s steps(2, jump-none) infinite alternate;
+}
+
+/* Keyframes de movimiento */
+@keyframes enemy-wounded-stagger {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg) scale(1, 1);
+  }
+  18% {
+    /* Tambaleo con inclinación hacia la izquierda */
+    transform: translateY(4px) rotate(-3.2deg) scale(1.03, 0.97);
+  }
+  38% {
+    /* Jadeo hacia arriba */
+    transform: translateY(-2px) rotate(1deg) scale(0.98, 1.02);
+  }
+  58% {
+    /* Desequilibrio hacia la derecha */
+    transform: translateY(3px) rotate(3deg) scale(1.02, 0.98);
+  }
+  78% {
+    /* Respiración fatigada */
+    transform: translateY(1px) rotate(-1deg) scale(0.99, 1.01);
+  }
+}
+
+@keyframes enemy-critical-tremble {
+  0%, 100% {
+    transform: translateY(2px) rotate(0deg) scale(1, 1);
+  }
+  20% {
+    transform: translate(-3px, 5px) rotate(-4deg) scale(1.04, 0.96);
+  }
+  40% {
+    transform: translate(2px, 1px) rotate(2deg) scale(0.97, 1.03);
+  }
+  60% {
+    transform: translate(3px, 6px) rotate(4deg) scale(1.05, 0.95);
+  }
+  80% {
+    transform: translate(-2px, 3px) rotate(-2deg) scale(0.98, 1.02);
+  }
+}
+
+/* Keyframes de cambio de color (Fantasía) */
+@keyframes enemy-wounded-color {
+  0% {
+    filter:
+      drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.95))
+      drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55))
+      drop-shadow(0 10px 22px rgba(0, 0, 0, 0.35));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 5px rgba(248, 113, 113, 0.95))
+      drop-shadow(0 0 12px rgba(239, 68, 68, 0.75))
+      drop-shadow(0 8px 18px rgba(185, 28, 28, 0.5))
+      saturate(1.5)
+      hue-rotate(-18deg)
+      brightness(1.1);
+  }
+  100% {
+    filter:
+      drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.95))
+      drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55))
+      drop-shadow(0 10px 22px rgba(0, 0, 0, 0.35));
+  }
+}
+
+@keyframes enemy-critical-color {
+  0% {
+    filter:
+      drop-shadow(0 0 4px rgba(239, 68, 68, 0.95))
+      drop-shadow(0 0 12px rgba(220, 38, 38, 0.8))
+      saturate(1.4)
+      hue-rotate(-20deg)
+      brightness(1.05);
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 8px #ef4444)
+      drop-shadow(0 0 18px #f59e0b)
+      saturate(1.85)
+      hue-rotate(-35deg)
+      brightness(1.22);
+  }
+  100% {
+    filter:
+      drop-shadow(0 0 4px rgba(239, 68, 68, 0.95))
+      drop-shadow(0 0 12px rgba(220, 38, 38, 0.8))
+      saturate(1.4)
+      hue-rotate(-20deg)
+      brightness(1.05);
+  }
+}
+
+/* Keyframes de cambio de color (Pixel Art) */
+@keyframes pixel-enemy-wounded-color {
+  0% {
+    filter:
+      drop-shadow(2px 0 0 #0f172a)
+      drop-shadow(-2px 0 0 #0f172a)
+      drop-shadow(0 2px 0 #0f172a)
+      drop-shadow(0 -2px 0 #0f172a)
+      drop-shadow(0 6px 0 rgba(0, 0, 0, 0.55));
+  }
+  100% {
+    filter:
+      drop-shadow(2px 0 0 #dc2626)
+      drop-shadow(-2px 0 0 #dc2626)
+      drop-shadow(0 2px 0 #dc2626)
+      drop-shadow(0 -2px 0 #dc2626)
+      drop-shadow(0 6px 0 rgba(185, 28, 28, 0.6))
+      saturate(1.5)
+      hue-rotate(-20deg)
+      brightness(1.15);
+  }
+}
+
+@keyframes pixel-enemy-critical-color {
+  0% {
+    filter:
+      drop-shadow(2px 0 0 #dc2626)
+      drop-shadow(-2px 0 0 #dc2626)
+      drop-shadow(0 2px 0 #dc2626)
+      drop-shadow(0 -2px 0 #dc2626)
+      drop-shadow(0 6px 0 rgba(185, 28, 28, 0.6))
+      saturate(1.4)
+      hue-rotate(-20deg);
+  }
+  100% {
+    filter:
+      drop-shadow(3px 0 0 #facc15)
+      drop-shadow(-3px 0 0 #facc15)
+      drop-shadow(0 3px 0 #ef4444)
+      drop-shadow(0 -3px 0 #ef4444)
+      drop-shadow(0 8px 0 rgba(0, 0, 0, 0.7))
+      saturate(2)
+      hue-rotate(-35deg)
+      brightness(1.25);
+  }
+}
+
+@keyframes aura-danger-pulse {
+  0% {
+    transform: translate(-50%, -46%) scale(0.92);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate(-50%, -46%) scale(1.15);
+    opacity: 1;
+  }
 }
 
 /* Animación natural de reposo: respiración orgánica y mirar a izquierda/derecha */

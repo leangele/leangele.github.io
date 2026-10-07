@@ -52,16 +52,25 @@ const CreatureSlot = ({
   graphicStyle = "pixel",
 }) => {
   const creature = getCreature(levelId);
+  const isWounded = Boolean(showHealth && maxHp > 0 && hp < maxHp && hp > 0);
+  const isCritical = Boolean(isWounded && hp / maxHp <= 0.4);
+  const healthClass = isCritical
+    ? "demon-figure--critical demon-figure--wounded"
+    : isWounded
+      ? "demon-figure--wounded"
+      : "";
+
   return (
   <div className="demon-slot">
     {mood === "laughing" && <p className="demon-speech">Try again</p>}
     {action === "miss" && <p className="combat-callout floating-miss">Miss</p>}
     <div
-      className={`demon-figure demon-figure--${mood} ${
+      className={`demon-figure demon-figure--${mood} ${healthClass} ${
         action === "hit" ? "demon-figure--hit damaged" : ""
       } ${action === "miss" ? "demon-figure--dodge" : ""}`}
       data-creature={creature.id}
       data-creature-mood={mood}
+      data-health-state={isCritical ? "critical" : isWounded ? "wounded" : "full"}
     >
       <CreatureSvg
         levelId={levelId}
