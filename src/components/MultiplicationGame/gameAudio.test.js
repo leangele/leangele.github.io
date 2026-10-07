@@ -2,6 +2,8 @@ import {
   passedChallenge,
   playDefeat,
   playVictory,
+  resetGameAudio,
+  setAudioGraphicStyle,
   startCombatMusic,
   startSelectMusic,
   stopCombatMusic,
@@ -37,6 +39,10 @@ class FakeAudioContext {
     };
   }
 }
+
+afterEach(() => {
+  resetGameAudio();
+});
 
 test("counts a score above 70 percent as a win", () => {
   expect(passedChallenge(4, 5, 70)).toBe(true);
@@ -96,4 +102,33 @@ test("counts 70 percent and below as a loss", () => {
   expect(passedChallenge(3, 5, 70)).toBe(false);
   expect(passedChallenge(70, 100, 70)).toBe(false);
   expect(passedChallenge(0, 5, 70)).toBe(false);
+});
+
+test("supports fantasy style music beds and transitions cleanly", () => {
+  resetGameAudio();
+  const oscillators = [];
+  const OriginalAudioContext = window.AudioContext;
+  window.AudioContext = class extends FakeAudioContext {
+    createOscillator() {
+      const oscillator = super.createOscillator();
+      const start = oscillator.start;
+      oscillator.start = () => {
+        start.call(oscillator);
+        oscillators.push(oscillator);
+      };
+      return oscillator;
+    }
+  };
+
+  setAudioGraphicStyle("fantasy");
+  startSelectMusic();
+  expect(oscillators.length).toBeGreaterThan(0);
+  expect(oscillators.every((osc) => osc.stopped)).toBe(true);
+
+  startCombatMusic();
+  expect(oscillators.length).toBeGreaterThan(10);
+
+  stopCombatMusic();
+  setAudioGraphicStyle("pixel");
+  window.AudioContext = OriginalAudioContext;
 });

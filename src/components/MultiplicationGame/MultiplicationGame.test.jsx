@@ -421,3 +421,34 @@ test("assigns a different fantasy creature to each times table", () => {
   expect(getCreature(2).name).toBe("Werewolf");
   expect(getCreature(10).name).toBe("Phoenix");
 });
+
+test("toggles between pixel art and fantasy styles and updates the arena", async () => {
+  render(<MultiplicationGame />);
+
+  const toggleBtn = await screen.findByRole("button", {
+    name: /Estilo gráfico:/,
+  });
+  expect(document.querySelector(".math-game--style-pixel")).not.toBeNull();
+  expect(document.querySelector(".battle-arena-stage")).toBeNull(); // not started yet
+
+  fireEvent.click(toggleBtn);
+  expect(document.querySelector(".math-game--style-fantasy")).not.toBeNull();
+  expect(window.localStorage.getItem("multiplication-game-style")).toBe("fantasy");
+
+  fireEvent.click(screen.getByRole("button", { name: "Start" }));
+  expect(document.querySelector(".battle-arena-stage")).not.toBeNull();
+  expect(document.querySelector(".math-game--style-fantasy")).not.toBeNull();
+
+  // Toggle back to pixel
+  fireEvent.click(toggleBtn);
+  expect(document.querySelector(".math-game--style-pixel")).not.toBeNull();
+  expect(window.localStorage.getItem("multiplication-game-style")).toBe("pixel");
+});
+
+test("supports ?style=fantasy URL query parameter", async () => {
+  window.history.pushState({}, "", "/?style=fantasy");
+  render(<MultiplicationGame />);
+
+  expect(await screen.findByRole("button", { name: "Start" })).toBeInTheDocument();
+  expect(document.querySelector(".math-game--style-fantasy")).not.toBeNull();
+});

@@ -19,7 +19,7 @@ const attackClass = (id, combat) => {
   return "";
 };
 
-const HeroSlot = ({ id, pose, combat }) => (
+const HeroSlot = ({ id, pose, combat, graphicStyle = "pixel" }) => (
   <div
     className={`hero-slot hero-slot--${pose} ${attackClass(id, combat)} ${
       combat === "hit" ? "attacking" : ""
@@ -28,6 +28,7 @@ const HeroSlot = ({ id, pose, combat }) => (
   >
     <HeroSvg
       id={id}
+      graphicStyle={graphicStyle}
       action={
         combat === "hit" || (id === "hunter" && combat === "miss")
           ? "attack"
@@ -48,6 +49,7 @@ const CreatureSlot = ({
   hp,
   maxHp,
   showHealth,
+  graphicStyle = "pixel",
 }) => {
   const creature = getCreature(levelId);
   return (
@@ -61,7 +63,12 @@ const CreatureSlot = ({
       data-creature={creature.id}
       data-creature-mood={mood}
     >
-      <CreatureSvg levelId={levelId} mood={mood} action={action || "idle"} />
+      <CreatureSvg
+        levelId={levelId}
+        mood={mood}
+        action={action || "idle"}
+        graphicStyle={graphicStyle}
+      />
     </div>
     <p className="adventure-scene__name">{creature.name}</p>
     {showHealth && (
@@ -89,13 +96,18 @@ const AdventureScene = ({
   maxHp = 1,
   combat = null,
   levelId = 2,
+  graphicStyle = "pixel",
 }) => {
   const pose = mode === "victory" ? "jump" : mode === "defeat" ? "gone" : "ready";
   const demonMood = mode === "victory" ? "defeated" : mode === "defeat" ? "laughing" : "idle";
 
   if (mode === "select") {
     return (
-      <section className="adventure-scene adventure-scene--select" data-scene="select">
+      <section
+        className={`adventure-scene adventure-scene--select adventure-scene--${graphicStyle}`}
+        data-scene="select"
+        data-style={graphicStyle}
+      >
         <div className="hero-choices">
           {HEROES.map((hero) => (
             <button
@@ -108,26 +120,35 @@ const AdventureScene = ({
               <span>{hero.name}</span>
               <HeroSvg
                 id={hero.id}
+                graphicStyle={graphicStyle}
                 action={selectedHero === hero.id ? "selected" : "idle"}
               />
             </button>
           ))}
         </div>
-        <CreatureSlot levelId={levelId} mood="smile" showHealth={false} />
+        <CreatureSlot
+          levelId={levelId}
+          mood="smile"
+          showHealth={false}
+          graphicStyle={graphicStyle}
+        />
       </section>
     );
   }
 
   return (
     <section
-      className={`adventure-scene adventure-scene--${mode}`}
+      className={`adventure-scene adventure-scene--${mode} adventure-scene--${graphicStyle}`}
       data-scene={mode}
       data-hero={heroId}
+      data-style={graphicStyle}
     >
+      <div className="battle-arena-stage" aria-hidden="true" />
       <HeroSlot
         id={heroId}
         pose={pose}
         combat={mode === "battle" ? combat : null}
+        graphicStyle={graphicStyle}
       />
       {mode === "battle" && heroId === "mage" && combat === "hit" && (
         <span className="magic-bolt" aria-hidden="true" />
@@ -140,6 +161,9 @@ const AdventureScene = ({
             aria-hidden="true"
           />
         )}
+      {mode === "battle" && heroId === "knight" && combat === "hit" && (
+        <span className="sword-slash" aria-hidden="true" />
+      )}
       <CreatureSlot
         levelId={levelId}
         mood={demonMood}
@@ -147,6 +171,7 @@ const AdventureScene = ({
         hp={hp}
         maxHp={maxHp}
         showHealth
+        graphicStyle={graphicStyle}
       />
     </section>
   );

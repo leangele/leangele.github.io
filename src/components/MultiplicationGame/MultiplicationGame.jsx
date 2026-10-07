@@ -15,7 +15,25 @@ import "../../adventure-game.css";
 
 const SLIDE_MS = 800;
 const SOUND_STORAGE_KEY = "multiplication-game-sound";
+const GRAPHIC_STYLE_KEY = "multiplication-game-style";
 const BEST_TIME_KEY = "multiplication-game-best-times";
+
+export const readStoredGraphicStyle = (configuredStyle) => {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const styleParam = params.get("style");
+    if (styleParam === "pixel" || styleParam === "fantasy") {
+      return styleParam;
+    }
+    const saved = window.localStorage.getItem(GRAPHIC_STYLE_KEY);
+    if (saved === "pixel" || saved === "fantasy") {
+      return saved;
+    }
+  } catch (error) {
+    // Private browsing can block storage.
+  }
+  return configuredStyle === "fantasy" ? "fantasy" : "pixel";
+};
 
 export const formatRoundTime = (milliseconds) => {
   const seconds = Math.max(0, Number(milliseconds) || 0) / 1000;
@@ -181,6 +199,7 @@ const MultiplicationGame = () => {
   const [heroId, setHeroId] = useState("hunter");
   const [combat, setCombat] = useState(null);
   const [soundOn, setSoundOn] = useState(true);
+  const [graphicStyle, setGraphicStyle] = useState("pixel");
   const [roundTimeMs, setRoundTimeMs] = useState(0);
   const [bestTimeMs, setBestTimeMs] = useState(null);
   const [beatRecord, setBeatRecord] = useState(false);
@@ -207,9 +226,12 @@ const MultiplicationGame = () => {
       })
       .then((gameConfig) => {
         const enabled = readStoredSound(gameConfig.sounds);
+        const style = readStoredGraphicStyle(gameConfig.graphicStyle);
         soundOnRef.current = enabled;
         audioEngine.isMuted = !enabled;
+        audioEngine.setGraphicStyle(style);
         setSoundOn(enabled);
+        setGraphicStyle(style);
         setConfig(gameConfig);
         setLevel(levelFromTableQuery(gameConfig, window.location.search));
       })
@@ -260,7 +282,7 @@ const MultiplicationGame = () => {
             audioEngine.playDefeatTheme();
           }
         } else {
-          playBetweenQuestions();
+          playBetweenQuestions(graphicStyle);
         }
       }
 
@@ -284,7 +306,7 @@ const MultiplicationGame = () => {
       setQuestionIndex((current) => current + 1);
       setSecondsLeft(config.secondsPerQuestion);
     },
-    [config, currentQuestion, level, questionIndex, questions.length, score]
+    [config, currentQuestion, graphicStyle, level, questionIndex, questions.length, score]
   );
 
   const beginAdvance = useCallback((wasCorrect) => {
@@ -406,8 +428,26 @@ const MultiplicationGame = () => {
     setCombat(null);
   };
 
+  const toggleGraphicStyle = () => {
+    const nextStyle = graphicStyle === "pixel" ? "fantasy" : "pixel";
+    setGraphicStyle(nextStyle);
+    audioEngine.setGraphicStyle(nextStyle);
+    try {
+      window.localStorage.setItem(GRAPHIC_STYLE_KEY, nextStyle);
+    } catch (error) {
+      // Storage might be blocked
+    }
+    if (soundOnRef.current) {
+      if (!hasStarted || playModeRef.current === "practice") {
+        startSelectMusic(nextStyle);
+      } else if (!isFinished) {
+        startCombatMusic(nextStyle);
+      }
+    }
+  };
+
   const playSelectMusic = (event) => {
-    if (event?.target?.closest?.(".score-card__actions, .sound-toggle")) {
+    if (event?.target?.closest?.(".score-card__actions, .sound-toggle, .style-toggle")) {
       return;
     }
     unlockGameAudio();
@@ -503,7 +543,15 @@ const MultiplicationGame = () => {
   }
 
   const soundToggle = (
-    <div className="sound-bar">
+    <div className="sound-bar game-controls-bar">
+      <button
+        type="button"
+        className={`style-toggle style-toggle--${graphicStyle}`}
+        aria-label={`Estilo gráfico: ${graphicStyle === "pixel" ? "Pixel Art Retro" : "Fantasía Medieval"}`}
+        onClick={toggleGraphicStyle}
+      >
+        {graphicStyle === "pixel" ? "👾 Pixel Art" : "🛡️ Fantasía"}
+      </button>
       <button
         type="button"
         className={`sound-toggle ${soundOn ? "sound-toggle--on" : "sound-toggle--off"}`}
@@ -515,7 +563,7 @@ const MultiplicationGame = () => {
       </button>
     </div>
   );
-  const stageClass = `math-game math-game--stage math-game--realm-${creature.id}`;
+  const stageClass = `math-game math-game--stage math-game--style-${graphicStyle} math-game--realm-${creature.id}`;
 
   if (!hasStarted) {
     return (
@@ -526,6 +574,7 @@ const MultiplicationGame = () => {
           selectedHero={heroId}
           onSelect={setHeroId}
           levelId={level.multiplier}
+          graphicStyle={graphicStyle}
         />
         <section className="score-card">
           <span>Level {level.id}</span>
@@ -564,6 +613,7 @@ const MultiplicationGame = () => {
           hp={demonHp}
           maxHp={roundTotal}
           levelId={level.multiplier}
+          graphicStyle={graphicStyle}
         />
         <section className={`score-card slide-panel slide-panel--${slidePhase}`}>
           <div className="score-card__icon" aria-hidden="true">
@@ -635,6 +685,7 @@ const MultiplicationGame = () => {
         maxHp={roundTotal}
         combat={combat}
         levelId={level.multiplier}
+        graphicStyle={graphicStyle}
       />
       <section className="question-card">
         <div className="question-card__header">
