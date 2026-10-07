@@ -4,9 +4,13 @@ import {
   playBetweenQuestions,
   playDefeat,
   playVictory,
+  startCombatMusic,
+  startSelectMusic,
+  stopCombatMusic,
   unlockGameAudio,
 } from "./gameAudio";
 import AdventureScene from "./AdventureScene";
+import { getCreature } from "./CharacterSvg";
 import "./MultiplicationGame.css";
 
 const SLIDE_MS = 800;
@@ -102,8 +106,11 @@ const MultiplicationGame = () => {
       );
   }, []);
 
+  useEffect(() => () => stopCombatMusic(), []);
+
   const currentQuestion = questions[questionIndex];
   const demonHp = Math.max(0, (config?.questionsPerLevel || 0) - score);
+  const creature = getCreature(level?.multiplier || level?.id || 1);
 
   const finishOrAdvance = useCallback(
     (wasCorrect) => {
@@ -222,6 +229,9 @@ const MultiplicationGame = () => {
 
   const startLevel = () => {
     unlockGameAudio();
+    if (config.sounds !== false) {
+      startCombatMusic();
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
     setQuestions(createQuestions(level, config.questionsPerLevel));
     setQuestionIndex(0);
@@ -235,7 +245,18 @@ const MultiplicationGame = () => {
     setCombat(null);
   };
 
+  const playSelectMusic = (event) => {
+    if (event?.target?.closest?.(".score-card__actions")) {
+      return;
+    }
+    unlockGameAudio();
+    if (config.sounds !== false) {
+      startSelectMusic();
+    }
+  };
+
   const returnToHeroSelect = () => {
+    playSelectMusic();
     window.scrollTo({ top: 0, behavior: "smooth" });
     setQuestions([]);
     setQuestionIndex(0);
@@ -281,16 +302,17 @@ const MultiplicationGame = () => {
 
   if (!hasStarted) {
     return (
-      <main className="math-game math-game--stage">
+      <main className="math-game math-game--stage" onPointerDown={playSelectMusic}>
         <AdventureScene
           mode="select"
           selectedHero={heroId}
           onSelect={setHeroId}
+          levelId={level.multiplier}
         />
         <section className="score-card">
           <span>Level {level.id}</span>
           <h1>{level.label}</h1>
-          <p>Choose a hero, then face the Werewolf.</p>
+          <p>Choose a hero, then face the {creature.name}.</p>
           <p>
             {config.questionsPerLevel} questions · {config.secondsPerQuestion}{" "}
             seconds
@@ -318,6 +340,7 @@ const MultiplicationGame = () => {
           heroId={heroId}
           hp={demonHp}
           maxHp={config.questionsPerLevel}
+          levelId={level.multiplier}
         />
         <section className={`score-card slide-panel slide-panel--${slidePhase}`}>
           <div className="score-card__icon" aria-hidden="true">
@@ -370,6 +393,7 @@ const MultiplicationGame = () => {
         hp={demonHp}
         maxHp={config.questionsPerLevel}
         combat={combat}
+        levelId={level.multiplier}
       />
       <section className="question-card">
         <div className="question-card__header">

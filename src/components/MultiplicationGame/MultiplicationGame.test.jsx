@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 jest.setTimeout(20000);
+import { getCreature } from "./CharacterSvg";
 import MultiplicationGame from "./MultiplicationGame";
 
 const config = {
@@ -57,7 +58,9 @@ test("plays five questions and displays the final score", async () => {
   expect(screen.getByText(/100%/)).toBeInTheDocument();
   expect(screen.getByText("Victory!")).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Play again" })).toBeEnabled();
-  expect(document.querySelector("[data-demon='defeated']")).not.toBeNull();
+  expect(
+    document.querySelector("[data-creature-mood='defeated']")
+  ).not.toBeNull();
   expect(document.querySelector("[data-pose='jump']")).not.toBeNull();
 
   fireEvent.click(screen.getByRole("button", { name: "Play again" }));
@@ -165,12 +168,14 @@ test("keeps Play again disabled until every missed answer is revealed", async ()
 
   expect(screen.getByText(missed[1].correct)).toBeInTheDocument();
   expect(playAgain).toBeEnabled();
-  expect(document.querySelector("[data-demon='laughing']")).not.toBeNull();
+  expect(
+    document.querySelector("[data-creature-mood='laughing']")
+  ).not.toBeNull();
   expect(document.querySelector("[data-pose='gone']")).not.toBeNull();
   expect(screen.getByText("Try again", { selector: ".demon-speech" })).toBeInTheDocument();
 });
 
-test("lets the player choose a hero and damages the demon on a correct answer", async () => {
+test("lets the player choose a hero and damages the creature on a correct answer", async () => {
   render(<MultiplicationGame />);
 
   expect(await screen.findByRole("button", { name: "Warrior" })).toBeInTheDocument();
@@ -183,6 +188,7 @@ test("lets the player choose a hero and damages the demon on a correct answer", 
     "aria-pressed",
     "true"
   );
+  expect(document.querySelector(".hero-svg--mage.hero-svg--selected")).not.toBeNull();
 
   fireEvent.click(screen.getByRole("button", { name: "Start" }));
   await screen.findByText(/2 × \d+/);
@@ -211,6 +217,7 @@ test("shows Miss and dodges when the answer is wrong", async () => {
   expect(screen.getByText("Miss")).toBeInTheDocument();
   expect(document.querySelector(".demon-figure--dodge")).not.toBeNull();
   expect(document.querySelector(".hero-slot--attack")).toBeNull();
+  expect(document.querySelector(".hero-slot--miss")).not.toBeNull();
 });
 
 test("slides the current question out before showing the next one", async () => {
@@ -233,4 +240,14 @@ test("slides the current question out before showing the next one", async () => 
     { timeout: 2000 }
   );
   expect(document.querySelector(".slide-panel--enter")).not.toBeNull();
+});
+
+test("assigns a different fantasy creature to each times table", () => {
+  const creatures = Array.from({ length: 10 }, (_, index) =>
+    getCreature(index + 1)
+  );
+
+  expect(new Set(creatures.map((creature) => creature.id)).size).toBe(10);
+  expect(getCreature(2).name).toBe("Werewolf");
+  expect(getCreature(10).name).toBe("Phoenix");
 });

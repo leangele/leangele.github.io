@@ -618,9 +618,13 @@
   .demon-figure--hit,
   .demon-figure--dodge,
   .hero-slot--attack,
+  .hero-slot--miss,
   .combat-callout,
   .demon-figure--defeated,
-  .hero-slot--gone {
+  .hero-slot--gone,
+  .hero-svg--selected,
+  .hero-svg--celebrate,
+  .creature-svg--smile {
     animation: none;
     transition: none;
   }
@@ -669,6 +673,72 @@
 .hero-choice--selected {
   border-color: var(--game-yellow);
   background: rgba(232, 184, 74, 0.22);
+}
+
+.character-svg {
+  overflow: visible;
+}
+
+.svg-shadow {
+  fill: rgba(0, 0, 0, 0.28);
+  transform-origin: center;
+}
+
+.hero-svg--warrior.hero-svg--selected .svg-character-body {
+  animation: warrior-selected 0.75s ease;
+  transform-origin: 40px 104px;
+}
+
+.hero-svg--knight.hero-svg--selected .svg-character-body {
+  animation: knight-selected 0.75s ease;
+  transform-origin: 40px 104px;
+}
+
+.hero-svg--mage.hero-svg--selected .svg-character-body {
+  animation: mage-selected 0.9s ease;
+  transform-origin: 40px 92px;
+}
+
+.hero-svg--mage.hero-svg--selected .svg-magic-orb,
+.hero-svg--mage.hero-svg--attack .svg-magic-orb {
+  animation: magic-pulse 0.65s ease-in-out infinite alternate;
+}
+
+.hero-svg--attack .svg-hero-tool {
+  animation: tool-strike 0.55s ease;
+  transform-origin: 54px 58px;
+}
+
+.hero-svg--miss .svg-character-body {
+  animation: hero-miss 0.8s ease;
+  transform-origin: center bottom;
+}
+
+.hero-svg--celebrate .svg-character-body {
+  animation: hero-celebrate 0.7s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.creature-svg--smile .svg-character-body {
+  animation: creature-smile 1.6s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.creature-svg--dodge .svg-creature-eyes {
+  transform: translateX(-2px);
+}
+
+.creature-svg--hit .svg-creature-eyes {
+  animation: creature-blink 0.45s ease;
+}
+
+.creature-svg--laughing .svg-creature-mouth {
+  animation: creature-laugh 0.35s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+.creature-svg--defeated .svg-shadow {
+  transform: scaleX(1.25);
 }
 
 .adventure-scene--select .demon-slot {
@@ -775,6 +845,10 @@
   animation: hero-lunge 800ms ease;
 }
 
+.hero-slot--miss {
+  animation: hero-recoil 800ms ease;
+}
+
 .demon-figure--dodge {
   animation: werewolf-dodge 800ms ease;
 }
@@ -809,6 +883,89 @@
   }
   100% {
     transform: translateX(0);
+  }
+}
+
+@keyframes hero-recoil {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  38% {
+    transform: translateX(-18px) rotate(-4deg);
+  }
+}
+
+@keyframes warrior-selected {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  45% {
+    transform: rotate(-8deg) translateY(-7px);
+  }
+}
+
+@keyframes knight-selected {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes mage-selected {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px) rotate(3deg);
+  }
+}
+
+@keyframes magic-pulse {
+  to {
+    r: 8px;
+    filter: drop-shadow(0 0 5px #67e8f9);
+  }
+}
+
+@keyframes tool-strike {
+  45% {
+    transform: rotate(24deg);
+  }
+}
+
+@keyframes hero-miss {
+  35% {
+    transform: rotate(-7deg) translateX(-5px);
+  }
+}
+
+@keyframes hero-celebrate {
+  50% {
+    transform: translateY(-7px) rotate(4deg);
+  }
+}
+
+@keyframes creature-smile {
+  50% {
+    transform: translateY(-4px) scale(1.03);
+  }
+}
+
+@keyframes creature-blink {
+  45% {
+    opacity: 0.1;
+  }
+}
+
+@keyframes creature-laugh {
+  to {
+    transform: scaleY(1.2);
   }
 }
 
@@ -881,6 +1038,88 @@
 
   .adventure-scene--select .demon-slot {
     width: 108px;
+  }
+}
+
+@media (max-width: 480px) and (orientation: portrait) {
+  .math-game--stage {
+    justify-content: flex-start;
+    gap: 6px;
+    padding-block: max(8px, env(safe-area-inset-top))
+      max(8px, env(safe-area-inset-bottom));
+  }
+
+  .adventure-scene--battle,
+  .adventure-scene--victory,
+  .adventure-scene--defeat {
+    min-height: 120px;
+  }
+
+  .hero-slot {
+    width: 82px;
+  }
+
+  .adventure-scene--battle .demon-slot,
+  .adventure-scene--victory .demon-slot,
+  .adventure-scene--defeat .demon-slot {
+    width: 108px;
+    margin-left: -22px;
+  }
+
+  .adventure-scene__name {
+    font-size: 0.85rem;
+  }
+
+  .demon-health {
+    height: 9px;
+    margin-top: 2px;
+  }
+
+  .score-card {
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .score-card__icon {
+    width: 46px;
+    height: 46px;
+    margin-bottom: 6px;
+    border-radius: 15px;
+    font-size: 1.45rem;
+  }
+
+  .score-card h1 {
+    margin-top: 4px;
+    font-size: clamp(2.5rem, 14vw, 3.5rem);
+  }
+
+  .score-card p {
+    margin: 4px 0 8px;
+    font-size: 0.95rem;
+  }
+
+  .missed-questions {
+    margin-top: 2px;
+  }
+
+  .missed-questions h2 {
+    margin-bottom: 2px;
+    font-size: 1rem;
+  }
+
+  .missed-questions li {
+    gap: 6px;
+    padding: 3px 0;
+  }
+
+  .missed-questions .reveal-button {
+    min-height: 32px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+  }
+
+  .score-card__actions button {
+    min-height: 42px;
   }
 }
 
