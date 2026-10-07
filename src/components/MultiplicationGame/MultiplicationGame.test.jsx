@@ -330,9 +330,17 @@ test("lets the player choose a hero and damages the creature on a correct answer
     "aria-pressed",
     "true"
   );
+  expect(document.querySelector(".hero-svg--hunter")).toHaveAttribute(
+    "src",
+    expect.stringContaining("/assets/pixel-hunter.svg")
+  );
+  expect(document.querySelector(".hero-svg--knight")).toHaveAttribute(
+    "src",
+    expect.stringContaining("/assets/pixel-knight.svg")
+  );
   expect(document.querySelector(".hero-svg--mage.hero-svg--selected")).toHaveAttribute(
     "src",
-    expect.stringContaining("/assets/mage.svg")
+    expect.stringContaining("/assets/pixel-mage.svg")
   );
 
   fireEvent.click(screen.getByRole("button", { name: "Start" }));
