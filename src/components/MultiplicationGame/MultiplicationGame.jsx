@@ -61,7 +61,6 @@ const MultiplicationGame = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
-  const [secondsPerQuestion, setSecondsPerQuestion] = useState(5);
   const [isFinished, setIsFinished] = useState(false);
 
   useEffect(() => {
@@ -77,8 +76,16 @@ const MultiplicationGame = () => {
         return response.json();
       })
       .then((gameConfig) => {
+        const selectedLevel = gameConfig.levels?.[0];
         setConfig(gameConfig);
-        setSecondsPerQuestion(gameConfig.secondsPerQuestion);
+        if (!selectedLevel) {
+          return;
+        }
+        setLevel(selectedLevel);
+        setQuestions(
+          createQuestions(selectedLevel, gameConfig.questionsPerLevel)
+        );
+        setSecondsLeft(gameConfig.secondsPerQuestion);
       })
       .catch(() =>
         setError("Could not load the game configuration.")
@@ -115,9 +122,9 @@ const MultiplicationGame = () => {
       }
 
       setQuestionIndex((current) => current + 1);
-      setSecondsLeft(secondsPerQuestion);
+      setSecondsLeft(config.secondsPerQuestion);
     },
-    [config, questionIndex, questions.length, secondsPerQuestion]
+    [config, questionIndex, questions.length]
   );
 
   useEffect(() => {
@@ -151,16 +158,6 @@ const MultiplicationGame = () => {
     return ((questionIndex + 1) / questions.length) * 100;
   }, [questionIndex, questions.length]);
 
-  const minSeconds = config?.minSecondsPerQuestion ?? 3;
-  const maxSeconds = config?.maxSecondsPerQuestion ?? 15;
-
-  const changeSeconds = (direction) => {
-    setSecondsPerQuestion((current) => {
-      const next = current + direction;
-      return Math.min(maxSeconds, Math.max(minSeconds, next));
-    });
-  };
-
   const startLevel = (selectedLevel) => {
     unlockGameAudio();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -170,7 +167,7 @@ const MultiplicationGame = () => {
     );
     setQuestionIndex(0);
     setScore(0);
-    setSecondsLeft(secondsPerQuestion);
+    setSecondsLeft(config.secondsPerQuestion);
     setIsFinished(false);
   };
 
@@ -181,15 +178,6 @@ const MultiplicationGame = () => {
       setScore(nextScore);
     }
     finishOrAdvance(nextScore);
-  };
-
-  const returnToLevels = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setLevel(null);
-    setQuestions([]);
-    setQuestionIndex(0);
-    setScore(0);
-    setIsFinished(false);
   };
 
   if (error) {
@@ -204,55 +192,8 @@ const MultiplicationGame = () => {
 
   if (!level) {
     return (
-      <main className="math-game">
-        <section className="math-game__hero">
-          <span className="math-game__eyebrow">LEARN BY PLAYING</span>
-          <h1>{config.title}</h1>
-          <p>{config.subtitle}</p>
-        </section>
-
-        <section className="time-setting" aria-label="Seconds per question">
-          <span>Seconds per question</span>
-          <div>
-            <button
-              type="button"
-              onClick={() => changeSeconds(-1)}
-              disabled={secondsPerQuestion <= minSeconds}
-              aria-label="Decrease seconds"
-            >
-              −
-            </button>
-            <strong>{secondsPerQuestion}</strong>
-            <button
-              type="button"
-              onClick={() => changeSeconds(1)}
-              disabled={secondsPerQuestion >= maxSeconds}
-              aria-label="Increase seconds"
-            >
-              +
-            </button>
-          </div>
-        </section>
-
-        <section className="level-picker" aria-labelledby="level-title">
-          <h2 id="level-title">Choose a level</h2>
-          <div className="level-grid">
-            {config.levels.map((item) => (
-              <button
-                className="level-card"
-                key={item.id}
-                onClick={() => startLevel(item)}
-              >
-                <span>Level {item.id}</span>
-                <strong>{item.label}</strong>
-                <small>
-                  {config.questionsPerLevel} questions · {secondsPerQuestion}{" "}
-                  seconds
-                </small>
-              </button>
-            ))}
-          </div>
-        </section>
+      <main className="math-game math-game--centered">
+        No level is configured.
       </main>
     );
   }
@@ -273,9 +214,6 @@ const MultiplicationGame = () => {
           <p>Your score was {percentage}%.</p>
           <div className="score-card__actions">
             <button onClick={() => startLevel(level)}>Play again</button>
-            <button className="secondary-button" onClick={returnToLevels}>
-              Choose another level
-            </button>
           </div>
         </section>
       </main>
@@ -286,9 +224,6 @@ const MultiplicationGame = () => {
     <main className="math-game math-game--centered">
       <section className="question-card">
         <div className="question-card__header">
-          <button className="back-button" onClick={returnToLevels}>
-            ← Levels
-          </button>
           <span>{level.label}</span>
         </div>
 

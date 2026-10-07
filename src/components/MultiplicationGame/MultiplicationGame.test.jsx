@@ -29,12 +29,22 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-test("plays five questions and displays the final score", async () => {
+test("starts the configured level without a level menu", async () => {
   render(<MultiplicationGame />);
 
-  fireEvent.click(
-    await screen.findByRole("button", { name: /Times Table 2/i })
-  );
+  expect(await screen.findByText(/2 × \d+/)).toBeInTheDocument();
+  expect(screen.getByLabelText("5 seconds left")).toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: /Increase seconds/i })
+  ).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: /Choose another level/i })
+  ).not.toBeInTheDocument();
+});
+
+test("plays five questions and displays the final score", async () => {
+  render(<MultiplicationGame />);
+  await screen.findByText(/2 × \d+/);
 
   for (let question = 0; question < 5; question += 1) {
     const expression = screen.getByText(/^\d+ × \d+$/).textContent;
@@ -47,15 +57,4 @@ test("plays five questions and displays the final score", async () => {
   expect(screen.getByText("5 / 5")).toBeInTheDocument();
   expect(screen.getByText(/100%/)).toBeInTheDocument();
   expect(screen.getByText("Victory!")).toBeInTheDocument();
-});
-
-test("uses the selected question time", async () => {
-  render(<MultiplicationGame />);
-
-  fireEvent.click(
-    await screen.findByRole("button", { name: "Increase seconds" })
-  );
-  fireEvent.click(screen.getByRole("button", { name: /Times Table 2/i }));
-
-  expect(screen.getByLabelText("6 seconds left")).toBeInTheDocument();
 });
