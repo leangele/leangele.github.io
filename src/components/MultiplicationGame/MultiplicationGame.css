@@ -440,11 +440,6 @@
   margin-bottom: 12px;
 }
 
-.score-card .practice-note {
-  margin: 0 0 14px;
-  font-size: 0.95rem;
-}
-
 .score-card__actions {
   display: grid;
   gap: 10px;

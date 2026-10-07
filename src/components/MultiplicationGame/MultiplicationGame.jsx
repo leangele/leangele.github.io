@@ -124,11 +124,11 @@ const shuffle = (items) => {
   return result;
 };
 
-const createOptions = (answer, multiplier) => {
+const createOptions = (answer, multiplier, count = 4) => {
   const options = new Set([answer]);
   let distance = 1;
 
-  while (options.size < 4) {
+  while (options.size < count) {
     options.add(answer + distance * multiplier);
     if (answer - distance * multiplier > 0) {
       options.add(answer - distance * multiplier);
@@ -136,7 +136,7 @@ const createOptions = (answer, multiplier) => {
     distance += 1;
   }
 
-  return shuffle([...options].slice(0, 4));
+  return shuffle([...options].slice(0, count));
 };
 
 const levelFactors = (level) =>
@@ -145,12 +145,12 @@ const levelFactors = (level) =>
     (_, index) => level.minFactor + index
   );
 
-const questionFromFactor = (level, factor) => {
+const questionFromFactor = (level, factor, optionCount = 4) => {
   const answer = level.multiplier * factor;
   return {
     factor,
     answer,
-    options: createOptions(answer, level.multiplier),
+    options: createOptions(answer, level.multiplier, optionCount),
   };
 };
 
@@ -162,7 +162,7 @@ const createQuestions = (level, count) => {
 };
 
 export const createOrderedQuestions = (level) =>
-  levelFactors(level).map((factor) => questionFromFactor(level, factor));
+  levelFactors(level).map((factor) => questionFromFactor(level, factor, 2));
 
 const MultiplicationGame = () => {
   const [config, setConfig] = useState(null);
@@ -522,11 +522,6 @@ const MultiplicationGame = () => {
           <p>
             {config.questionsPerLevel} questions · {config.secondsPerQuestion}{" "}
             seconds
-          </p>
-          <p className="practice-note">
-            Or practice in order: {level.multiplier} × {level.minFactor},{" "}
-            {level.multiplier} × {level.minFactor + 1}, {level.multiplier} ×{" "}
-            {level.minFactor + 2}.
           </p>
           <div className="score-card__actions">
             <button onClick={() => startRound("battle")}>Start</button>

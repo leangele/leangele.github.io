@@ -113,6 +113,10 @@ test("lists a times table in factor order for practice", () => {
   expect(questions.map((question) => question.answer)).toEqual([
     2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
   ]);
+  expect(questions.every((question) => question.options.length === 2)).toBe(true);
+  expect(
+    questions.every((question) => question.options.includes(question.answer))
+  ).toBe(true);
 });
 
 test("advances practice questions in order after each answer", async () => {
@@ -120,6 +124,7 @@ test("advances practice questions in order after each answer", async () => {
   fireEvent.click(await screen.findByRole("button", { name: "Practice" }));
 
   expect(await screen.findByRole("heading", { name: "2 × 1" })).toBeInTheDocument();
+  expect(document.querySelectorAll(".answer-grid button")).toHaveLength(2);
   expect(screen.getByText("Practice · Times Table 2")).toBeInTheDocument();
   expect(screen.queryByLabelText(/seconds left/)).not.toBeInTheDocument();
 
