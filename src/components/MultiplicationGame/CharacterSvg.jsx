@@ -7,16 +7,16 @@ export const HEROES = [
 ];
 
 export const CREATURES = {
-  1: { id: "slime", name: "Forest Slime", color: "#65a30d", accent: "#bef264", dark: "#3f6212" },
-  2: { id: "werewolf", name: "Werewolf", color: "#8a6a52", accent: "#c4a484", dark: "#4a3525" },
-  3: { id: "goblin", name: "Goblin", color: "#4d7c0f", accent: "#a3e635", dark: "#274005" },
-  4: { id: "troll", name: "Stone Troll", color: "#64748b", accent: "#cbd5e1", dark: "#334155" },
-  5: { id: "dragon", name: "Fire Dragon", color: "#b91c1c", accent: "#fb923c", dark: "#7f1d1d" },
-  6: { id: "cyclops", name: "Cyclops", color: "#7c3aed", accent: "#c4b5fd", dark: "#4c1d95" },
-  7: { id: "griffin", name: "Griffin", color: "#a16207", accent: "#fde68a", dark: "#603b03" },
-  8: { id: "minotaur", name: "Minotaur", color: "#78350f", accent: "#d6d3d1", dark: "#451a03" },
-  9: { id: "kraken", name: "Kraken", color: "#0f766e", accent: "#5eead4", dark: "#093d39" },
-  10: { id: "phoenix", name: "Phoenix", color: "#ea580c", accent: "#fde047", dark: "#9a3412" },
+  1: { id: "slime", name: "Forest Slime", color: "#10b981", accent: "#a7f3d0", dark: "#064e3b" },
+  2: { id: "werewolf", name: "Werewolf", color: "#334155", accent: "#f1f5f9", dark: "#0f172a" },
+  3: { id: "goblin", name: "Goblin", color: "#84cc16", accent: "#fef08a", dark: "#365314" },
+  4: { id: "troll", name: "Stone Troll", color: "#1e293b", accent: "#38bdf8", dark: "#0f172a" },
+  5: { id: "dragon", name: "Fire Dragon", color: "#7f1d1d", accent: "#fef08a", dark: "#450a0a" },
+  6: { id: "cyclops", name: "Cyclops", color: "#c2410c", accent: "#fed7aa", dark: "#7c2d12" },
+  7: { id: "griffin", name: "Griffin", color: "#e2e8f0", accent: "#fef08a", dark: "#94a3b8" },
+  8: { id: "minotaur", name: "Minotaur", color: "#291609", accent: "#ffffff", dark: "#140a04" },
+  9: { id: "kraken", name: "Kraken", color: "#4c1d95", accent: "#f43f5e", dark: "#2e1065" },
+  10: { id: "phoenix", name: "Phoenix", color: "#be123c", accent: "#ffffff", dark: "#881337" },
 };
 
 export const getCreature = (levelId) =>

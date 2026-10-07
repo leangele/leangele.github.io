@@ -234,7 +234,10 @@
    ESTILO 1: FANTASÍA MEDIEVAL ILUSTRADA
    ========================================================================= */
 .math-game--style-fantasy .character-svg {
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  filter:
+    drop-shadow(0 0 2px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.35));
 }
 
 .math-game--style-fantasy .score-card,
@@ -266,7 +269,12 @@
 .math-game--style-pixel .creature-svg {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  filter: drop-shadow(0 4px 0px rgba(0, 0, 0, 0.6));
+  filter:
+    drop-shadow(2px 0 0 #0f172a)
+    drop-shadow(-2px 0 0 #0f172a)
+    drop-shadow(0 2px 0 #0f172a)
+    drop-shadow(0 -2px 0 #0f172a)
+    drop-shadow(0 6px 0 rgba(0, 0, 0, 0.55));
 }
 
 .math-game--style-pixel .score-card,
@@ -1471,20 +1479,53 @@ img.hero-svg--selected,
   position: relative;
   display: grid;
   justify-items: center;
+  z-index: 2;
+}
+
+.demon-figure {
+  position: relative;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+/* Halo de contraste y foco luminoso detrás del enemigo */
+.demon-figure::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -46%);
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.28) 45%, rgba(255, 255, 255, 0) 72%);
+  filter: blur(8px);
+}
+
+.math-game--style-pixel .demon-figure::before {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.18) 48%, rgba(255, 255, 255, 0) 72%);
+  filter: none;
 }
 
 .demon-figure svg {
   width: 100%;
   height: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .adventure-scene__name {
   margin: -6px 0 0;
-  color: #f8f1e3;
+  color: #ffffff;
   font-family: "Baloo 2", sans-serif;
   font-size: 1rem;
   font-weight: 800;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.9),
+    0 2px 8px rgba(0, 0, 0, 0.75);
 }
 
 .demon-health {
@@ -2111,6 +2152,8 @@ img.hero-svg--selected,
   }
 
   .missed-questions {
+    --reveal-slot-width: 8.75rem;
+    --reveal-slot-height: 32px;
     margin-top: 2px;
   }
 
@@ -2122,11 +2165,6 @@ img.hero-svg--selected,
   .missed-questions h2 {
     margin-bottom: 2px;
     font-size: 1rem;
-  }
-
-  .missed-questions {
-    --reveal-slot-width: 8.75rem;
-    --reveal-slot-height: 32px;
   }
 
   .missed-questions li {
