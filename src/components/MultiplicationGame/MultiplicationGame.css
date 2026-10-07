@@ -1318,6 +1318,7 @@
   .hero-slot--shoot,
   .magic-bolt,
   .arrow-shot,
+  .sword-slash,
   .hero-slot--miss,
   .combat-callout,
   .combat-callout.floating-miss,
@@ -1675,63 +1676,129 @@ img.hero-svg--selected,
   animation: demon-hit 0.45s ease 0.28s;
 }
 
-@keyframes hunter-shoot {
-  0%,
-  100% {
-    transform: translateX(0);
+/* Animación natural de reposo: respiración orgánica y mirar a izquierda/derecha */
+@keyframes hero-idle-natural {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg) scale(1, 1);
   }
-  35% {
-    transform: translateX(-6px);
+  16% {
+    /* Mirada atenta hacia la derecha (hacia el enemigo) */
+    transform: translateY(-2px) rotate(2.4deg) scale(1.015, 1.02);
+  }
+  34% {
+    /* Regreso al centro */
+    transform: translateY(0) rotate(0.4deg) scale(1, 1);
+  }
+  50% {
+    /* Mirada cautelosa hacia la izquierda (comprobando flanco) */
+    transform: translateY(-1.5px) rotate(-2.8deg) scale(0.99, 1.015);
+  }
+  68% {
+    /* Vista al frente y respiración relajada */
+    transform: translateY(0) rotate(0deg) scale(1, 1);
+  }
+  84% {
+    /* Ajuste de postura en los pies */
+    transform: translateY(1.2px) rotate(0.6deg) scale(1.01, 0.99);
+  }
+}
+
+/* Hunter: Disparo de flechas con anticipación, tensión del arco y retroceso */
+@keyframes hunter-shoot {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  24% {
+    /* Tensar cuerda hacia atrás con postura firme */
+    transform: translateX(-18px) translateY(2px) rotate(-7deg) scale(0.96, 1.03);
+  }
+  40% {
+    /* Suelta explosiva de la flecha con chasquido adelante */
+    transform: translateX(10px) translateY(-1px) rotate(5deg) scale(1.04, 0.97);
+  }
+  62% {
+    /* Estabilización del retroceso */
+    transform: translateX(-4px) rotate(-2deg);
+  }
+  100% {
+    transform: translateX(0) scale(1);
   }
 }
 
 @keyframes bow-draw {
-  40% {
-    transform: translateX(-8px);
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  26% {
+    transform: translateX(-14px) rotate(-10deg);
+  }
+  42% {
+    transform: translateX(8px) rotate(6deg);
   }
 }
 
+/* Proyectil de flecha: Trayectoria de vuelo fluida con cola luminosa */
 @keyframes arrow-shot {
   0% {
     opacity: 0;
-    transform: translateX(0);
+    transform: translate(0, 4px) rotate(-4deg);
   }
-  16% {
+  12% {
     opacity: 1;
-    transform: translateX(24px);
+    transform: translate(32px, -2px) rotate(-2deg);
   }
-  72% {
+  52% {
     opacity: 1;
-    transform: translateX(170px);
+    transform: translate(118px, -5px) rotate(1deg);
+  }
+  78% {
+    opacity: 1;
+    transform: translate(185px, -2px) rotate(3deg);
   }
   100% {
     opacity: 0;
-    transform: translateX(210px);
+    transform: translate(220px, 0px) rotate(4deg);
   }
 }
 
 @keyframes arrow-miss {
   0% {
     opacity: 0;
-    transform: translate(0, 0) rotate(0);
+    transform: translate(0, 0) rotate(0deg);
   }
-  16% {
+  14% {
     opacity: 1;
-    transform: translate(24px, -8px) rotate(-10deg);
+    transform: translate(30px, -12px) rotate(-14deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(145px, -60px) rotate(-26deg);
   }
   100% {
     opacity: 0;
-    transform: translate(210px, -78px) rotate(-22deg);
+    transform: translate(235px, -105px) rotate(-38deg);
   }
 }
 
+/* Mage: Canalización mágica, elevación y descarga de energía */
 @keyframes mage-cast {
-  0%,
-  100% {
-    transform: translateX(0) rotate(0);
+  0% {
+    transform: translateX(0) translateY(0) rotate(0);
   }
-  40% {
-    transform: translateX(-8px) rotate(-4deg);
+  24% {
+    /* Concentración y levitación sutil */
+    transform: translateX(-14px) translateY(-10px) rotate(-8deg) scale(1.05);
+  }
+  46% {
+    /* Golpe de báculo y lanzamiento */
+    transform: translateX(22px) translateY(3px) rotate(12deg) scale(1.03);
+  }
+  74% {
+    /* Caída suave */
+    transform: translateX(-2px) translateY(-2px) rotate(1deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0);
   }
 }
 
@@ -1739,50 +1806,105 @@ img.hero-svg--selected,
   0% {
     left: 22%;
     opacity: 0;
-    transform: translateY(12px) scale(0.35);
+    transform: translateY(12px) scale(0.35) rotate(0deg);
   }
   18% {
     left: 28%;
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotate(90deg);
   }
-  72% {
-    left: 62%;
+  55% {
+    left: 54%;
     opacity: 1;
-    transform: translateY(-16px) scale(1.25);
+    transform: translateY(-20px) scale(1.35) rotate(220deg);
+  }
+  75% {
+    left: 65%;
+    opacity: 1;
+    transform: translateY(-16px) scale(1.3) rotate(320deg);
   }
   100% {
-    left: 70%;
+    left: 72%;
     opacity: 0;
-    transform: translateY(-8px) scale(0.45);
+    transform: translateY(-8px) scale(0.4) rotate(420deg);
   }
 }
 
 @keyframes mage-staff {
-  40% {
-    transform: rotate(-32deg);
+  0%, 100% {
+    transform: rotate(0);
+  }
+  28% {
+    transform: rotate(-16deg);
+  }
+  46% {
+    transform: rotate(28deg);
   }
 }
 
+/* Knight: Mover espada y estocada heroica con preparación y corte */
 @keyframes hero-lunge {
   0% {
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
-  40% {
-    transform: translateX(46px) rotate(-8deg);
+  20% {
+    /* Preparación: caballero retrocede levantando espada y escudo */
+    transform: translateX(-16px) rotate(-14deg) scale(0.95, 1.03);
+  }
+  44% {
+    /* Embestida y tajo descendente a fondo */
+    transform: translateX(68px) rotate(18deg) scale(1.12, 0.95);
+  }
+  62% {
+    /* Remate del filo de la espada */
+    transform: translateX(72px) rotate(10deg) scale(1.05);
+  }
+  80% {
+    /* Guardia de recuperación */
+    transform: translateX(18px) rotate(-3deg);
   }
   100% {
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Destello del tajo de la espada del caballero */
+@keyframes sword-slash-arc {
+  0% {
+    opacity: 0;
+    transform: translate(-15px, 20px) scale(0.25) rotate(-65deg);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(20px, -5px) scale(0.95) rotate(10deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(80px, -22px) scale(1.4) rotate(80deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(115px, -38px) scale(1.65) rotate(115deg);
   }
 }
 
 @keyframes hero-recoil {
-  0%,
-  100% {
-    transform: translateX(0);
+  0% {
+    transform: translateX(0) rotate(0);
   }
-  38% {
-    transform: translateX(-18px) rotate(-4deg);
+  25% {
+    /* Tropezón al fallar */
+    transform: translateX(-22px) translateY(2px) rotate(-8deg) scale(0.96);
+  }
+  50% {
+    /* Rebote de recuperación */
+    transform: translateX(-12px) translateY(-1px) rotate(-3deg);
+  }
+  75% {
+    transform: translateX(-2px) rotate(1deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0);
   }
 }
 
@@ -1836,8 +1958,20 @@ img.hero-svg--selected,
 }
 
 @keyframes hero-celebrate {
+  0%, 100% {
+    transform: translateY(0) scale(1, 1) rotate(0deg);
+  }
+  25% {
+    /* Agacharse para saltar */
+    transform: translateY(4px) scale(1.06, 0.92) rotate(-2deg);
+  }
   50% {
-    transform: translateY(-7px) rotate(4deg);
+    /* Salto festivo de júbilo */
+    transform: translateY(-16px) scale(0.95, 1.06) rotate(4deg);
+  }
+  75% {
+    /* Suspensión en el aire */
+    transform: translateY(-8px) scale(1.02, 0.98) rotate(-3deg);
   }
 }
 
@@ -1861,13 +1995,22 @@ img.hero-svg--selected,
 
 @keyframes werewolf-dodge {
   0% {
-    transform: translate(0, 0);
+    transform: translate(0, 0) scale(1, 1);
   }
-  35% {
-    transform: translate(40px, -18px);
+  20% {
+    /* Anticipación al agacharse */
+    transform: translate(-8px, 6px) scale(1.06, 0.92);
+  }
+  45% {
+    /* Salto acrobático hacia atrás */
+    transform: translate(46px, -24px) rotate(8deg) scale(0.95, 1.05);
+  }
+  75% {
+    /* Aterrizaje con compresión */
+    transform: translate(14px, 4px) scale(1.08, 0.94);
   }
   100% {
-    transform: translate(0, 0);
+    transform: translate(0, 0) scale(1, 1);
   }
 }
 
@@ -1904,18 +2047,24 @@ img.hero-svg--selected,
 
 @keyframes demon-hit {
   0% {
-    transform: translateX(0);
+    transform: translateX(0) scale(1, 1);
     filter: brightness(1);
   }
-  30% {
-    transform: translateX(10px);
-    filter: brightness(1.8);
+  22% {
+    /* Compresión de impacto con destello */
+    transform: translateX(14px) scale(1.18, 0.86);
+    filter: brightness(2) saturate(1.4);
   }
-  60% {
-    transform: translateX(-8px);
+  50% {
+    /* Rebote elástico */
+    transform: translateX(-10px) scale(0.92, 1.1);
+    filter: brightness(1.3);
+  }
+  74% {
+    transform: translateX(4px) scale(1.03, 0.98);
   }
   100% {
-    transform: translateX(0);
+    transform: translateX(0) scale(1, 1);
     filter: brightness(1);
   }
 }
