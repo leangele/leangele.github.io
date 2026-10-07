@@ -13,10 +13,11 @@ import { getCreature } from "./CharacterSvg";
 import "./MultiplicationGame.css";
 import "../../adventure-game.css";
 
-const SLIDE_MS = 800;
+const SLIDE_MS = 400;
 const SOUND_STORAGE_KEY = "multiplication-game-sound";
 const GRAPHIC_STYLE_KEY = "multiplication-game-style";
 const BEST_TIME_KEY = "multiplication-game-best-times";
+const ADVANCE_BEST_TIME_KEY = "multiplication-game-advance-best-times";
 
 export const readStoredGraphicStyle = (configuredStyle) => {
   try {
@@ -63,6 +64,28 @@ export const nextBestTime = (previousMs, roundMs, won) => {
   return { bestMs: previousMs, beatRecord: false };
 };
 
+export const formatRecordStamp = (date) => {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const hours24 = date.getHours();
+  const hours12 = hours24 % 12 || 12;
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const period = hours24 >= 12 ? "PM" : "AM";
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}, ${hours12}:${minutes} ${period}`;
+};
+
 const readBestTimes = () => {
   try {
     const parsed = JSON.parse(window.localStorage.getItem(BEST_TIME_KEY) || "{}");
@@ -85,6 +108,45 @@ const writeBestTime = (multiplier, milliseconds) => {
   times[multiplier] = milliseconds;
   try {
     window.localStorage.setItem(BEST_TIME_KEY, JSON.stringify(times));
+  } catch (error) {
+    // The score still shows this round when storage is blocked.
+  }
+};
+
+const readAdvanceRecords = () => {
+  try {
+    const parsed = JSON.parse(
+      window.localStorage.getItem(ADVANCE_BEST_TIME_KEY) || "{}"
+    );
+    if (!parsed || typeof parsed !== "object") {
+      return {};
+    }
+    return parsed;
+  } catch (error) {
+    return {};
+  }
+};
+
+const readAdvanceRecord = (multiplier) => {
+  const record = readAdvanceRecords()[multiplier];
+  if (!record || typeof record !== "object") {
+    return null;
+  }
+  const ms = Number(record.ms);
+  if (!Number.isFinite(ms)) {
+    return null;
+  }
+  return {
+    ms,
+    setAt: typeof record.setAt === "string" ? record.setAt : "",
+  };
+};
+
+const writeAdvanceRecord = (multiplier, record) => {
+  const records = readAdvanceRecords();
+  records[multiplier] = { ms: record.ms, setAt: record.setAt };
+  try {
+    window.localStorage.setItem(ADVANCE_BEST_TIME_KEY, JSON.stringify(records));
   } catch (error) {
     // The score still shows this round when storage is blocked.
   }
@@ -153,18 +215,27 @@ const shuffle = (items) => {
 };
 
 const createOptions = (answer, multiplier, count = 4) => {
+  const step = multiplier > 0 ? multiplier : 1;
   const options = new Set([answer]);
   let distance = 1;
 
-  while (options.size < count) {
-    options.add(answer + distance * multiplier);
-    if (answer - distance * multiplier > 0) {
-      options.add(answer - distance * multiplier);
+  while (options.size < count && distance < 40) {
+    const higher = answer + distance * step;
+    const lower = answer - distance * step;
+    if (options.size < count && higher > 0 && higher !== answer) {
+      options.add(higher);
+    }
+    if (options.size < count && lower > 0 && lower !== answer) {
+      options.add(lower);
     }
     distance += 1;
   }
 
-  return shuffle([...options].slice(0, count));
+  const unique = [...options];
+  if (!unique.includes(answer)) {
+    unique.unshift(answer);
+  }
+  return shuffle(unique.slice(0, count));
 };
 
 const levelFactors = (level) =>
@@ -176,17 +247,49 @@ const levelFactors = (level) =>
 const questionFromFactor = (level, factor, optionCount = 4) => {
   const answer = level.multiplier * factor;
   return {
+    multiplier: level.multiplier,
     factor,
     answer,
     options: createOptions(answer, level.multiplier, optionCount),
   };
 };
 
-const createQuestions = (level, count) => {
+export const createQuestions = (level, count) => {
   const factors = levelFactors(level);
+  const seen = new Set();
   return shuffle(factors)
     .slice(0, Math.min(count, factors.length))
-    .map((factor) => questionFromFactor(level, factor));
+    .map((factor) => questionFromFactor(level, factor))
+    .filter((question) => {
+      const key = `${question.multiplier}×${question.factor}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+};
+
+export const createAdvanceQuestions = (level, count) => {
+  const pool = [];
+  for (let multiplier = 1; multiplier < level.multiplier; multiplier += 1) {
+    const table = {
+      multiplier,
+      minFactor: level.minFactor,
+      maxFactor: level.maxFactor,
+    };
+    levelFactors(table).forEach((factor) => {
+      const question = questionFromFactor(table, factor);
+      const key = `${question.multiplier}×${question.factor}`;
+      if (!pool.some((item) => `${item.multiplier}×${item.factor}` === key)) {
+        pool.push(question);
+      }
+    });
+  }
+  if (!pool.length) {
+    return [];
+  }
+  return shuffle(pool).slice(0, Math.min(count, pool.length));
 };
 
 export const createOrderedQuestions = (level) =>
@@ -214,6 +317,8 @@ const MultiplicationGame = () => {
   const [bestTimeMs, setBestTimeMs] = useState(null);
   const [beatRecord, setBeatRecord] = useState(false);
   const [previousBestMs, setPreviousBestMs] = useState(null);
+  const [bestSetAt, setBestSetAt] = useState(null);
+  const [liveRoundMs, setLiveRoundMs] = useState(0);
   const soundOnRef = useRef(true);
   const graphicStyleRef = useRef("pixel");
   const playModeRef = useRef("battle");
@@ -256,7 +361,7 @@ const MultiplicationGame = () => {
 
   const currentQuestion = questions[questionIndex];
   const roundTotal =
-    playMode === "practice" && questions.length
+    (playMode === "practice" || playMode === "advance") && questions.length
       ? questions.length
       : config?.questionsPerLevel || 0;
   const demonHp = Math.max(0, roundTotal - score);
@@ -268,7 +373,7 @@ const MultiplicationGame = () => {
         setMissedQuestions((current) => [
           ...current,
           {
-            prompt: `${level.multiplier} × ${currentQuestion.factor}`,
+            prompt: `${currentQuestion.multiplier} × ${currentQuestion.factor}`,
             answer: currentQuestion.answer,
             revealed: false,
           },
@@ -282,7 +387,9 @@ const MultiplicationGame = () => {
 
       const soundsEnabled = soundOnRef.current;
       const practicing = playModeRef.current === "practice";
-      const total = practicing ? questions.length : config.questionsPerLevel;
+      const advancing = playModeRef.current === "advance";
+      const total =
+        practicing || advancing ? questions.length : config.questionsPerLevel;
       const isLastQuestion = questionIndex >= questions.length - 1;
 
       if (soundsEnabled) {
@@ -301,15 +408,49 @@ const MultiplicationGame = () => {
       if (isLastQuestion) {
         const roundMs = Math.round(answerElapsedRef.current);
         const won = passedChallenge(nextScore, total, config.passPercent);
-        const previous = practicing ? null : readBestTime(level.multiplier);
-        const result = nextBestTime(previous, roundMs, won && !practicing);
-        if (!practicing && won && result.bestMs === roundMs) {
+        if (practicing) {
+          setRoundTimeMs(roundMs);
+          setBestTimeMs(null);
+          setBeatRecord(false);
+          setPreviousBestMs(null);
+          setBestSetAt(null);
+          setIsFinished(true);
+          return;
+        }
+
+        if (advancing) {
+          const previous = readAdvanceRecord(level.multiplier);
+          const previousMs = previous?.ms ?? null;
+          const result = nextBestTime(previousMs, roundMs, won);
+          const isNewRecord =
+            won &&
+            result.bestMs === roundMs &&
+            (previousMs == null || result.beatRecord);
+          const setAt = isNewRecord
+            ? formatRecordStamp(new Date())
+            : previous?.setAt || null;
+          if (isNewRecord) {
+            writeAdvanceRecord(level.multiplier, { ms: roundMs, setAt });
+          }
+          setRoundTimeMs(roundMs);
+          setBestTimeMs(result.bestMs);
+          setBeatRecord(result.beatRecord);
+          setPreviousBestMs(result.beatRecord ? previousMs : null);
+          setBestSetAt(setAt);
+          setIsFinished(true);
+          return;
+        }
+
+        const previous = readBestTime(level.multiplier);
+        const result = nextBestTime(previous, roundMs, won);
+        if (won && result.bestMs === roundMs) {
           writeBestTime(level.multiplier, roundMs);
         }
         setRoundTimeMs(roundMs);
-        setBestTimeMs(practicing ? null : result.bestMs);
-        setBeatRecord(!practicing && result.beatRecord);
-        setPreviousBestMs(!practicing && result.beatRecord ? previous : null);
+        setBestTimeMs(result.bestMs);
+        setBeatRecord(result.beatRecord);
+        setPreviousBestMs(result.beatRecord ? previous : null);
+        setBestSetAt(null);
         setIsFinished(true);
         return;
       }
@@ -326,6 +467,7 @@ const MultiplicationGame = () => {
       return;
     }
     answerElapsedRef.current += performance.now() - questionShownAtRef.current;
+    setLiveRoundMs(answerElapsedRef.current);
     pendingAdvance.current = wasCorrect;
     setCombat(wasCorrect ? "hit" : "miss");
     if (wasCorrect) {
@@ -368,6 +510,26 @@ const MultiplicationGame = () => {
     if (
       playMode === "practice" ||
       !hasStarted ||
+      isFinished ||
+      slidePhase !== "shown"
+    ) {
+      return undefined;
+    }
+
+    const tick = () => {
+      setLiveRoundMs(
+        answerElapsedRef.current + performance.now() - questionShownAtRef.current
+      );
+    };
+    tick();
+    const timer = window.setInterval(tick, 100);
+    return () => window.clearInterval(timer);
+  }, [hasStarted, isFinished, slidePhase, questionIndex, playMode]);
+
+  useEffect(() => {
+    if (
+      playMode === "practice" ||
+      !hasStarted ||
       !level ||
       isFinished ||
       !currentQuestion ||
@@ -405,6 +567,9 @@ const MultiplicationGame = () => {
   }, [questionIndex, questions.length]);
 
   const startRound = (mode) => {
+    if (mode === "advance" && level.multiplier < 2) {
+      return;
+    }
     unlockGameAudio();
     if (soundOnRef.current) {
       if (mode === "practice") {
@@ -421,7 +586,9 @@ const MultiplicationGame = () => {
     setQuestions(
       mode === "practice"
         ? createOrderedQuestions(level)
-        : createQuestions(level, config.questionsPerLevel)
+        : mode === "advance"
+          ? createAdvanceQuestions(level, config.questionsPerLevel)
+          : createQuestions(level, config.questionsPerLevel)
     );
     setQuestionIndex(0);
     setScore(0);
@@ -432,10 +599,12 @@ const MultiplicationGame = () => {
     pendingAdvance.current = null;
     answerElapsedRef.current = 0;
     questionShownAtRef.current = performance.now();
+    setLiveRoundMs(0);
     setChosenOption(null);
     setRoundTimeMs(0);
     setBeatRecord(false);
     setPreviousBestMs(null);
+    setBestSetAt(null);
     setSlidePhase("shown");
     setCombat(null);
   };
@@ -505,11 +674,7 @@ const MultiplicationGame = () => {
       return;
     }
 
-    const won = passedChallenge(
-      score,
-      config.questionsPerLevel,
-      config.passPercent
-    );
+    const won = passedChallenge(score, roundTotal, config.passPercent);
     if (won) {
       audioEngine.playVictoryTheme();
     } else {
@@ -608,7 +773,23 @@ const MultiplicationGame = () => {
             seconds
           </p>
           <div className="score-card__actions">
-            <button onClick={() => startRound("battle")}>Start</button>
+            <div className="mode-row">
+              <button
+                type="button"
+                className="start-button"
+                onClick={() => startRound("battle")}
+              >
+                Start
+              </button>
+              <button
+                type="button"
+                className="advance-button"
+                onClick={() => startRound("advance")}
+                disabled={level.multiplier < 2}
+              >
+                Advance
+              </button>
+            </div>
             <button
               type="button"
               className="secondary-button"
@@ -658,8 +839,11 @@ const MultiplicationGame = () => {
               New best time! You beat {formatRoundTime(previousBestMs)}.
             </p>
           )}
-          {bestTimeMs != null && !beatRecord && (
+          {bestTimeMs != null && (playMode === "advance" || !beatRecord) && (
             <p className="round-time__best">Best: {formatRoundTime(bestTimeMs)}</p>
+          )}
+          {playMode === "advance" && bestSetAt && (
+            <p className="round-time__set">Set {bestSetAt}</p>
           )}
           {missedQuestions.length > 0 && (
             <div className="missed-questions">
@@ -712,7 +896,11 @@ const MultiplicationGame = () => {
       <section className="question-card">
         <div className="question-card__header">
           <span>
-            {playMode === "practice" ? `Practice · ${level.label}` : level.label}
+            {playMode === "practice"
+              ? `Practice · ${level.label}`
+              : playMode === "advance"
+                ? `Advance · ${level.label}`
+                : level.label}
           </span>
         </div>
 
@@ -722,13 +910,18 @@ const MultiplicationGame = () => {
           </span>
           <strong>{score} correct</strong>
         </div>
+        {playMode !== "practice" && (
+          <p className="global-timer" aria-live="polite">
+            Total {formatRoundTime(liveRoundMs)}
+          </p>
+        )}
         <div className="progress-track">
           <div style={{ width: `${progress}%` }} />
         </div>
 
         <div className={`question-card__body slide-panel slide-panel--${slidePhase}`}>
           <div className="question-card__prompt">
-            {playMode === "battle" && (
+            {playMode !== "practice" && (
               <div
                 className={`timer ${secondsLeft <= 2 ? "timer--urgent" : ""}`}
                 aria-label={`${secondsLeft} seconds left`}
@@ -738,7 +931,7 @@ const MultiplicationGame = () => {
             )}
             <p>What is</p>
             <h1>
-              {level.multiplier} × {currentQuestion.factor}
+              {currentQuestion.multiplier} × {currentQuestion.factor}
             </h1>
           </div>
 

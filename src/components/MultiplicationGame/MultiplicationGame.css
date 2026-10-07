@@ -747,8 +747,12 @@
   }
 
   .answer-grid button:hover,
-  .score-card button:hover:not(.secondary-button) {
+  .score-card button:hover:not(.secondary-button):not(.advance-button) {
     background: var(--game-purple-dark);
+  }
+
+  .score-card .advance-button:hover:not(:disabled) {
+    background: linear-gradient(180deg, #fff3c4 0%, #fbbf24 42%, #d97706 100%);
   }
 }
 
@@ -866,12 +870,12 @@
 }
 
 .slide-panel--exit {
-  animation: slide-out-left 800ms ease forwards;
+  animation: slide-out-left 400ms ease forwards;
   pointer-events: none;
 }
 
 .slide-panel--enter {
-  animation: slide-in-right 800ms ease both;
+  animation: slide-in-right 400ms ease both;
   pointer-events: none;
 }
 
@@ -1035,7 +1039,8 @@
 
 .score-card .round-time,
 .score-card .round-time__record,
-.score-card .round-time__best {
+.score-card .round-time__best,
+.score-card .round-time__set {
   margin: 0 0 4px;
   font-weight: 800;
 }
@@ -1049,13 +1054,47 @@
   color: var(--game-purple);
 }
 
-.score-card .round-time__best {
+.score-card .round-time__best,
+.score-card .round-time__set {
   margin-bottom: 12px;
 }
 
 .score-card__actions {
   display: grid;
   gap: 10px;
+}
+
+.mode-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: end;
+}
+
+.score-card .start-button {
+  min-height: 48px;
+}
+
+.score-card .advance-button {
+  min-height: 48px;
+  color: #3b2204;
+  background: linear-gradient(180deg, #ffe08a 0%, #f5b942 46%, #d97706 100%);
+  border: 2px solid #fde68a;
+  border-bottom: 7px solid #92400e;
+  box-shadow:
+    0 0 0 1px rgba(120, 53, 15, 0.35),
+    0 10px 24px rgba(217, 119, 6, 0.35);
+}
+
+.score-card .advance-button:active:not(:disabled) {
+  transform: translateY(4px);
+  border-bottom-width: 3px;
+}
+
+.global-timer {
+  margin: 8px 0 0;
+  color: var(--game-ink);
+  font-weight: 800;
 }
 
 .score-card button {
@@ -2343,7 +2382,8 @@ img.hero-svg--selected,
 
   .score-card .round-time,
   .score-card .round-time__record,
-  .score-card .round-time__best {
+  .score-card .round-time__best,
+  .score-card .round-time__set {
     margin: 0 0 2px;
     font-size: 0.9rem;
   }

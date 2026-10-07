@@ -1,9 +1,12 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
-jest.setTimeout(20000);
+jest.setTimeout(60000);
 import { getCreature } from "./CharacterSvg";
 import MultiplicationGame, {
+  createAdvanceQuestions,
   createOrderedQuestions,
+  createQuestions,
+  formatRecordStamp,
   formatRoundTime,
   levelFromTableQuery,
   musicPhaseFor,
@@ -31,6 +34,7 @@ beforeEach(() => {
   window.localStorage.removeItem("multiplication-game-sound");
   window.localStorage.removeItem("multiplication-game-style");
   window.localStorage.removeItem("multiplication-game-best-times");
+  window.localStorage.removeItem("multiplication-game-advance-best-times");
   window.scrollTo = jest.fn();
   global.fetch = jest.fn().mockResolvedValue({
     ok: true,
@@ -452,6 +456,14 @@ test("chooses the music bed for the phase that is already playing", () => {
   expect(
     musicPhaseFor({
       hasStarted: true,
+      playMode: "advance",
+      isFinished: false,
+      won: false,
+    })
+  ).toBe("combat");
+  expect(
+    musicPhaseFor({
+      hasStarted: true,
       playMode: "battle",
       isFinished: true,
       won: true,
@@ -516,6 +528,214 @@ test("switches graphic style during a question without resetting the round", asy
     "pixel-hunter.svg"
   );
   expect(window.localStorage.getItem("multiplication-game-style")).toBe("fantasy");
+});
+
+test("keeps questions and wrong answers unique", () => {
+  const level = {
+    multiplier: 3,
+    minFactor: 1,
+    maxFactor: 10,
+  };
+  const questions = createQuestions(level, 8);
+  const prompts = questions.map(
+    (question) => `${question.multiplier}×${question.factor}`
+  );
+
+  expect(questions).toHaveLength(8);
+  expect(new Set(prompts).size).toBe(prompts.length);
+  questions.forEach((question) => {
+    expect(new Set(question.options).size).toBe(question.options.length);
+    expect(question.options.filter((option) => option === question.answer)).toHaveLength(1);
+  });
+
+  const advance = createAdvanceQuestions({ ...level, id: 3 }, 8);
+  const advancePrompts = advance.map(
+    (question) => `${question.multiplier}×${question.factor}`
+  );
+  expect(new Set(advancePrompts).size).toBe(advancePrompts.length);
+});
+
+test("builds advance questions only from lower tables", () => {
+  const table = {
+    id: 3,
+    label: "Times Table 3",
+    multiplier: 3,
+    minFactor: 1,
+    maxFactor: 10,
+  };
+  const questions = createAdvanceQuestions(table, 5);
+
+  expect(questions).toHaveLength(5);
+  expect(
+    questions.every(
+      (question) => question.multiplier === 1 || question.multiplier === 2
+    )
+  ).toBe(true);
+  expect(
+    questions.every((question) => question.factor >= 1 && question.factor <= 10)
+  ).toBe(true);
+  expect(questions.every((question) => question.options.length === 4)).toBe(true);
+  expect(
+    questions.every(
+      (question) => question.answer === question.multiplier * question.factor
+    )
+  ).toBe(true);
+
+  const pool = createAdvanceQuestions(table, 100);
+  expect(pool).toHaveLength(20);
+  expect(pool.some((question) => question.multiplier === 3)).toBe(false);
+  expect(createAdvanceQuestions({ ...table, multiplier: 1 }, 5)).toEqual([]);
+  expect(
+    createAdvanceQuestions(
+      { ...table, multiplier: 2, minFactor: 1, maxFactor: 2 },
+      5
+    )
+  ).toHaveLength(2);
+  expect(formatRecordStamp(new Date(2026, 9, 7, 8, 9))).toBe(
+    "Oct 7, 2026, 8:09 AM"
+  );
+});
+
+test("places Advance between Start and Practice", async () => {
+  render(<MultiplicationGame />);
+
+  const start = await screen.findByRole("button", { name: "Start" });
+  const advance = screen.getByRole("button", { name: "Advance" });
+  expect(start.parentElement).toBe(advance.parentElement);
+  expect(start.parentElement).toHaveClass("mode-row");
+  expect(
+    [...start.closest(".score-card__actions").querySelectorAll("button")].map(
+      (button) => button.textContent
+    )
+  ).toEqual(["Start", "Advance", "Practice"]);
+  expect(advance).toBeEnabled();
+});
+
+test("disables Advance on times table 1", async () => {
+  window.history.pushState({}, "", "/?table=1");
+  render(<MultiplicationGame />);
+
+  const advance = await screen.findByRole("button", { name: "Advance" });
+  expect(advance).toBeDisabled();
+  expect(screen.getByRole("heading", { name: "Times Table 1" })).toBeInTheDocument();
+
+  fireEvent.click(advance);
+
+  expect(screen.queryByLabelText(/seconds left/)).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Start" })).toBeEnabled();
+});
+
+test("stores an advance best time separately and shows the date", async () => {
+  window.history.pushState({}, "", "/?table=3");
+  window.localStorage.setItem(
+    "multiplication-game-best-times",
+    JSON.stringify({ 3: 4000 })
+  );
+
+  const originalMatchMedia = window.matchMedia;
+  window.matchMedia = () => ({
+    matches: true,
+    media: "(prefers-reduced-motion: reduce)",
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  });
+
+  let clock = 1000;
+  jest.spyOn(performance, "now").mockImplementation(() => clock);
+
+  try {
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Advance" }));
+
+  expect(await screen.findByText(/^[12] × \d+$/)).toBeInTheDocument();
+  expect(screen.getByText("Advance · Times Table 3")).toBeInTheDocument();
+  expect(screen.getByLabelText("5 seconds left")).toBeInTheDocument();
+  expect(document.querySelectorAll(".answer-grid button")).toHaveLength(4);
+
+  for (let question = 0; question < 5; question += 1) {
+    const expression = screen.getByText(/^\d+ × \d+$/).textContent;
+    expect(expression.startsWith("3")).toBe(false);
+    expect(/^[12] × \d+$/.test(expression)).toBe(true);
+    clock += 2000;
+    await answerCurrentQuestion();
+  }
+
+  const stored = JSON.parse(
+    window.localStorage.getItem("multiplication-game-advance-best-times")
+  );
+  expect(stored["3"].ms).toBe(10000);
+  expect(stored["3"].setAt).toEqual(expect.any(String));
+  expect(stored["3"].setAt.length).toBeGreaterThan(0);
+  expect(screen.getByText("Time: 10.0s")).toBeInTheDocument();
+  expect(screen.getByText("Best: 10.0s")).toBeInTheDocument();
+  expect(screen.getByText(`Set ${stored["3"].setAt}`)).toBeInTheDocument();
+  expect(screen.queryByText(/New best time/)).not.toBeInTheDocument();
+  expect(
+    JSON.parse(window.localStorage.getItem("multiplication-game-best-times"))
+  ).toEqual({ 3: 4000 });
+
+  const firstRecord = stored["3"];
+
+  fireEvent.click(screen.getByRole("button", { name: "Play again" }));
+  fireEvent.click(screen.getByRole("button", { name: "Advance" }));
+  await screen.findByText(/^[12] × \d+$/);
+
+  for (let question = 0; question < 5; question += 1) {
+    clock += 1000;
+    await answerCurrentQuestion();
+  }
+
+  const faster = JSON.parse(
+    window.localStorage.getItem("multiplication-game-advance-best-times")
+  );
+  expect(faster["3"].ms).toBe(5000);
+  expect(screen.getByText("Time: 5.0s")).toBeInTheDocument();
+  expect(screen.getByText("Best: 5.0s")).toBeInTheDocument();
+  expect(screen.getByText("New best time! You beat 10.0s.")).toBeInTheDocument();
+  expect(screen.getByText(`Set ${faster["3"].setAt}`)).toBeInTheDocument();
+  expect(
+    JSON.parse(window.localStorage.getItem("multiplication-game-best-times"))
+  ).toEqual({ 3: 4000 });
+
+  fireEvent.click(screen.getByRole("button", { name: "Play again" }));
+  fireEvent.click(screen.getByRole("button", { name: "Advance" }));
+  await screen.findByText(/^[12] × \d+$/);
+
+  for (let question = 0; question < 5; question += 1) {
+    clock += 3000;
+    await answerCurrentQuestion();
+  }
+
+  expect(screen.getByText("Time: 15.0s")).toBeInTheDocument();
+  expect(screen.getByText("Best: 5.0s")).toBeInTheDocument();
+  expect(screen.getByText(`Set ${faster["3"].setAt}`)).toBeInTheDocument();
+  expect(screen.queryByText(/New best time/)).not.toBeInTheDocument();
+  expect(
+    JSON.parse(window.localStorage.getItem("multiplication-game-advance-best-times"))
+  ).toEqual(faster);
+  expect(faster["3"].ms).not.toBe(firstRecord.ms);
+
+  fireEvent.click(screen.getByRole("button", { name: "Play again" }));
+  fireEvent.click(screen.getByRole("button", { name: "Start" }));
+  await screen.findByText(/3 × \d+/);
+
+  for (let question = 0; question < 5; question += 1) {
+    clock += 500;
+    await answerCurrentQuestion();
+  }
+
+  expect(
+    JSON.parse(window.localStorage.getItem("multiplication-game-best-times"))
+  ).toEqual({ 3: 2500 });
+  expect(
+    JSON.parse(window.localStorage.getItem("multiplication-game-advance-best-times"))
+  ).toEqual(faster);
+  expect(screen.queryByText(`Set ${faster["3"].setAt}`)).not.toBeInTheDocument();
+  } finally {
+    window.matchMedia = originalMatchMedia;
+  }
 });
 
 test("supports ?style=fantasy URL query parameter", async () => {
