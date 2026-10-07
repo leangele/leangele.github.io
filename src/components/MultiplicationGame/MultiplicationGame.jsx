@@ -639,9 +639,6 @@ const MultiplicationGame = () => {
           graphicStyle={graphicStyle}
         />
         <section className={`score-card slide-panel slide-panel--${slidePhase}`}>
-          <div className="score-card__icon" aria-hidden="true">
-            {won ? "★" : "♪"}
-          </div>
           <span>
             {practicing
               ? won
@@ -671,18 +668,20 @@ const MultiplicationGame = () => {
                 {missedQuestions.map((item, index) => (
                   <li key={item.prompt}>
                     <span>{item.prompt}</span>
-                    {item.revealed ? (
-                      <strong>{item.answer}</strong>
-                    ) : (
-                      <button
-                        type="button"
-                        className="reveal-button"
-                        aria-label={`Reveal answer for ${item.prompt}`}
-                        onClick={() => revealMissedAnswer(index)}
-                      >
-                        Reveal answer
-                      </button>
-                    )}
+                    <div className="reveal-slot">
+                      {item.revealed ? (
+                        <strong>{item.answer}</strong>
+                      ) : (
+                        <button
+                          type="button"
+                          className="reveal-button"
+                          aria-label={`Reveal answer for ${item.prompt}`}
+                          onClick={() => revealMissedAnswer(index)}
+                        >
+                          Reveal answer
+                        </button>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
