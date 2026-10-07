@@ -1,15 +1,21 @@
 {
   "title": "Multiplication Challenge",
-  "subtitle": "Answer 5 questions before time runs out.",
-  "questionsPerLevel": 5,
+  "subtitle": "Answer 8 questions before time runs out.",
+  "questionsPerLevel": 8,
   "secondsPerQuestion": 5,
   "passPercent": 70,
+  "slideMs": 400,
+  "answerChoices": 4,
+  "practiceAnswerChoices": 2,
+  "minTable": 1,
+  "maxTable": 10,
+  "graphicStyle": "pixel",
   "sounds": true,
   "levels": [
     {
-      "id": 2,
-      "label": "Times Table 2",
-      "multiplier": 2,
+      "id": 3,
+      "label": "Times Table 3",
+      "multiplier": 3,
       "minFactor": 1,
       "maxFactor": 10
     }
