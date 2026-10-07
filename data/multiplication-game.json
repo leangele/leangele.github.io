@@ -1,0 +1,22 @@
+{
+  "title": "Multiplication Challenge",
+  "subtitle": "Pick a times table and answer 5 questions before time runs out.",
+  "questionsPerLevel": 5,
+  "secondsPerQuestion": 5,
+  "minSecondsPerQuestion": 3,
+  "maxSecondsPerQuestion": 15,
+  "passPercent": 70,
+  "sounds": true,
+  "levels": [
+    { "id": 1, "label": "Times Table 1", "multiplier": 1, "minFactor": 1, "maxFactor": 10 },
+    { "id": 2, "label": "Times Table 2", "multiplier": 2, "minFactor": 1, "maxFactor": 10 },
+    { "id": 3, "label": "Times Table 3", "multiplier": 3, "minFactor": 1, "maxFactor": 10 },
+    { "id": 4, "label": "Times Table 4", "multiplier": 4, "minFactor": 1, "maxFactor": 10 },
+    { "id": 5, "label": "Times Table 5", "multiplier": 5, "minFactor": 1, "maxFactor": 10 },
+    { "id": 6, "label": "Times Table 6", "multiplier": 6, "minFactor": 1, "maxFactor": 10 },
+    { "id": 7, "label": "Times Table 7", "multiplier": 7, "minFactor": 1, "maxFactor": 10 },
+    { "id": 8, "label": "Times Table 8", "multiplier": 8, "minFactor": 1, "maxFactor": 10 },
+    { "id": 9, "label": "Times Table 9", "multiplier": 9, "minFactor": 1, "maxFactor": 10 },
+    { "id": 10, "label": "Times Table 10", "multiplier": 10, "minFactor": 1, "maxFactor": 10 }
+  ]
+}
