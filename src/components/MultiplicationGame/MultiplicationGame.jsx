@@ -64,7 +64,6 @@ const MultiplicationGame = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [missedQuestions, setMissedQuestions] = useState([]);
-  const [showMissedAnswers, setShowMissedAnswers] = useState(false);
 
   useEffect(() => {
     const configUrl = `${
@@ -97,6 +96,7 @@ const MultiplicationGame = () => {
           {
             prompt: `${level.multiplier} × ${currentQuestion.factor}`,
             answer: currentQuestion.answer,
+            revealed: false,
           },
         ]);
       }
@@ -178,7 +178,14 @@ const MultiplicationGame = () => {
     setIsFinished(false);
     setHasStarted(true);
     setMissedQuestions([]);
-    setShowMissedAnswers(false);
+  };
+
+  const revealMissedAnswer = (index) => {
+    setMissedQuestions((current) =>
+      current.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, revealed: true } : item
+      )
+    );
   };
 
   const answerQuestion = (option) => {
@@ -228,6 +235,7 @@ const MultiplicationGame = () => {
       config.questionsPerLevel,
       config.passPercent
     );
+    const answersStillHidden = missedQuestions.some((item) => !item.revealed);
     return (
       <main className="math-game math-game--centered">
         <section className="score-card">
@@ -243,26 +251,30 @@ const MultiplicationGame = () => {
             <div className="missed-questions">
               <h2>Missed questions</h2>
               <ul>
-                {missedQuestions.map((item) => (
+                {missedQuestions.map((item, index) => (
                   <li key={item.prompt}>
                     <span>{item.prompt}</span>
-                    {showMissedAnswers && <strong>{item.answer}</strong>}
+                    {item.revealed ? (
+                      <strong>{item.answer}</strong>
+                    ) : (
+                      <button
+                        type="button"
+                        className="reveal-button"
+                        aria-label={`Reveal answer for ${item.prompt}`}
+                        onClick={() => revealMissedAnswer(index)}
+                      >
+                        Reveal answer
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
-              {!showMissedAnswers && (
-                <button
-                  type="button"
-                  className="reveal-button"
-                  onClick={() => setShowMissedAnswers(true)}
-                >
-                  Reveal answers
-                </button>
-              )}
             </div>
           )}
           <div className="score-card__actions">
-            <button onClick={startLevel}>Play again</button>
+            <button onClick={startLevel} disabled={answersStillHidden}>
+              Play again
+            </button>
           </div>
         </section>
       </main>

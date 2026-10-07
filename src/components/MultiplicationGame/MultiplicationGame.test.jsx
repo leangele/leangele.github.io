@@ -58,13 +58,11 @@ test("plays five questions and displays the final score", async () => {
   expect(screen.getByText("5 / 5")).toBeInTheDocument();
   expect(screen.getByText(/100%/)).toBeInTheDocument();
   expect(screen.getByText("Victory!")).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Play again" })).toBeEnabled();
 });
 
-test("lists a missed question on the score screen and reveals its answer", async () => {
-  render(<MultiplicationGame />);
-  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
-
-  const expression = (await screen.findByText(/^\d+ × \d+$/)).textContent;
+const missCurrentQuestion = () => {
+  const expression = screen.getByText(/^\d+ × \d+$/).textContent;
   const [left, right] = expression.split(" × ").map(Number);
   const correct = String(left * right);
   fireEvent.click(
@@ -72,23 +70,76 @@ test("lists a missed question on the score screen and reveals its answer", async
       .getAllByRole("button")
       .find((button) => button.textContent !== correct)
   );
+  return { expression, correct };
+};
 
+const answerCurrentQuestion = () => {
+  const expression = screen.getByText(/^\d+ × \d+$/).textContent;
+  const [left, right] = expression.split(" × ").map(Number);
+  fireEvent.click(screen.getByRole("button", { name: String(left * right) }));
+};
+
+test("lists a missed question on the score screen and reveals its answer", async () => {
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
+  await screen.findByText(/^\d+ × \d+$/);
+
+  const missed = missCurrentQuestion();
   for (let question = 0; question < 4; question += 1) {
-    const nextExpression = screen.getByText(/^\d+ × \d+$/).textContent;
-    const [nextLeft, nextRight] = nextExpression.split(" × ").map(Number);
-    fireEvent.click(
-      screen.getByRole("button", { name: String(nextLeft * nextRight) })
-    );
+    answerCurrentQuestion();
   }
 
+  const playAgain = screen.getByRole("button", { name: "Play again" });
   expect(screen.getByText("4 / 5")).toBeInTheDocument();
-  expect(screen.getByText(expression)).toBeInTheDocument();
-  expect(screen.queryByText(correct)).not.toBeInTheDocument();
+  expect(screen.getByText(missed.expression)).toBeInTheDocument();
+  expect(screen.queryByText(missed.correct)).not.toBeInTheDocument();
+  expect(playAgain).toBeDisabled();
 
-  fireEvent.click(screen.getByRole("button", { name: "Reveal answers" }));
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: `Reveal answer for ${missed.expression}`,
+    })
+  );
 
-  expect(screen.getByText(correct)).toBeInTheDocument();
+  expect(screen.getByText(missed.correct)).toBeInTheDocument();
   expect(
-    screen.queryByRole("button", { name: "Reveal answers" })
+    screen.queryByRole("button", {
+      name: `Reveal answer for ${missed.expression}`,
+    })
   ).not.toBeInTheDocument();
+  expect(playAgain).toBeEnabled();
+});
+
+test("keeps Play again disabled until every missed answer is revealed", async () => {
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
+  await screen.findByText(/^\d+ × \d+$/);
+
+  const missed = [missCurrentQuestion(), missCurrentQuestion()];
+  for (let question = 0; question < 3; question += 1) {
+    answerCurrentQuestion();
+  }
+
+  const playAgain = screen.getByRole("button", { name: "Play again" });
+  expect(screen.getByText("3 / 5")).toBeInTheDocument();
+  expect(playAgain).toBeDisabled();
+
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: `Reveal answer for ${missed[0].expression}`,
+    })
+  );
+
+  expect(screen.getByText(missed[0].correct)).toBeInTheDocument();
+  expect(screen.queryByText(missed[1].correct)).not.toBeInTheDocument();
+  expect(playAgain).toBeDisabled();
+
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: `Reveal answer for ${missed[1].expression}`,
+    })
+  );
+
+  expect(screen.getByText(missed[1].correct)).toBeInTheDocument();
+  expect(playAgain).toBeEnabled();
 });

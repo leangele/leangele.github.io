@@ -181,7 +181,20 @@
 }
 
 .missed-questions .reveal-button {
-  margin-top: 8px;
+  width: auto;
+  margin: 0;
+  padding: 8px 14px;
+  min-height: 40px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.score-card button:disabled,
+.score-card button:disabled:hover {
+  background: var(--game-purple);
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .level-card span,
