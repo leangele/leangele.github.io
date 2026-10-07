@@ -62,6 +62,7 @@ const MultiplicationGame = () => {
   const [score, setScore] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
     const configUrl = `${
@@ -76,16 +77,8 @@ const MultiplicationGame = () => {
         return response.json();
       })
       .then((gameConfig) => {
-        const selectedLevel = gameConfig.levels?.[0];
         setConfig(gameConfig);
-        if (!selectedLevel) {
-          return;
-        }
-        setLevel(selectedLevel);
-        setQuestions(
-          createQuestions(selectedLevel, gameConfig.questionsPerLevel)
-        );
-        setSecondsLeft(gameConfig.secondsPerQuestion);
+        setLevel(gameConfig.levels?.[0] ?? null);
       })
       .catch(() =>
         setError("Could not load the game configuration.")
@@ -128,7 +121,7 @@ const MultiplicationGame = () => {
   );
 
   useEffect(() => {
-    if (!level || isFinished || !currentQuestion) {
+    if (!hasStarted || !level || isFinished || !currentQuestion) {
       return undefined;
     }
 
@@ -144,6 +137,7 @@ const MultiplicationGame = () => {
     return () => window.clearTimeout(timer);
   }, [
     secondsLeft,
+    hasStarted,
     level,
     isFinished,
     currentQuestion,
@@ -158,17 +152,15 @@ const MultiplicationGame = () => {
     return ((questionIndex + 1) / questions.length) * 100;
   }, [questionIndex, questions.length]);
 
-  const startLevel = (selectedLevel) => {
+  const startLevel = () => {
     unlockGameAudio();
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setLevel(selectedLevel);
-    setQuestions(
-      createQuestions(selectedLevel, config.questionsPerLevel)
-    );
+    setQuestions(createQuestions(level, config.questionsPerLevel));
     setQuestionIndex(0);
     setScore(0);
     setSecondsLeft(config.secondsPerQuestion);
     setIsFinished(false);
+    setHasStarted(true);
   };
 
   const answerQuestion = (option) => {
@@ -198,6 +190,24 @@ const MultiplicationGame = () => {
     );
   }
 
+  if (!hasStarted) {
+    return (
+      <main className="math-game math-game--centered">
+        <section className="score-card">
+          <span>Level {level.id}</span>
+          <h1>{level.label}</h1>
+          <p>
+            {config.questionsPerLevel} questions · {config.secondsPerQuestion}{" "}
+            seconds
+          </p>
+          <div className="score-card__actions">
+            <button onClick={startLevel}>Start</button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   if (isFinished) {
     const percentage = Math.round((score / questions.length) * 100);
     const won = passedChallenge(score, questions.length, config.passPercent);
@@ -213,7 +223,7 @@ const MultiplicationGame = () => {
           </h1>
           <p>Your score was {percentage}%.</p>
           <div className="score-card__actions">
-            <button onClick={() => startLevel(level)}>Play again</button>
+            <button onClick={startLevel}>Play again</button>
           </div>
         </section>
       </main>

@@ -29,21 +29,22 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-test("starts the configured level without a level menu", async () => {
+test("waits for Start and then uses the configured times table", async () => {
   render(<MultiplicationGame />);
+
+  expect(await screen.findByRole("button", { name: "Start" })).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Times Table 2" })).toBeInTheDocument();
+  expect(screen.queryByText(/2 × \d+/)).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Start" }));
 
   expect(await screen.findByText(/2 × \d+/)).toBeInTheDocument();
   expect(screen.getByLabelText("5 seconds left")).toBeInTheDocument();
-  expect(
-    screen.queryByRole("button", { name: /Increase seconds/i })
-  ).not.toBeInTheDocument();
-  expect(
-    screen.queryByRole("button", { name: /Choose another level/i })
-  ).not.toBeInTheDocument();
 });
 
 test("plays five questions and displays the final score", async () => {
   render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
   await screen.findByText(/2 × \d+/);
 
   for (let question = 0; question < 5; question += 1) {
