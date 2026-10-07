@@ -2219,3 +2219,132 @@ img.hero-svg--selected,
     min-height: 120px;
   }
 }
+
+/* Desktop: use the viewport instead of scrolling the document.
+   Phone portrait and short landscape keep their own rules. */
+@media (min-width: 900px) and (min-height: 640px) {
+  html:has(.math-game--stage),
+  body:has(.math-game--stage) {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .math-game--stage {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) minmax(420px, 560px);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-content: center;
+    justify-content: center;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    padding: 16px 32px 20px;
+    gap: 8px 32px;
+  }
+
+  .math-game--stage .game-controls-bar {
+    grid-column: 1 / -1;
+    position: static;
+    width: min(100%, 980px);
+    justify-self: center;
+  }
+
+  .math-game--stage .adventure-scene {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center;
+    justify-self: center;
+    width: min(100%, 520px);
+  }
+
+  .math-game--stage .question-card,
+  .math-game--stage .score-card {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    width: min(100%, 560px);
+    max-height: 100%;
+    padding: 18px 22px;
+  }
+
+  .math-game--stage .question-card {
+    overflow: visible;
+  }
+
+  .math-game--stage .score-card {
+    overflow: auto;
+  }
+
+  .math-game--stage .progress-label {
+    margin-top: 12px;
+  }
+
+  .math-game--stage .timer {
+    width: 56px;
+    height: 56px;
+    margin: 10px auto 8px;
+    border-width: 5px;
+    font-size: 1.6rem;
+  }
+
+  .math-game--stage .question-card__prompt h1 {
+    margin-bottom: 8px;
+    font-size: clamp(2.2rem, 7vh, 4rem);
+  }
+
+  .math-game--stage .adventure-scene--battle,
+  .math-game--stage .adventure-scene--victory,
+  .math-game--stage .adventure-scene--defeat {
+    min-height: 150px;
+  }
+}
+
+@media (min-width: 900px) and (min-height: 640px) and (max-height: 860px) {
+  .math-game--stage {
+    padding: 10px 24px 12px;
+    gap: 4px 24px;
+  }
+
+  .math-game--stage .hero-choice img.hero-svg,
+  .math-game--stage .hero-slot img.hero-svg {
+    width: 84px;
+  }
+
+  .math-game--stage .adventure-scene--battle .demon-slot,
+  .math-game--stage .adventure-scene--victory .demon-slot,
+  .math-game--stage .adventure-scene--defeat .demon-slot,
+  .math-game--stage .adventure-scene--select .demon-slot {
+    width: 128px;
+  }
+
+  .math-game--stage .question-card,
+  .math-game--stage .score-card {
+    padding: 14px 18px;
+  }
+
+  .math-game--stage .answer-grid {
+    gap: 8px;
+  }
+
+  .math-game--stage .answer-grid button {
+    min-height: 46px;
+  }
+
+  .math-game--stage .timer {
+    width: 48px;
+    height: 48px;
+    margin: 6px auto 4px;
+    font-size: 1.35rem;
+  }
+
+  .math-game--stage .progress-label {
+    margin-top: 6px;
+  }
+
+  .math-game--stage .question-card__prompt h1 {
+    font-size: clamp(2rem, 6vh, 3.2rem);
+  }
+}

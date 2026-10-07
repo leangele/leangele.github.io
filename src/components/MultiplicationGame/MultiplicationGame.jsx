@@ -35,6 +35,16 @@ export const readStoredGraphicStyle = (configuredStyle) => {
   return configuredStyle === "fantasy" ? "fantasy" : "pixel";
 };
 
+export const musicPhaseFor = ({ hasStarted, playMode, isFinished, won }) => {
+  if (!hasStarted) {
+    return "select";
+  }
+  if (isFinished) {
+    return won ? "victory" : "defeat";
+  }
+  return playMode === "practice" ? "select" : "combat";
+};
+
 export const formatRoundTime = (milliseconds) => {
   const seconds = Math.max(0, Number(milliseconds) || 0) / 1000;
   return `${seconds.toFixed(1)}s`;
@@ -205,11 +215,13 @@ const MultiplicationGame = () => {
   const [beatRecord, setBeatRecord] = useState(false);
   const [previousBestMs, setPreviousBestMs] = useState(null);
   const soundOnRef = useRef(true);
+  const graphicStyleRef = useRef("pixel");
   const playModeRef = useRef("battle");
   const pendingAdvance = useRef(null);
   const answerElapsedRef = useRef(0);
   const questionShownAtRef = useRef(0);
   soundOnRef.current = soundOn;
+  graphicStyleRef.current = graphicStyle;
   playModeRef.current = playMode;
 
   useEffect(() => {
@@ -282,7 +294,7 @@ const MultiplicationGame = () => {
             audioEngine.playDefeatTheme();
           }
         } else {
-          playBetweenQuestions(graphicStyle);
+          playBetweenQuestions(graphicStyleRef.current);
         }
       }
 
@@ -306,7 +318,7 @@ const MultiplicationGame = () => {
       setQuestionIndex((current) => current + 1);
       setSecondsLeft(config.secondsPerQuestion);
     },
-    [config, currentQuestion, graphicStyle, level, questionIndex, questions.length, score]
+    [config, currentQuestion, level, questionIndex, questions.length, score]
   );
 
   const beginAdvance = useCallback((wasCorrect) => {
@@ -437,12 +449,23 @@ const MultiplicationGame = () => {
     } catch (error) {
       // Storage might be blocked
     }
-    if (soundOnRef.current) {
-      if (!hasStarted || playModeRef.current === "practice") {
-        startSelectMusic(nextStyle);
-      } else if (!isFinished) {
-        startCombatMusic(nextStyle);
-      }
+    if (!soundOnRef.current) {
+      return;
+    }
+    const phase = musicPhaseFor({
+      hasStarted,
+      playMode: playModeRef.current,
+      isFinished,
+      won: passedChallenge(score, roundTotal, config.passPercent),
+    });
+    if (phase === "select") {
+      startSelectMusic(nextStyle);
+    } else if (phase === "combat") {
+      startCombatMusic(nextStyle);
+    } else if (phase === "victory") {
+      audioEngine.playVictoryTheme(nextStyle);
+    } else {
+      audioEngine.playDefeatTheme(nextStyle);
     }
   };
 
@@ -547,10 +570,10 @@ const MultiplicationGame = () => {
       <button
         type="button"
         className={`style-toggle style-toggle--${graphicStyle}`}
-        aria-label={`Estilo gráfico: ${graphicStyle === "pixel" ? "Pixel Art Retro" : "Fantasía Medieval"}`}
+        aria-label={`Graphic style: ${graphicStyle === "pixel" ? "Pixel art" : "Fantasy"}. Switch to ${graphicStyle === "pixel" ? "fantasy" : "pixel art"}`}
         onClick={toggleGraphicStyle}
       >
-        {graphicStyle === "pixel" ? "👾 Pixel Art" : "🛡️ Fantasía"}
+        {graphicStyle === "pixel" ? "👾 Pixel Art" : "🛡️ Fantasy"}
       </button>
       <button
         type="button"

@@ -6,6 +6,7 @@ import MultiplicationGame, {
   createOrderedQuestions,
   formatRoundTime,
   levelFromTableQuery,
+  musicPhaseFor,
   nextBestTime,
 } from "./MultiplicationGame";
 
@@ -28,6 +29,7 @@ const config = {
 beforeEach(() => {
   window.history.pushState({}, "", "/");
   window.localStorage.removeItem("multiplication-game-sound");
+  window.localStorage.removeItem("multiplication-game-style");
   window.localStorage.removeItem("multiplication-game-best-times");
   window.scrollTo = jest.fn();
   global.fetch = jest.fn().mockResolvedValue({
@@ -422,14 +424,57 @@ test("assigns a different fantasy creature to each times table", () => {
   expect(getCreature(10).name).toBe("Phoenix");
 });
 
+test("chooses the music bed for the phase that is already playing", () => {
+  expect(
+    musicPhaseFor({
+      hasStarted: false,
+      playMode: "battle",
+      isFinished: false,
+      won: false,
+    })
+  ).toBe("select");
+  expect(
+    musicPhaseFor({
+      hasStarted: true,
+      playMode: "practice",
+      isFinished: false,
+      won: false,
+    })
+  ).toBe("select");
+  expect(
+    musicPhaseFor({
+      hasStarted: true,
+      playMode: "battle",
+      isFinished: false,
+      won: false,
+    })
+  ).toBe("combat");
+  expect(
+    musicPhaseFor({
+      hasStarted: true,
+      playMode: "battle",
+      isFinished: true,
+      won: true,
+    })
+  ).toBe("victory");
+  expect(
+    musicPhaseFor({
+      hasStarted: true,
+      playMode: "battle",
+      isFinished: true,
+      won: false,
+    })
+  ).toBe("defeat");
+});
+
 test("toggles between pixel art and fantasy styles and updates the arena", async () => {
   render(<MultiplicationGame />);
 
   const toggleBtn = await screen.findByRole("button", {
-    name: /Estilo gráfico:/,
+    name: /Graphic style:/,
   });
   expect(document.querySelector(".math-game--style-pixel")).not.toBeNull();
-  expect(document.querySelector(".battle-arena-stage")).toBeNull(); // not started yet
+  expect(document.querySelector(".battle-arena-stage")).toBeNull();
 
   fireEvent.click(toggleBtn);
   expect(document.querySelector(".math-game--style-fantasy")).not.toBeNull();
@@ -439,10 +484,38 @@ test("toggles between pixel art and fantasy styles and updates the arena", async
   expect(document.querySelector(".battle-arena-stage")).not.toBeNull();
   expect(document.querySelector(".math-game--style-fantasy")).not.toBeNull();
 
-  // Toggle back to pixel
-  fireEvent.click(toggleBtn);
+  fireEvent.click(screen.getByRole("button", { name: /Graphic style:/ }));
   expect(document.querySelector(".math-game--style-pixel")).not.toBeNull();
   expect(window.localStorage.getItem("multiplication-game-style")).toBe("pixel");
+});
+
+test("switches graphic style during a question without resetting the round", async () => {
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
+
+  const expression = (await screen.findByText(/^\d+ × \d+$/)).textContent;
+  const secondsLeft = screen.getByLabelText(/seconds left/).textContent;
+  expect(screen.getByText("0 correct")).toBeInTheDocument();
+  expect(document.querySelector(".hero-svg").getAttribute("src")).toContain(
+    "pixel-hunter.svg"
+  );
+
+  fireEvent.click(
+    screen.getByRole("button", { name: /Graphic style: Pixel art/ })
+  );
+
+  expect(document.querySelector(".math-game--style-fantasy")).not.toBeNull();
+  expect(screen.getByText(expression)).toBeInTheDocument();
+  expect(screen.getByLabelText(/seconds left/).textContent).toBe(secondsLeft);
+  expect(screen.getByText("0 correct")).toBeInTheDocument();
+  expect(screen.getByText(/Question 1 of/)).toBeInTheDocument();
+  expect(document.querySelector(".hero-svg").getAttribute("src")).toContain(
+    "hunter.svg"
+  );
+  expect(document.querySelector(".hero-svg").getAttribute("src")).not.toContain(
+    "pixel-hunter.svg"
+  );
+  expect(window.localStorage.getItem("multiplication-game-style")).toBe("fantasy");
 });
 
 test("supports ?style=fantasy URL query parameter", async () => {
