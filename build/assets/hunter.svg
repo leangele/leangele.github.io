@@ -1,25 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120">
   <defs>
-    <linearGradient id="leatherGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#15803d"/><stop offset="100%" stop-color="#14532d"/>
-    </linearGradient>
-    <linearGradient id="woodGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#b45309"/><stop offset="100%" stop-color="#78350f"/>
-    </linearGradient>
+    <!-- Shadows & filters -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
   </defs>
-  <ellipse cx="50" cy="92" rx="34" ry="6" fill="rgba(0,0,0,0.25)"/>
-  <path d="M34 44 L30 84 Q50 88 70 84 L66 44 Z" fill="url(#leatherGrad)" stroke="#052e16" stroke-width="2"/>
-  <rect x="32" y="60" width="36" height="5" rx="1.5" fill="#78350f" stroke="#451a03" stroke-width="1"/>
-  <circle cx="50" cy="30" r="11" fill="#ffedd5"/>
-  <path d="M34 30 C34 16 66 16 66 30 C66 40 58 42 50 42 C42 42 34 40 34 30 Z" fill="#166534" stroke="#052e16" stroke-width="2"/>
-  <path d="M58 20 Q70 12 72 22 Q64 22 58 20 Z" fill="#ea580c"/>
-  <ellipse cx="50" cy="31" rx="8" ry="7" fill="#ffedd5"/>
-  <circle cx="47" cy="30" r="1.5" fill="#0f172a"/>
-  <circle cx="53" cy="30" r="1.5" fill="#0f172a"/>
-  <path d="M22 22 Q10 50 22 80" stroke="url(#woodGrad)" stroke-width="4" stroke-linecap="round" fill="none"/>
-  <line x1="22" y1="22" x2="22" y2="80" stroke="#cbd5e1" stroke-width="1.5"/>
-  <line x1="16" y1="51" x2="42" y2="51" stroke="#475569" stroke-width="2"/>
-  <polygon points="42,51 37,48 37,54" fill="#0284c7"/>
-  <polygon points="16,51 13,48 13,54" fill="#ea580c"/>
-  <rect x="62" y="32" width="7" height="24" rx="2" transform="rotate(18 62 32)" fill="#9a3412" stroke="#451a03" stroke-width="1.5"/>
+  <!-- Base Shadow -->
+  <ellipse cx="50" cy="110" rx="34" ry="7" fill="#000" opacity="0.25"/>
+
+  <!-- Quiver on back (situado en la espalda a la izquierda) -->
+  <rect x="31" y="32" width="15" height="42" rx="4" fill="#7A3E1D"/>
+  <!-- Arrows in quiver -->
+  <path d="M 43 32 L 45 18 M 39 32 L 38 16 M 34 32 L 32 20" stroke="#2C3E50" stroke-width="2"/>
+  <polygon points="47,18 43,18 45,14" fill="#E65100"/>
+  <polygon points="40,16 36,16 38,12" fill="#E65100"/>
+  <polygon points="34,20 30,20 32,16" fill="#E65100"/>
+
+  <!-- Body/Tunic -->
+  <path d="M 33 43 L 67 43 L 71 85 L 29 85 Z" fill="#2E6930" stroke="#1D471F" stroke-width="2"/>
+  <!-- Belt -->
+  <rect x="31" y="59" width="38" height="6" fill="#7A3E1D"/>
+  <rect x="46" y="58" width="8" height="8" fill="#D4AC0D"/>
+
+  <!-- Legs -->
+  <rect x="36" y="85" width="10" height="18" fill="#1D471F"/>
+  <rect x="54" y="85" width="10" height="18" fill="#1D471F"/>
+  <!-- Boots -->
+  <rect x="34" y="98" width="13" height="8" rx="2" fill="#5D4037"/>
+  <rect x="53" y="98" width="13" height="8" rx="2" fill="#5D4037"/>
+
+  <!-- Head -->
+  <ellipse cx="50" cy="30" rx="17" ry="14" fill="#2E6930" stroke="#1D471F" stroke-width="2"/>
+  <ellipse cx="50" cy="31" rx="10" ry="7" fill="#FFE0BD"/>
+  <!-- Ojos mirando al frente/derecha hacia el enemigo -->
+  <circle cx="48" cy="30" r="1.5" fill="#1C2833"/>
+  <circle cx="54" cy="30" r="1.5" fill="#1C2833"/>
+  <!-- Pluma orientada hacia atrás -->
+  <path d="M 42 20 C 35 15, 25 18, 28 22 C 32 22, 40 21, 42 20 Z" fill="#E65100"/>
+
+  <!-- Arco en la mano delantera apuntando hacia la derecha (hacia el enemigo) -->
+  <g class="svg-hero-tool">
+    <path d="M 78 25 Q 88 75 78 105" stroke="#7A3E1D" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <line x1="78" y1="26" x2="78" y2="104" stroke="#E0E6ED" stroke-width="1.5"/>
+  </g>
+  <!-- Flecha nockada orientada hacia adelante / enemigo -->
+  <g class="svg-nocked-arrow">
+    <line x1="62" y1="65" x2="84" y2="65" stroke="#2C3E50" stroke-width="2.5"/>
+    <polygon points="84,62 90,65 84,68" fill="#0080FF"/>
+    <polygon points="62,62 59,65 62,68" fill="#FF6600"/>
+  </g>
 </svg>
