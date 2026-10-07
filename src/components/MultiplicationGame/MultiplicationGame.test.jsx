@@ -171,8 +171,13 @@ test("shows the times table requested in the URL", async () => {
   expect(document.querySelector(".math-game--realm-griffin")).not.toBeNull();
 });
 
+const openGameMenu = async () => {
+  fireEvent.click(await screen.findByRole("button", { name: "Open menu" }));
+};
+
 test("turns sound off and remembers that choice", async () => {
   render(<MultiplicationGame />);
+  await openGameMenu();
 
   fireEvent.click(await screen.findByRole("button", { name: "Turn sound off" }));
 
@@ -491,6 +496,7 @@ test("chooses the music bed for the phase that is already playing", () => {
 
 test("toggles between pixel art and fantasy styles and updates the arena", async () => {
   render(<MultiplicationGame />);
+  await openGameMenu();
 
   const toggleBtn = await screen.findByRole("button", {
     name: /Graphic style:/,
@@ -506,6 +512,7 @@ test("toggles between pixel art and fantasy styles and updates the arena", async
   expect(document.querySelector(".battle-arena-stage")).not.toBeNull();
   expect(document.querySelector(".math-game--style-fantasy")).not.toBeNull();
 
+  await openGameMenu();
   fireEvent.click(screen.getByRole("button", { name: /Graphic style:/ }));
   expect(document.querySelector(".math-game--style-pixel")).not.toBeNull();
   expect(window.localStorage.getItem("multiplication-game-style")).toBe("pixel");
@@ -522,6 +529,7 @@ test("switches graphic style during a question without resetting the round", asy
     "pixel-hunter.svg"
   );
 
+  await openGameMenu();
   fireEvent.click(
     screen.getByRole("button", { name: /Graphic style: Pixel art/ })
   );
@@ -748,6 +756,41 @@ test("stores an advance best time separately and shows the date", async () => {
   } finally {
     window.matchMedia = originalMatchMedia;
   }
+});
+
+test("opens a menu of times tables and switches the creature", async () => {
+  render(<MultiplicationGame />);
+  await openGameMenu();
+
+  expect(screen.getByRole("dialog", { name: "Game menu" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Times Table 1" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Times Table 10" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Times Table 2" })).toHaveAttribute(
+    "aria-current",
+    "true"
+  );
+
+  fireEvent.click(screen.getByRole("button", { name: "Times Table 7" }));
+
+  expect(screen.getByRole("heading", { name: "Times Table 7" })).toBeInTheDocument();
+  expect(screen.getByText(/face the Griffin/)).toBeInTheDocument();
+  expect(document.querySelector(".math-game--realm-griffin")).not.toBeNull();
+  expect(screen.queryByRole("dialog", { name: "Game menu" })).not.toBeInTheDocument();
+  expect(window.location.search).toBe("?table=7");
+});
+
+test("returns to hero select when a different table is chosen mid-round", async () => {
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
+  const expression = (await screen.findByText(/^\d+ × \d+$/)).textContent;
+
+  await openGameMenu();
+  fireEvent.click(screen.getByRole("button", { name: "Times Table 5" }));
+
+  expect(screen.queryByText(expression)).not.toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Times Table 5" })).toBeInTheDocument();
+  expect(screen.getByText(/face the Fire Dragon/)).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Start" })).toBeEnabled();
 });
 
 test("supports ?style=fantasy URL query parameter", async () => {

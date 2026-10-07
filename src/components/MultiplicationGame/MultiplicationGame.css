@@ -164,10 +164,141 @@
   padding-inline: clamp(12px, 4vw, 24px);
 }
 
-.sound-bar {
+.game-menu {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 50;
+}
+
+.menu-button {
+  position: relative;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid var(--game-yellow);
+  border-radius: 10px;
+  background: rgba(30, 20, 12, 0.88);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.menu-button__bars,
+.menu-button__bars::before,
+.menu-button__bars::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 1px;
+  background: #f8f1e3;
+}
+
+.menu-button__bars {
+  position: relative;
+}
+
+.menu-button__bars::before,
+.menu-button__bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.menu-button__bars::before {
+  top: -6px;
+}
+
+.menu-button__bars::after {
+  top: 6px;
+}
+
+.menu-button[aria-expanded="true"] .menu-button__bars {
+  background: transparent;
+}
+
+.menu-button[aria-expanded="true"] .menu-button__bars::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.menu-button[aria-expanded="true"] .menu-button__bars::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+.game-menu__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  padding: 0;
+  background: rgba(12, 8, 4, 0.45);
+  cursor: pointer;
+}
+
+.game-menu__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 2;
+  width: min(280px, calc(100vw - 24px));
+  max-height: min(70dvh, 520px);
+  overflow: auto;
+  padding: 14px;
+  border: 3px solid var(--game-purple);
+  border-radius: 14px;
+  background: #f6e7c1;
+  color: var(--game-ink);
+  box-shadow: 0 16px 32px rgba(24, 14, 8, 0.35);
+}
+
+.game-menu__panel h2 {
+  margin: 0 0 8px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 1rem;
+  color: var(--game-purple);
+}
+
+.game-menu__levels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.game-menu__level {
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 8px;
+  border: 2px solid var(--game-purple);
+  border-radius: 10px;
+  background: #fff8ea;
+  color: var(--game-ink);
+  font-family: "Nunito", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.game-menu__level--current {
+  background: var(--game-purple);
+  color: #fff8ea;
+}
+
+.game-menu__settings {
   display: flex;
-  justify-content: flex-end;
-  width: min(100%, 560px);
+  flex-direction: column;
+  gap: 8px;
+}
+
+.game-menu__settings .style-toggle,
+.game-menu__settings .sound-toggle {
+  width: 100%;
+  justify-content: center;
 }
 
 .sound-toggle {
@@ -186,14 +317,6 @@
 .sound-toggle--off {
   border-color: rgba(248, 241, 227, 0.4);
   color: rgba(248, 241, 227, 0.75);
-}
-
-.game-controls-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  width: min(100%, 560px);
 }
 
 .style-toggle {
@@ -312,10 +435,18 @@
 }
 
 .math-game--style-pixel .sound-toggle,
-.math-game--style-pixel .style-toggle {
+.math-game--style-pixel .style-toggle,
+.math-game--style-pixel .menu-button,
+.math-game--style-pixel .game-menu__level {
   border-radius: 6px;
   border-width: 3px;
   box-shadow: 3px 3px 0px #000000;
+}
+
+.math-game--style-pixel .game-menu__panel {
+  border-radius: 8px;
+  border: 4px solid #111827;
+  box-shadow: 6px 6px 0 #0f172a;
 }
 
 /* =========================================================================
@@ -2470,7 +2601,7 @@ img.hero-svg--selected,
   .math-game--stage {
     display: grid;
     grid-template-columns: minmax(300px, 1fr) minmax(420px, 560px);
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     align-content: center;
     justify-content: center;
     height: 100vh;
@@ -2482,16 +2613,9 @@ img.hero-svg--selected,
     gap: 8px 32px;
   }
 
-  .math-game--stage .game-controls-bar {
-    grid-column: 1 / -1;
-    position: static;
-    width: min(100%, 980px);
-    justify-self: center;
-  }
-
   .math-game--stage .adventure-scene {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 1;
     align-self: center;
     justify-self: center;
     width: min(100%, 520px);
@@ -2500,7 +2624,7 @@ img.hero-svg--selected,
   .math-game--stage .question-card,
   .math-game--stage .score-card {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 1;
     align-self: center;
     width: min(100%, 560px);
     max-height: 100%;

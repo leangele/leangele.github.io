@@ -323,6 +323,7 @@ const MultiplicationGame = () => {
   const [previousBestMs, setPreviousBestMs] = useState(null);
   const [bestSetAt, setBestSetAt] = useState(null);
   const [liveRoundMs, setLiveRoundMs] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   const soundOnRef = useRef(true);
   const graphicStyleRef = useRef(null);
   const playModeRef = useRef("battle");
@@ -362,6 +363,19 @@ const MultiplicationGame = () => {
   }, []);
 
   useEffect(() => () => stopCombatMusic(), []);
+
+  useEffect(() => {
+    if (!menuOpen) {
+      return undefined;
+    }
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
 
   const currentQuestion = questions[questionIndex];
   const roundTotal =
@@ -574,6 +588,7 @@ const MultiplicationGame = () => {
     if (mode === "advance" && level.multiplier <= config.minTable) {
       return;
     }
+    setMenuOpen(false);
     unlockGameAudio();
     if (soundOnRef.current) {
       if (mode === "practice") {
@@ -648,7 +663,7 @@ const MultiplicationGame = () => {
   };
 
   const playSelectMusic = (event) => {
-    if (event?.target?.closest?.(".score-card__actions, .sound-toggle, .style-toggle")) {
+    if (event?.target?.closest?.(".score-card__actions, .game-menu")) {
       return;
     }
     unlockGameAudio();
@@ -688,6 +703,31 @@ const MultiplicationGame = () => {
       audioEngine.playVictoryTheme();
     } else {
       audioEngine.playDefeatTheme();
+    }
+  };
+
+  const selectTable = (table) => {
+    setMenuOpen(false);
+    if (table === level.multiplier) {
+      return;
+    }
+
+    setLevel(levelFromTableQuery(config, `?table=${table}`));
+    try {
+      const params = new URLSearchParams(window.location.search);
+      params.set("table", String(table));
+      const query = params.toString();
+      window.history.replaceState(
+        {},
+        "",
+        `${window.location.pathname}${query ? `?${query}` : ""}`
+      );
+    } catch (error) {
+      // The chosen table still applies for this visit.
+    }
+
+    if (hasStarted) {
+      returnToHeroSelect();
     }
   };
 
@@ -739,25 +779,77 @@ const MultiplicationGame = () => {
     );
   }
 
-  const soundToggle = (
-    <div className="sound-bar game-controls-bar">
+  const tableNumbers = Array.from(
+    { length: config.maxTable - config.minTable + 1 },
+    (_, index) => config.minTable + index
+  );
+  const gameMenu = (
+    <div className="game-menu">
       <button
         type="button"
-        className={`style-toggle style-toggle--${graphicStyle}`}
-        aria-label={`Graphic style: ${graphicStyle === "pixel" ? "Pixel art" : "Fantasy"}. Switch to ${graphicStyle === "pixel" ? "fantasy" : "pixel art"}`}
-        onClick={toggleGraphicStyle}
+        className="menu-button"
+        aria-expanded={menuOpen}
+        aria-controls="game-menu-panel"
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        onClick={() => setMenuOpen((open) => !open)}
       >
-        {graphicStyle === "pixel" ? "👾 Pixel Art" : "🛡️ Fantasy"}
+        <span className="menu-button__bars" aria-hidden="true" />
       </button>
-      <button
-        type="button"
-        className={`sound-toggle ${soundOn ? "sound-toggle--on" : "sound-toggle--off"}`}
-        aria-pressed={soundOn}
-        aria-label={soundOn ? "Turn sound off" : "Turn sound on"}
-        onClick={toggleSound}
-      >
-        {soundOn ? "Sound on" : "Sound off"}
-      </button>
+      {menuOpen && (
+        <>
+          <button
+            type="button"
+            className="game-menu__backdrop"
+            aria-label="Dismiss menu"
+            onClick={() => setMenuOpen(false)}
+          />
+          <div
+            id="game-menu-panel"
+            className="game-menu__panel"
+            role="dialog"
+            aria-label="Game menu"
+          >
+            <h2>Levels</h2>
+            <ul className="game-menu__levels">
+              {tableNumbers.map((table) => (
+                <li key={table}>
+                  <button
+                    type="button"
+                    className={`game-menu__level${
+                      level.multiplier === table ? " game-menu__level--current" : ""
+                    }`}
+                    aria-current={level.multiplier === table ? "true" : undefined}
+                    aria-label={`Times Table ${table}`}
+                    onClick={() => selectTable(table)}
+                  >
+                    Table {table}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <h2>Settings</h2>
+            <div className="game-menu__settings">
+              <button
+                type="button"
+                className={`style-toggle style-toggle--${graphicStyle}`}
+                aria-label={`Graphic style: ${graphicStyle === "pixel" ? "Pixel art" : "Fantasy"}. Switch to ${graphicStyle === "pixel" ? "fantasy" : "pixel art"}`}
+                onClick={toggleGraphicStyle}
+              >
+                {graphicStyle === "pixel" ? "👾 Pixel Art" : "🛡️ Fantasy"}
+              </button>
+              <button
+                type="button"
+                className={`sound-toggle ${soundOn ? "sound-toggle--on" : "sound-toggle--off"}`}
+                aria-pressed={soundOn}
+                aria-label={soundOn ? "Turn sound off" : "Turn sound on"}
+                onClick={toggleSound}
+              >
+                {soundOn ? "Sound on" : "Sound off"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
   const stageClass = `math-game math-game--stage math-game--style-${graphicStyle} math-game--realm-${creature.id}`;
@@ -766,7 +858,7 @@ const MultiplicationGame = () => {
   if (!hasStarted) {
     return (
       <main className={stageClass} style={stageStyle} onPointerDown={playSelectMusic}>
-        {soundToggle}
+        {gameMenu}
         <AdventureScene
           mode="select"
           selectedHero={heroId}
@@ -820,7 +912,7 @@ const MultiplicationGame = () => {
     const answersStillHidden = missedQuestions.some((item) => !item.revealed);
     return (
       <main className={stageClass} style={stageStyle}>
-        {soundToggle}
+        {gameMenu}
         <AdventureScene
           mode={won ? "victory" : "defeat"}
           heroId={heroId}
@@ -893,7 +985,7 @@ const MultiplicationGame = () => {
 
   return (
     <main className={stageClass} style={stageStyle}>
-      {soundToggle}
+      {gameMenu}
       <AdventureScene
         mode="battle"
         heroId={heroId}
