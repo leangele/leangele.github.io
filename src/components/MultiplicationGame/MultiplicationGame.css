@@ -153,6 +153,37 @@
   }
 }
 
+.missed-questions {
+  width: 100%;
+  margin-top: 8px;
+  text-align: left;
+}
+
+.missed-questions h2 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+}
+
+.missed-questions ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.missed-questions li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid #e9e6f7;
+  font-weight: 800;
+}
+
+.missed-questions .reveal-button {
+  margin-top: 8px;
+}
+
 .level-card span,
 .score-card > span {
   color: var(--game-purple);

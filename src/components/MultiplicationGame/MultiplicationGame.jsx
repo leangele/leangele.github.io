@@ -63,6 +63,8 @@ const MultiplicationGame = () => {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [missedQuestions, setMissedQuestions] = useState([]);
+  const [showMissedAnswers, setShowMissedAnswers] = useState(false);
 
   useEffect(() => {
     const configUrl = `${
@@ -88,7 +90,22 @@ const MultiplicationGame = () => {
   const currentQuestion = questions[questionIndex];
 
   const finishOrAdvance = useCallback(
-    (nextScore) => {
+    (wasCorrect) => {
+      if (!wasCorrect) {
+        setMissedQuestions((current) => [
+          ...current,
+          {
+            prompt: `${level.multiplier} × ${currentQuestion.factor}`,
+            answer: currentQuestion.answer,
+          },
+        ]);
+      }
+
+      const nextScore = wasCorrect ? score + 1 : score;
+      if (wasCorrect) {
+        setScore(nextScore);
+      }
+
       const soundsEnabled = config.sounds !== false;
       const isLastQuestion = questionIndex >= questions.length - 1;
 
@@ -96,7 +113,7 @@ const MultiplicationGame = () => {
         if (isLastQuestion) {
           const won = passedChallenge(
             nextScore,
-            questions.length,
+            config.questionsPerLevel,
             config.passPercent
           );
           if (won) {
@@ -117,7 +134,7 @@ const MultiplicationGame = () => {
       setQuestionIndex((current) => current + 1);
       setSecondsLeft(config.secondsPerQuestion);
     },
-    [config, questionIndex, questions.length]
+    [config, currentQuestion, level, questionIndex, questions.length, score]
   );
 
   useEffect(() => {
@@ -126,7 +143,7 @@ const MultiplicationGame = () => {
     }
 
     if (secondsLeft === 0) {
-      finishOrAdvance(score);
+      finishOrAdvance(false);
       return undefined;
     }
 
@@ -142,7 +159,6 @@ const MultiplicationGame = () => {
     isFinished,
     currentQuestion,
     finishOrAdvance,
-    score,
   ]);
 
   const progress = useMemo(() => {
@@ -161,15 +177,12 @@ const MultiplicationGame = () => {
     setSecondsLeft(config.secondsPerQuestion);
     setIsFinished(false);
     setHasStarted(true);
+    setMissedQuestions([]);
+    setShowMissedAnswers(false);
   };
 
   const answerQuestion = (option) => {
-    const nextScore =
-      option === currentQuestion.answer ? score + 1 : score;
-    if (nextScore !== score) {
-      setScore(nextScore);
-    }
-    finishOrAdvance(nextScore);
+    finishOrAdvance(option === currentQuestion.answer);
   };
 
   if (error) {
@@ -209,8 +222,12 @@ const MultiplicationGame = () => {
   }
 
   if (isFinished) {
-    const percentage = Math.round((score / questions.length) * 100);
-    const won = passedChallenge(score, questions.length, config.passPercent);
+    const percentage = Math.round((score / config.questionsPerLevel) * 100);
+    const won = passedChallenge(
+      score,
+      config.questionsPerLevel,
+      config.passPercent
+    );
     return (
       <main className="math-game math-game--centered">
         <section className="score-card">
@@ -219,9 +236,31 @@ const MultiplicationGame = () => {
           </div>
           <span>{won ? "Victory!" : "Try again"}</span>
           <h1>
-            {score} / {questions.length}
+            {score} / {config.questionsPerLevel}
           </h1>
           <p>Your score was {percentage}%.</p>
+          {missedQuestions.length > 0 && (
+            <div className="missed-questions">
+              <h2>Missed questions</h2>
+              <ul>
+                {missedQuestions.map((item) => (
+                  <li key={item.prompt}>
+                    <span>{item.prompt}</span>
+                    {showMissedAnswers && <strong>{item.answer}</strong>}
+                  </li>
+                ))}
+              </ul>
+              {!showMissedAnswers && (
+                <button
+                  type="button"
+                  className="reveal-button"
+                  onClick={() => setShowMissedAnswers(true)}
+                >
+                  Reveal answers
+                </button>
+              )}
+            </div>
+          )}
           <div className="score-card__actions">
             <button onClick={startLevel}>Play again</button>
           </div>

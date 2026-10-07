@@ -59,3 +59,36 @@ test("plays five questions and displays the final score", async () => {
   expect(screen.getByText(/100%/)).toBeInTheDocument();
   expect(screen.getByText("Victory!")).toBeInTheDocument();
 });
+
+test("lists a missed question on the score screen and reveals its answer", async () => {
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
+
+  const expression = (await screen.findByText(/^\d+ × \d+$/)).textContent;
+  const [left, right] = expression.split(" × ").map(Number);
+  const correct = String(left * right);
+  fireEvent.click(
+    screen
+      .getAllByRole("button")
+      .find((button) => button.textContent !== correct)
+  );
+
+  for (let question = 0; question < 4; question += 1) {
+    const nextExpression = screen.getByText(/^\d+ × \d+$/).textContent;
+    const [nextLeft, nextRight] = nextExpression.split(" × ").map(Number);
+    fireEvent.click(
+      screen.getByRole("button", { name: String(nextLeft * nextRight) })
+    );
+  }
+
+  expect(screen.getByText("4 / 5")).toBeInTheDocument();
+  expect(screen.getByText(expression)).toBeInTheDocument();
+  expect(screen.queryByText(correct)).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Reveal answers" }));
+
+  expect(screen.getByText(correct)).toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "Reveal answers" })
+  ).not.toBeInTheDocument();
+});
