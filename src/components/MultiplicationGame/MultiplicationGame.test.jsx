@@ -3,6 +3,8 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 jest.setTimeout(60000);
 import { getCreature } from "./CharacterSvg";
 import MultiplicationGame, {
+  HISTORY_KEY,
+  appendPlayedGame,
   createAdvanceQuestions,
   createOrderedQuestions,
   createQuestions,
@@ -11,6 +13,8 @@ import MultiplicationGame, {
   levelFromTableQuery,
   musicPhaseFor,
   nextBestTime,
+  topScores,
+  withBestFlags,
 } from "./MultiplicationGame";
 
 const config = {
@@ -42,6 +46,7 @@ beforeEach(() => {
   window.localStorage.removeItem("multiplication-game-style");
   window.localStorage.removeItem("multiplication-game-best-times");
   window.localStorage.removeItem("multiplication-game-advance-best-times");
+  window.localStorage.removeItem("multiplication-game-history");
   window.scrollTo = jest.fn();
   global.fetch = jest.fn().mockResolvedValue({
     ok: true,
@@ -791,6 +796,109 @@ test("returns to hero select when a different table is chosen mid-round", async 
   expect(screen.getByRole("heading", { name: "Times Table 5" })).toBeInTheDocument();
   expect(screen.getByText(/face the Fire Dragon/)).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Start" })).toBeEnabled();
+});
+
+test("marks the best score, the best time, and the best overall game", () => {
+  const games = [
+    { id: "perfect-slow", mode: "battle", table: 3, score: 10, total: 10, timeMs: 30000, setAt: "a" },
+    { id: "balanced", mode: "advance", table: 4, score: 9, total: 10, timeMs: 8000, setAt: "b" },
+    { id: "fast-low", mode: "practice", table: 2, score: 3, total: 10, timeMs: 2000, setAt: "c" },
+    { id: "middle", mode: "battle", table: 5, score: 8, total: 10, timeMs: 20000, setAt: "d" },
+  ];
+  const marked = withBestFlags(games);
+
+  expect(marked.find((game) => game.id === "perfect-slow")).toMatchObject({
+    bestScore: true,
+    bestTime: false,
+    bestBoth: false,
+  });
+  expect(marked.find((game) => game.id === "fast-low")).toMatchObject({
+    bestScore: false,
+    bestTime: true,
+    bestBoth: false,
+  });
+  expect(marked.find((game) => game.id === "balanced")).toMatchObject({
+    bestScore: false,
+    bestTime: false,
+    bestBoth: true,
+  });
+
+  const saved = appendPlayedGame(marked, {
+    id: "newer-perfect",
+    mode: "battle",
+    table: 3,
+    score: 10,
+    total: 10,
+    timeMs: 1000,
+    setAt: "e",
+  });
+  expect(saved.find((game) => game.id === "newer-perfect")).toMatchObject({
+    bestScore: true,
+    bestTime: true,
+    bestBoth: true,
+  });
+  expect(saved.find((game) => game.id === "perfect-slow").bestScore).toBe(false);
+  expect(topScores(Array.from({ length: 12 }, (_, index) => ({
+    id: `game-${index}`,
+    mode: "battle",
+    table: 2,
+    score: index,
+    total: 12,
+    timeMs: 1000 + index,
+    setAt: String(index),
+  })), "score")).toHaveLength(10);
+});
+
+test("shows the top ten scores for each record category", async () => {
+  const games = withBestFlags([
+    { id: "perfect-slow", mode: "battle", table: 3, score: 10, total: 10, timeMs: 30000, setAt: "a" },
+    { id: "balanced", mode: "advance", table: 4, score: 9, total: 10, timeMs: 8000, setAt: "b" },
+    { id: "fast-low", mode: "practice", table: 2, score: 3, total: 10, timeMs: 2000, setAt: "c" },
+  ]);
+  window.localStorage.setItem(HISTORY_KEY, JSON.stringify(games));
+  render(<MultiplicationGame />);
+  await openGameMenu();
+  fireEvent.click(screen.getByRole("button", { name: "Best scores" }));
+
+  expect(screen.getByRole("tab", { name: "Highest score" })).toHaveAttribute(
+    "aria-selected",
+    "true"
+  );
+  expect(screen.getByRole("tab", { name: "Best time" })).toBeInTheDocument();
+  expect(screen.getByRole("tab", { name: "Best overall" })).toBeInTheDocument();
+  expect(document.querySelector(".game-menu__score")).toHaveTextContent("10/10");
+  expect(document.querySelector(".game-menu__score")).toHaveTextContent("Table 3 · Start");
+
+  fireEvent.click(screen.getByRole("tab", { name: "Best time" }));
+  expect(document.querySelector(".game-menu__score")).toHaveTextContent("3/10");
+  expect(document.querySelector(".game-menu__score")).toHaveTextContent("Practice");
+
+  fireEvent.click(screen.getByRole("tab", { name: "Best overall" }));
+  expect(document.querySelector(".game-menu__score")).toHaveTextContent("9/10");
+  expect(document.querySelector(".game-menu__score")).toHaveTextContent("Advance");
+});
+
+test("stores a finished game in local history", async () => {
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
+  await screen.findByText(/^\d+ × \d+$/);
+
+  for (let question = 0; question < 5; question += 1) {
+    await answerCurrentQuestion();
+  }
+
+  const history = JSON.parse(window.localStorage.getItem(HISTORY_KEY));
+  expect(history).toHaveLength(1);
+  expect(history[0]).toMatchObject({
+    mode: "battle",
+    table: 2,
+    score: 5,
+    total: 5,
+    bestScore: true,
+    bestTime: true,
+    bestBoth: true,
+  });
+  expect(history[0].timeMs).toBeGreaterThanOrEqual(0);
 });
 
 test("supports ?style=fantasy URL query parameter", async () => {

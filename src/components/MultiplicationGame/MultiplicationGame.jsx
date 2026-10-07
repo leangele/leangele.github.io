@@ -17,6 +17,20 @@ const SOUND_STORAGE_KEY = "multiplication-game-sound";
 const GRAPHIC_STYLE_KEY = "multiplication-game-style";
 const BEST_TIME_KEY = "multiplication-game-best-times";
 const ADVANCE_BEST_TIME_KEY = "multiplication-game-advance-best-times";
+export const HISTORY_KEY = "multiplication-game-history";
+const HISTORY_LIMIT = 200;
+
+export const SCORE_CATEGORIES = [
+  { id: "score", label: "Highest score" },
+  { id: "time", label: "Best time" },
+  { id: "both", label: "Best overall" },
+];
+
+const MODE_LABELS = {
+  battle: "Start",
+  advance: "Advance",
+  practice: "Practice",
+};
 
 export const readStoredGraphicStyle = (configuredStyle) => {
   try {
@@ -61,6 +75,87 @@ export const nextBestTime = (previousMs, roundMs, won) => {
     };
   }
   return { bestMs: previousMs, beatRecord: false };
+};
+
+const scoreRatio = (game) => (game.total > 0 ? game.score / game.total : 0);
+
+const compareByScore = (a, b) =>
+  b.score - a.score || scoreRatio(b) - scoreRatio(a) || a.timeMs - b.timeMs;
+
+const compareByTime = (a, b) =>
+  a.timeMs - b.timeMs || b.score - a.score || scoreRatio(b) - scoreRatio(a);
+
+const isPlayedGame = (game) =>
+  Boolean(game) &&
+  typeof game.id === "string" &&
+  (game.mode === "battle" || game.mode === "advance" || game.mode === "practice") &&
+  Number.isInteger(game.table) &&
+  Number.isFinite(Number(game.score)) &&
+  Number.isFinite(Number(game.total)) &&
+  Number(game.total) > 0 &&
+  Number.isFinite(Number(game.timeMs)) &&
+  Number(game.timeMs) >= 0;
+
+export const rankGames = (games, category) => {
+  const list = (Array.isArray(games) ? games : []).filter(isPlayedGame);
+  if (category === "both") {
+    const maxTime = Math.max(...list.map((game) => game.timeMs), 1);
+    const bothValue = (game) => scoreRatio(game) + (1 - game.timeMs / maxTime);
+    return [...list].sort(
+      (a, b) => bothValue(b) - bothValue(a) || compareByScore(a, b)
+    );
+  }
+  return [...list].sort(category === "time" ? compareByTime : compareByScore);
+};
+
+export const withBestFlags = (games) => {
+  const list = (Array.isArray(games) ? games : []).filter(isPlayedGame);
+  const bestScoreId = rankGames(list, "score")[0]?.id ?? null;
+  const bestTimeId = rankGames(list, "time")[0]?.id ?? null;
+  const bestBothId = rankGames(list, "both")[0]?.id ?? null;
+  return list.map((game) => ({
+    ...game,
+    score: Number(game.score),
+    total: Number(game.total),
+    timeMs: Number(game.timeMs),
+    bestScore: game.id === bestScoreId,
+    bestTime: game.id === bestTimeId,
+    bestBoth: game.id === bestBothId,
+  }));
+};
+
+export const topScores = (games, category, limit = 10) =>
+  rankGames(withBestFlags(games), category).slice(0, limit);
+
+export const appendPlayedGame = (games, game) => {
+  if (!isPlayedGame(game)) {
+    return withBestFlags(games);
+  }
+  return withBestFlags([...withBestFlags(games), game].slice(-HISTORY_LIMIT));
+};
+
+const readHistory = () => {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(HISTORY_KEY) || "[]");
+    return withBestFlags(parsed);
+  } catch (error) {
+    return [];
+  }
+};
+
+const writeHistory = (games) => {
+  try {
+    window.localStorage.setItem(HISTORY_KEY, JSON.stringify(games));
+  } catch (error) {
+    // The score screen still shows this round when storage is blocked.
+  }
+};
+
+let playedGameSeq = 0;
+
+const createPlayedGameId = () => {
+  playedGameSeq += 1;
+  return `${Date.now()}-${playedGameSeq}`;
 };
 
 export const formatRecordStamp = (date) => {
@@ -299,6 +394,65 @@ export const createAdvanceQuestions = (level, count, optionCount, minTable) => {
 export const createOrderedQuestions = (level, optionCount) =>
   levelFactors(level).map((factor) => questionFromFactor(level, factor, optionCount));
 
+const categoryFlag = {
+  score: "bestScore",
+  time: "bestTime",
+  both: "bestBoth",
+};
+
+const ScoresPage = ({ history, category, onCategory, onBack }) => {
+  const rows = topScores(history, category);
+  const flag = categoryFlag[category] || "bestScore";
+  return (
+    <div className="game-menu__scores">
+      <button type="button" className="game-menu__back" onClick={onBack}>
+        Back
+      </button>
+      <h2>Best scores</h2>
+      <div className="game-menu__categories" role="tablist" aria-label="Score categories">
+        {SCORE_CATEGORIES.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            aria-selected={category === item.id}
+            className={`game-menu__category${
+              category === item.id ? " game-menu__category--current" : ""
+            }`}
+            onClick={() => onCategory(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      {rows.length === 0 ? (
+        <p className="game-menu__empty">No games yet.</p>
+      ) : (
+        <ol className="game-menu__score-list">
+          {rows.map((game, index) => (
+            <li
+              key={game.id}
+              className={`game-menu__score${game[flag] ? " game-menu__score--best" : ""}`}
+            >
+              <span className="game-menu__rank">{index + 1}</span>
+              <span className="game-menu__score-copy">
+                <strong>
+                  {game.score}/{game.total}
+                  <span className="game-menu__time"> {formatRoundTime(game.timeMs)}</span>
+                </strong>
+                <small>
+                  Table {game.table} · {MODE_LABELS[game.mode]}
+                  {game[flag] ? " · Best" : ""}
+                </small>
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+};
+
 const MultiplicationGame = () => {
   const [config, setConfig] = useState(null);
   const [error, setError] = useState("");
@@ -324,6 +478,9 @@ const MultiplicationGame = () => {
   const [bestSetAt, setBestSetAt] = useState(null);
   const [liveRoundMs, setLiveRoundMs] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPage, setMenuPage] = useState("main");
+  const [scoreCategory, setScoreCategory] = useState("score");
+  const [history, setHistory] = useState(() => readHistory());
   const soundOnRef = useRef(true);
   const graphicStyleRef = useRef(null);
   const playModeRef = useRef("battle");
@@ -371,6 +528,7 @@ const MultiplicationGame = () => {
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
         setMenuOpen(false);
+        setMenuPage("main");
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -426,6 +584,17 @@ const MultiplicationGame = () => {
       if (isLastQuestion) {
         const roundMs = Math.round(answerElapsedRef.current);
         const won = passedChallenge(nextScore, total, config.passPercent);
+        const played = appendPlayedGame(readHistory(), {
+          id: createPlayedGameId(),
+          mode: playModeRef.current,
+          table: level.multiplier,
+          score: nextScore,
+          total,
+          timeMs: roundMs,
+          setAt: formatRecordStamp(new Date()),
+        });
+        writeHistory(played);
+        setHistory(played);
         if (practicing) {
           setRoundTimeMs(roundMs);
           setBestTimeMs(null);
@@ -589,6 +758,7 @@ const MultiplicationGame = () => {
       return;
     }
     setMenuOpen(false);
+    setMenuPage("main");
     unlockGameAudio();
     if (soundOnRef.current) {
       if (mode === "practice") {
@@ -708,6 +878,7 @@ const MultiplicationGame = () => {
 
   const selectTable = (table) => {
     setMenuOpen(false);
+    setMenuPage("main");
     if (table === level.multiplier) {
       return;
     }
@@ -791,7 +962,10 @@ const MultiplicationGame = () => {
         aria-expanded={menuOpen}
         aria-controls="game-menu-panel"
         aria-label={menuOpen ? "Close menu" : "Open menu"}
-        onClick={() => setMenuOpen((open) => !open)}
+        onClick={() => {
+          setMenuOpen((open) => !open);
+          setMenuPage("main");
+        }}
       >
         <span className="menu-button__bars" aria-hidden="true" />
       </button>
@@ -801,7 +975,10 @@ const MultiplicationGame = () => {
             type="button"
             className="game-menu__backdrop"
             aria-label="Dismiss menu"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => {
+              setMenuOpen(false);
+              setMenuPage("main");
+            }}
           />
           <div
             id="game-menu-panel"
@@ -809,6 +986,15 @@ const MultiplicationGame = () => {
             role="dialog"
             aria-label="Game menu"
           >
+            {menuPage === "scores" ? (
+              <ScoresPage
+                history={history}
+                category={scoreCategory}
+                onCategory={setScoreCategory}
+                onBack={() => setMenuPage("main")}
+              />
+            ) : (
+              <>
             <h2>Levels</h2>
             <ul className="game-menu__levels">
               {tableNumbers.map((table) => (
@@ -847,6 +1033,16 @@ const MultiplicationGame = () => {
                 {soundOn ? "Sound on" : "Sound off"}
               </button>
             </div>
+            <h2>Records</h2>
+            <button
+              type="button"
+              className="game-menu__records"
+              onClick={() => setMenuPage("scores")}
+            >
+              Best scores
+            </button>
+              </>
+            )}
           </div>
         </>
       )}
