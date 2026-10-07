@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="100%" height="100%" shape-rendering="crispEdges">
+  <!-- Colinas escalonadas de fondo (Verde Pino / Trébol) -->
+  <path d="M 0 110 L 80 85 L 180 105 L 300 75 L 420 100 L 520 80 L 600 95 L 600 200 L 0 200 Z" fill="#15803d" />
+
+  <!-- Pinos Pixel Art 16-bit en el horizonte -->
+  <g fill="#166534">
+    <!-- Pinos Izquierda -->
+    <polygon points="20,70 10,105 30,105" />
+    <polygon points="20,55 12,80 28,80" />
+    <polygon points="20,40 15,62 25,62" />
+
+    <polygon points="45,75 32,110 58,110" />
+    <polygon points="45,60 36,88 54,88" />
+    <polygon points="45,46 39,70 51,70" />
+
+    <polygon points="75,80 64,115 86,115" />
+    <polygon points="75,66 67,92 83,92" />
+
+    <!-- Pinos Derecha -->
+    <polygon points="380,75 368,110 392,110" />
+    <polygon points="380,60 371,88 389,88" />
+
+    <polygon points="410,70 395,108 425,108" />
+    <polygon points="410,54 400,82 420,82" />
+    <polygon points="410,40 404,64 416,64" />
+
+    <polygon points="560,78 548,114 572,114" />
+    <polygon points="560,62 552,90 568,90" />
+  </g>
+
+  <!-- Colina Intermedia (Verde Esmeralda Vibrante) -->
+  <path d="M 0 130 L 120 105 L 260 125 L 390 100 L 500 120 L 600 105 L 600 200 L 0 200 Z" fill="#16a34a" />
+
+  <!-- Árboles Frondosos Pixel Art (Estilo SNES/GBA RPG) -->
+  <g>
+    <!-- Gran Árbol Izquierdo -->
+    <rect x="115" y="125" width="10" height="75" fill="#78350f" />
+    <!-- Copa escalonada en verde brillante y sombra -->
+    <rect x="85" y="65" width="70" height="60" fill="#22c55e" />
+    <rect x="95" y="55" width="50" height="15" fill="#22c55e" />
+    <rect x="105" y="48" width="30" height="10" fill="#4ade80" />
+    <rect x="90" y="70" width="30" height="25" fill="#4ade80" />
+    <rect x="95" y="65" width="20" height="10" fill="#86efac" />
+    <rect x="125" y="95" width="30" height="30" fill="#15803d" />
+
+    <!-- Árbol Secundario -->
+    <rect x="185" y="135" width="8" height="65" fill="#78350f" />
+    <rect x="165" y="85" width="48" height="50" fill="#22c55e" />
+    <rect x="173" y="75" width="32" height="14" fill="#4ade80" />
+    <rect x="178" y="72" width="20" height="6" fill="#86efac" />
+    <rect x="193" y="110" width="20" height="25" fill="#15803d" />
+
+    <!-- Gran Árbol Derecho -->
+    <rect x="495" y="125" width="10" height="75" fill="#78350f" />
+    <rect x="465" y="60" width="70" height="65" fill="#22c55e" />
+    <rect x="475" y="50" width="50" height="15" fill="#22c55e" />
+    <rect x="485" y="44" width="30" height="10" fill="#4ade80" />
+    <rect x="470" y="65" width="30" height="25" fill="#4ade80" />
+    <rect x="475" y="60" width="20" height="10" fill="#86efac" />
+    <rect x="505" y="95" width="30" height="30" fill="#15803d" />
+
+    <!-- Árbol Derecho Secundario -->
+    <rect x="440" y="135" width="8" height="65" fill="#78350f" />
+    <rect x="420" y="85" width="48" height="50" fill="#22c55e" />
+    <rect x="428" y="75" width="32" height="14" fill="#4ade80" />
+    <rect x="432" y="70" width="20" height="8" fill="#86efac" />
+    <rect x="448" y="110" width="20" height="25" fill="#15803d" />
+  </g>
+
+  <!-- Colina Delantera (Pradera Verde Sol con Flores Pixel) -->
+  <path d="M 0 155 L 140 135 L 300 150 L 460 130 L 600 145 L 600 200 L 0 200 Z" fill="#22c55e" />
+
+  <!-- Píxeles de Flores y césped -->
+  <g>
+    <!-- Flores amarillas -->
+    <rect x="60" y="165" width="4" height="4" fill="#fef08a" />
+    <rect x="140" y="155" width="4" height="4" fill="#fef08a" />
+    <rect x="230" y="170" width="4" height="4" fill="#fef08a" />
+    <rect x="350" y="160" width="4" height="4" fill="#fef08a" />
+    <rect x="430" y="150" width="4" height="4" fill="#fef08a" />
+    <rect x="540" y="165" width="4" height="4" fill="#fef08a" />
+
+    <!-- Flores rosas y blancas -->
+    <rect x="90" y="170" width="4" height="4" fill="#f472b6" />
+    <rect x="280" y="165" width="4" height="4" fill="#ffffff" />
+    <rect x="390" y="172" width="4" height="4" fill="#f472b6" />
+    <rect x="480" y="160" width="4" height="4" fill="#ffffff" />
+  </g>
+</svg>

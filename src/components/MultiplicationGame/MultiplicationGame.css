@@ -16,9 +16,8 @@
   overflow-x: clip;
   color: #f8f1e3;
   background:
-    radial-gradient(circle at 50% 0%, rgba(232, 184, 74, 0.28), transparent 26%),
-    radial-gradient(circle at 12% 80%, rgba(61, 107, 79, 0.45), transparent 28%),
-    linear-gradient(180deg, #1e3a5f 0%, #3d6b4f 46%, #c4a574 100%);
+    radial-gradient(circle at 50% 0%, rgba(254, 240, 138, 0.45), transparent 30%),
+    linear-gradient(180deg, #38bdf8 0%, #7dd3fc 45%, #bae6fd 70%, #dcfce7 100%);
   font-family: "Nunito", sans-serif;
 }
 
@@ -26,9 +25,30 @@
   position: relative;
   isolation: isolate;
   background-attachment: fixed;
+  background-size: cover;
+  background-position: center top;
 }
 
+/* Capa 1: Gran Castillo Medieval (Torreones, murallas y almenas) */
 .math-game[class*="math-game--realm-"]::before {
+  content: "";
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -2;
+  height: 52vh;
+  min-height: 280px;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-position: bottom center;
+  background-size: 1200px 360px;
+  opacity: 0.95;
+  transition: opacity 400ms ease;
+}
+
+/* Capa 2: Bosque Encantado Frondoso (Árboles vibrantes, pinos y colinas verdes) */
+.math-game[class*="math-game--realm-"]::after {
   content: "";
   position: fixed;
   right: 0;
@@ -38,144 +58,95 @@
   height: 42vh;
   min-height: 220px;
   pointer-events: none;
+  background-repeat: repeat-x;
+  background-position: bottom center;
+  background-size: 1200px 320px;
+  opacity: 0.98;
+  transition: opacity 400ms ease;
 }
 
+/* Enlace de escenarios por estilo gráfico */
+.math-game--style-fantasy[class*="math-game--realm-"]::before {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201200%20400%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22stone-grad%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2394a3b8%22%20%2F%3E%20%3Cstop%20offset%3D%2245%25%22%20stop-color%3D%22%2364748b%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23475569%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22stone-dark%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2364748b%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23334155%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22roof-blue%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2360a5fa%22%20%2F%3E%20%3Cstop%20offset%3D%2260%25%22%20stop-color%3D%22%232563eb%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231d4ed8%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22roof-red%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f87171%22%20%2F%3E%20%3Cstop%20offset%3D%2260%25%22%20stop-color%3D%22%23dc2626%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23991b1b%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22banner-gold%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%220%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fde047%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23eab308%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22banner-red%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%220%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f87171%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23dc2626%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3Cfilter%20id%3D%22castle-shadow%22%20x%3D%22-5%25%22%20y%3D%22-5%25%22%20width%3D%22110%25%22%20height%3D%22110%25%22%3E%20%3CfeDropShadow%20dx%3D%220%22%20dy%3D%224%22%20stdDeviation%3D%224%22%20flood-color%3D%22%230f172a%22%20flood-opacity%3D%220.35%22%20%2F%3E%20%3C%2Ffilter%3E%20%3C%2Fdefs%3E%20%3C!--%20Monta%C3%B1as%20lejanas%20detr%C3%A1s%20del%20castillo%20--%3E%20%3Cpath%20d%3D%22M%200%20280%20Q%20180%20160%20360%20220%20Q%20550%20140%20750%20200%20Q%20980%20130%201200%20210%20L%201200%20400%20L%200%20400%20Z%22%20fill%3D%22%2364748b%22%20opacity%3D%220.35%22%20%2F%3E%20%3Cpath%20d%3D%22M%200%20310%20Q%20220%20210%20480%20260%20Q%20720%20180%20940%20240%20Q%201100%20200%201200%20250%20L%201200%20400%20L%200%20400%20Z%22%20fill%3D%22%23475569%22%20opacity%3D%220.45%22%20%2F%3E%20%3C!--%20Gran%20Castillo%20Medieval%20--%3E%20%3Cg%20filter%3D%22url(%23castle-shadow)%22%3E%20%3C!--%20Muralla%20Izquierda%20(con%20almenas)%20--%3E%20%3Crect%20x%3D%22140%22%20y%3D%22190%22%20width%3D%22360%22%20height%3D%22210%22%20fill%3D%22url(%23stone-grad)%22%20%2F%3E%20%3C!--%20Almenas%20Muralla%20Izquierda%20--%3E%20%3Cpath%20d%3D%22M%20140%20190%20h%20360%20v%20-18%20h%20-24%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-24%20v%2018%20Z%22%20fill%3D%22url(%23stone-dark)%22%20%2F%3E%20%3C!--%20Detalles%20de%20piedra%20y%20saeteras%20--%3E%20%3Crect%20x%3D%22220%22%20y%3D%22230%22%20width%3D%228%22%20height%3D%2222%22%20rx%3D%224%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22300%22%20y%3D%22230%22%20width%3D%228%22%20height%3D%2222%22%20rx%3D%224%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22380%22%20y%3D%22230%22%20width%3D%228%22%20height%3D%2222%22%20rx%3D%224%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3C!--%20Muralla%20Derecha%20(con%20almenas)%20--%3E%20%3Crect%20x%3D%22700%22%20y%3D%22190%22%20width%3D%22360%22%20height%3D%22210%22%20fill%3D%22url(%23stone-grad)%22%20%2F%3E%20%3C!--%20Almenas%20Muralla%20Derecha%20--%3E%20%3Cpath%20d%3D%22M%20700%20190%20h%20360%20v%20-18%20h%20-24%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-26%20v%20-10%20h%20-26%20v%2010%20h%20-24%20v%2018%20Z%22%20fill%3D%22url(%23stone-dark)%22%20%2F%3E%20%3C!--%20Saeteras%20Muralla%20Derecha%20--%3E%20%3Crect%20x%3D%22780%22%20y%3D%22230%22%20width%3D%228%22%20height%3D%2222%22%20rx%3D%224%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22860%22%20y%3D%22230%22%20width%3D%228%22%20height%3D%2222%22%20rx%3D%224%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22940%22%20y%3D%22230%22%20width%3D%228%22%20height%3D%2222%22%20rx%3D%224%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3C!--%20Torre%20Basti%C3%B3n%20Izquierda%20--%3E%20%3Crect%20x%3D%2260%22%20y%3D%22130%22%20width%3D%2290%22%20height%3D%22270%22%20fill%3D%22url(%23stone-grad)%22%20%2F%3E%20%3Cpath%20d%3D%22M%2055%20130%20h%20100%20v%20-20%20h%20-20%20v%2010%20h%20-20%20v%20-10%20h%20-20%20v%2010%20h%20-20%20v%20-10%20h%20-20%20v%2020%20Z%22%20fill%3D%22url(%23stone-dark)%22%20%2F%3E%20%3Cpolygon%20points%3D%22105%2C40%2050%2C110%20160%2C110%22%20fill%3D%22url(%23roof-blue)%22%20%2F%3E%20%3C!--%20Bander%C3%ADn%20Torre%20Izquierda%20--%3E%20%3Cline%20x1%3D%22105%22%20y1%3D%2240%22%20x2%3D%22105%22%20y2%3D%2210%22%20stroke%3D%22%2378350f%22%20stroke-width%3D%223%22%20%2F%3E%20%3Cpath%20d%3D%22M%20105%2010%20h%2035%20l%20-12%2012%20l%2012%2012%20h%20-35%20Z%22%20fill%3D%22url(%23banner-gold)%22%20%2F%3E%20%3C!--%20Ventanas%20iluminadas%20con%20sol%20--%3E%20%3Crect%20x%3D%2295%22%20y%3D%22160%22%20width%3D%2220%22%20height%3D%2232%22%20rx%3D%2210%22%20fill%3D%22%23fef08a%22%20stroke%3D%22%23ca8a04%22%20stroke-width%3D%222%22%20%2F%3E%20%3Crect%20x%3D%2295%22%20y%3D%22220%22%20width%3D%2220%22%20height%3D%2232%22%20rx%3D%2210%22%20fill%3D%22%23fef08a%22%20stroke%3D%22%23ca8a04%22%20stroke-width%3D%222%22%20%2F%3E%20%3C!--%20Torre%20Basti%C3%B3n%20Derecha%20--%3E%20%3Crect%20x%3D%221050%22%20y%3D%22130%22%20width%3D%2290%22%20height%3D%22270%22%20fill%3D%22url(%23stone-grad)%22%20%2F%3E%20%3Cpath%20d%3D%22M%201045%20130%20h%20100%20v%20-20%20h%20-20%20v%2010%20h%20-20%20v%20-10%20h%20-20%20v%2010%20h%20-20%20v%20-10%20h%20-20%20v%2020%20Z%22%20fill%3D%22url(%23stone-dark)%22%20%2F%3E%20%3Cpolygon%20points%3D%221095%2C40%201040%2C110%201150%2C110%22%20fill%3D%22url(%23roof-blue)%22%20%2F%3E%20%3C!--%20Bander%C3%ADn%20Torre%20Derecha%20--%3E%20%3Cline%20x1%3D%221095%22%20y1%3D%2240%22%20x2%3D%221095%22%20y2%3D%2210%22%20stroke%3D%22%2378350f%22%20stroke-width%3D%223%22%20%2F%3E%20%3Cpath%20d%3D%22M%201095%2010%20h%2035%20l%20-12%2012%20l%2012%2012%20h%20-35%20Z%22%20fill%3D%22url(%23banner-gold)%22%20%2F%3E%20%3C!--%20Ventanas%20iluminadas%20--%3E%20%3Crect%20x%3D%221085%22%20y%3D%22160%22%20width%3D%2220%22%20height%3D%2232%22%20rx%3D%2210%22%20fill%3D%22%23fef08a%22%20stroke%3D%22%23ca8a04%22%20stroke-width%3D%222%22%20%2F%3E%20%3Crect%20x%3D%221085%22%20y%3D%22220%22%20width%3D%2220%22%20height%3D%2232%22%20rx%3D%2210%22%20fill%3D%22%23fef08a%22%20stroke%3D%22%23ca8a04%22%20stroke-width%3D%222%22%20%2F%3E%20%3C!--%20Torre%C3%B3n%20Central%20Principal%20(Donj%C3%B3n%20Real)%20--%3E%20%3Crect%20x%3D%22480%22%20y%3D%22100%22%20width%3D%22240%22%20height%3D%22300%22%20fill%3D%22url(%23stone-grad)%22%20%2F%3E%20%3C!--%20Moldura%20y%20Almenas%20Centrales%20--%3E%20%3Cpath%20d%3D%22M%20475%20100%20h%20250%20v%20-22%20h%20-24%20v%2012%20h%20-26%20v%20-12%20h%20-26%20v%2012%20h%20-26%20v%20-12%20h%20-26%20v%2012%20h%20-26%20v%20-12%20h%20-26%20v%2012%20h%20-26%20v%20-12%20h%20-24%20v%2022%20Z%22%20fill%3D%22url(%23stone-dark)%22%20%2F%3E%20%3C!--%20Torre%20Superior%20Central%20con%20Aguja%20Mayor%20--%3E%20%3Crect%20x%3D%22535%22%20y%3D%2250%22%20width%3D%22130%22%20height%3D%2250%22%20fill%3D%22url(%23stone-dark)%22%20%2F%3E%20%3Cpolygon%20points%3D%22600%2C-15%20525%2C50%20675%2C50%22%20fill%3D%22url(%23roof-red)%22%20%2F%3E%20%3C!--%20Gran%20Estandarte%20Real%20Central%20--%3E%20%3Cline%20x1%3D%22600%22%20y1%3D%22-15%22%20x2%3D%22600%22%20y2%3D%22-45%22%20stroke%3D%22%23f59e0b%22%20stroke-width%3D%224%22%20%2F%3E%20%3Cpath%20d%3D%22M%20600%20-45%20h%2050%20l%20-16%2016%20l%2016%2016%20h%20-50%20Z%22%20fill%3D%22url(%23banner-red)%22%20%2F%3E%20%3C!--%20Ventanales%20del%20Gran%20Sal%C3%B3n%20Real%20--%3E%20%3Crect%20x%3D%22530%22%20y%3D%22125%22%20width%3D%2228%22%20height%3D%2248%22%20rx%3D%2214%22%20fill%3D%22%23fef08a%22%20stroke%3D%22%23d97706%22%20stroke-width%3D%222.5%22%20%2F%3E%20%3Crect%20x%3D%22586%22%20y%3D%22120%22%20width%3D%2228%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23fef08a%22%20stroke%3D%22%23d97706%22%20stroke-width%3D%222.5%22%20%2F%3E%20%3Crect%20x%3D%22642%22%20y%3D%22125%22%20width%3D%2228%22%20height%3D%2248%22%20rx%3D%2214%22%20fill%3D%22%23fef08a%22%20stroke%3D%22%23d97706%22%20stroke-width%3D%222.5%22%20%2F%3E%20%3C!--%20Gran%20Port%C3%B3n%20Arqueado%20de%20Entrada%20y%20Rastrillo%20--%3E%20%3Cpath%20d%3D%22M%20560%20400%20v%20-95%20a%2040%2040%200%200%201%2080%200%20v%2095%20Z%22%20fill%3D%22%231e1b4b%22%20stroke%3D%22%2378350f%22%20stroke-width%3D%226%22%20%2F%3E%20%3C!--%20Rastrillo%20dorado%20%2F%20hierro%20--%3E%20%3Cline%20x1%3D%22578%22%20y1%3D%22305%22%20x2%3D%22578%22%20y2%3D%22400%22%20stroke%3D%22%23f59e0b%22%20stroke-width%3D%223%22%20%2F%3E%20%3Cline%20x1%3D%22600%22%20y1%3D%22298%22%20x2%3D%22600%22%20y2%3D%22400%22%20stroke%3D%22%23f59e0b%22%20stroke-width%3D%223%22%20%2F%3E%20%3Cline%20x1%3D%22622%22%20y1%3D%22305%22%20x2%3D%22622%22%20y2%3D%22400%22%20stroke%3D%22%23f59e0b%22%20stroke-width%3D%223%22%20%2F%3E%20%3Cline%20x1%3D%22560%22%20y1%3D%22335%22%20x2%3D%22640%22%20y2%3D%22335%22%20stroke%3D%22%23f59e0b%22%20stroke-width%3D%223%22%20%2F%3E%20%3Cline%20x1%3D%22560%22%20y1%3D%22365%22%20x2%3D%22640%22%20y2%3D%22365%22%20stroke%3D%22%23f59e0b%22%20stroke-width%3D%223%22%20%2F%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E");
+  background-size: 1200px 360px;
+}
+
+.math-game--style-fantasy[class*="math-game--realm-"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201200%20400%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22hill-back%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%234ade80%22%20%2F%3E%20%3Cstop%20offset%3D%2235%25%22%20stop-color%3D%22%2322c55e%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2315803d%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22hill-mid%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2386efac%22%20%2F%3E%20%3Cstop%20offset%3D%2240%25%22%20stop-color%3D%22%2322c55e%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23166534%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22hill-front%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23bbf7d0%22%20%2F%3E%20%3Cstop%20offset%3D%2225%25%22%20stop-color%3D%22%234ade80%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2315803d%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22leaf-bright%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23a7f3d0%22%20%2F%3E%20%3Cstop%20offset%3D%2240%25%22%20stop-color%3D%22%2334d399%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23059669%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22leaf-emerald%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2386efac%22%20%2F%3E%20%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%2322c55e%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2314532d%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22trunk-wood%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%220%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2392400e%22%20%2F%3E%20%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%2378350f%22%20%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23451a03%22%20%2F%3E%20%3C%2FlinearGradient%3E%20%3Cfilter%20id%3D%22forest-shadow%22%20x%3D%22-5%25%22%20y%3D%22-5%25%22%20width%3D%22110%25%22%20height%3D%22110%25%22%3E%20%3CfeDropShadow%20dx%3D%220%22%20dy%3D%223%22%20stdDeviation%3D%223%22%20flood-color%3D%22%23064e3b%22%20flood-opacity%3D%220.3%22%20%2F%3E%20%3C%2Ffilter%3E%20%3C%2Fdefs%3E%20%3C!--%20Colinas%20ondulantes%20de%20fondo%20--%3E%20%3Cpath%20d%3D%22M%200%20220%20Q%20300%20150%20600%20200%20Q%20900%20140%201200%20190%20L%201200%20400%20L%200%20400%20Z%22%20fill%3D%22url(%23hill-back)%22%20%2F%3E%20%3C!--%20Bosque%20de%20Fondo%3A%20Siluetas%20de%20Pinos%20N%C3%B3rdicos%20--%3E%20%3Cg%20fill%3D%22%23166534%22%20opacity%3D%220.85%22%3E%20%3C!--%20Pinos%20Izquierda%20--%3E%20%3Cpolygon%20points%3D%2240%2C160%2020%2C230%2060%2C230%22%20%2F%3E%20%3Cpolygon%20points%3D%2240%2C140%2025%2C190%2055%2C190%22%20%2F%3E%20%3Cpolygon%20points%3D%2240%2C120%2028%2C160%2052%2C160%22%20%2F%3E%20%3Cpolygon%20points%3D%2290%2C170%2065%2C240%20115%2C240%22%20%2F%3E%20%3Cpolygon%20points%3D%2290%2C145%2072%2C200%20108%2C200%22%20%2F%3E%20%3Cpolygon%20points%3D%2290%2C125%2078%2C170%20102%2C170%22%20%2F%3E%20%3Cpolygon%20points%3D%22150%2C180%20128%2C250%20172%2C250%22%20%2F%3E%20%3Cpolygon%20points%3D%22150%2C155%20134%2C210%20166%2C210%22%20%2F%3E%20%3C!--%20Pinos%20Centro-Derecha%20--%3E%20%3Cpolygon%20points%3D%22760%2C165%20738%2C235%20782%2C235%22%20%2F%3E%20%3Cpolygon%20points%3D%22760%2C145%20744%2C195%20776%2C195%22%20%2F%3E%20%3Cpolygon%20points%3D%22820%2C150%20795%2C225%20845%2C225%22%20%2F%3E%20%3Cpolygon%20points%3D%22820%2C130%20802%2C185%20838%2C185%22%20%2F%3E%20%3Cpolygon%20points%3D%22820%2C110%20808%2C155%20832%2C155%22%20%2F%3E%20%3Cpolygon%20points%3D%221120%2C170%201095%2C240%201145%2C240%22%20%2F%3E%20%3Cpolygon%20points%3D%221120%2C145%201102%2C200%201138%2C200%22%20%2F%3E%20%3Cpolygon%20points%3D%221120%2C125%201108%2C170%201132%2C170%22%20%2F%3E%20%3C%2Fg%3E%20%3C!--%20Colina%20Intermedia%20--%3E%20%3Cpath%20d%3D%22M%200%20260%20Q%20250%20190%20550%20250%20Q%20850%20200%201200%20240%20L%201200%20400%20L%200%20400%20Z%22%20fill%3D%22url(%23hill-mid)%22%20%2F%3E%20%3C!--%20Gran%20Robledal%20Frondoso%20(%C3%81rboles%20vibrantes%20y%20llenos%20de%20vida)%20--%3E%20%3Cg%20filter%3D%22url(%23forest-shadow)%22%3E%20%3C!--%20Gran%20%C3%81rbol%20Izquierdo%20--%3E%20%3Cpath%20d%3D%22M%20220%20370%20Q%20225%20280%20230%20220%20Q%20235%20280%20240%20370%20Z%22%20fill%3D%22url(%23trunk-wood)%22%20%2F%3E%20%3C!--%20Copa%20del%20%C3%A1rbol%20en%20racimos%20frondosos%20--%3E%20%3Ccircle%20cx%3D%22230%22%20cy%3D%22180%22%20r%3D%2258%22%20fill%3D%22url(%23leaf-emerald)%22%20%2F%3E%20%3Ccircle%20cx%3D%22185%22%20cy%3D%22195%22%20r%3D%2248%22%20fill%3D%22url(%23leaf-bright)%22%20%2F%3E%20%3Ccircle%20cx%3D%22275%22%20cy%3D%22195%22%20r%3D%2248%22%20fill%3D%22url(%23leaf-emerald)%22%20%2F%3E%20%3Ccircle%20cx%3D%22210%22%20cy%3D%22140%22%20r%3D%2244%22%20fill%3D%22url(%23leaf-bright)%22%20%2F%3E%20%3Ccircle%20cx%3D%22255%22%20cy%3D%22140%22%20r%3D%2242%22%20fill%3D%22url(%23leaf-bright)%22%20%2F%3E%20%3Cellipse%20cx%3D%22230%22%20cy%3D%22125%22%20rx%3D%2230%22%20ry%3D%2222%22%20fill%3D%22%2386efac%22%20opacity%3D%220.6%22%20%2F%3E%20%3C!--%20Roble%20Secundario%20--%3E%20%3Cpath%20d%3D%22M%20370%20380%20Q%20375%20300%20378%20250%20Q%20382%20300%20388%20380%20Z%22%20fill%3D%22url(%23trunk-wood)%22%20%2F%3E%20%3Ccircle%20cx%3D%22380%22%20cy%3D%22220%22%20r%3D%2248%22%20fill%3D%22url(%23leaf-bright)%22%20%2F%3E%20%3Ccircle%20cx%3D%22345%22%20cy%3D%22235%22%20r%3D%2238%22%20fill%3D%22url(%23leaf-emerald)%22%20%2F%3E%20%3Ccircle%20cx%3D%22415%22%20cy%3D%22235%22%20r%3D%2238%22%20fill%3D%22url(%23leaf-emerald)%22%20%2F%3E%20%3Ccircle%20cx%3D%22380%22%20cy%3D%22185%22%20r%3D%2234%22%20fill%3D%22%23a7f3d0%22%20opacity%3D%220.8%22%20%2F%3E%20%3C!--%20Gran%20%C3%81rbol%20Derecho%20--%3E%20%3Cpath%20d%3D%22M%20980%20370%20Q%20985%20270%20990%20210%20Q%20995%20270%201000%20370%20Z%22%20fill%3D%22url(%23trunk-wood)%22%20%2F%3E%20%3Ccircle%20cx%3D%22990%22%20cy%3D%22170%22%20r%3D%2262%22%20fill%3D%22url(%23leaf-emerald)%22%20%2F%3E%20%3Ccircle%20cx%3D%22940%22%20cy%3D%22185%22%20r%3D%2250%22%20fill%3D%22url(%23leaf-bright)%22%20%2F%3E%20%3Ccircle%20cx%3D%221040%22%20cy%3D%22185%22%20r%3D%2250%22%20fill%3D%22url(%23leaf-emerald)%22%20%2F%3E%20%3Ccircle%20cx%3D%22965%22%20cy%3D%22125%22%20r%3D%2246%22%20fill%3D%22url(%23leaf-bright)%22%20%2F%3E%20%3Ccircle%20cx%3D%221015%22%20cy%3D%22125%22%20r%3D%2244%22%20fill%3D%22url(%23leaf-bright)%22%20%2F%3E%20%3Cellipse%20cx%3D%22990%22%20cy%3D%22110%22%20rx%3D%2232%22%20ry%3D%2224%22%20fill%3D%22%23bbf7d0%22%20opacity%3D%220.75%22%20%2F%3E%20%3C!--%20Roble%20Centro-Derecha%20--%3E%20%3Cpath%20d%3D%22M%20870%20380%20Q%20874%20310%20878%20260%20Q%20882%20310%20886%20380%20Z%22%20fill%3D%22url(%23trunk-wood)%22%20%2F%3E%20%3Ccircle%20cx%3D%22880%22%20cy%3D%22230%22%20r%3D%2246%22%20fill%3D%22url(%23leaf-bright)%22%20%2F%3E%20%3Ccircle%20cx%3D%22845%22%20cy%3D%22245%22%20r%3D%2236%22%20fill%3D%22url(%23leaf-emerald)%22%20%2F%3E%20%3Ccircle%20cx%3D%22915%22%20cy%3D%22245%22%20r%3D%2236%22%20fill%3D%22url(%23leaf-emerald)%22%20%2F%3E%20%3Ccircle%20cx%3D%22880%22%20cy%3D%22195%22%20r%3D%2232%22%20fill%3D%22%2386efac%22%20opacity%3D%220.8%22%20%2F%3E%20%3C%2Fg%3E%20%3C!--%20Colina%20Delantera%20con%20Prado%20y%20Flores%20--%3E%20%3Cpath%20d%3D%22M%200%20310%20Q%20320%20250%20650%20300%20Q%20960%20250%201200%20280%20L%201200%20400%20L%200%20400%20Z%22%20fill%3D%22url(%23hill-front)%22%20%2F%3E%20%3C!--%20Flores%20silvestres%20y%20arbustos%20del%20prado%20--%3E%20%3Cg%20opacity%3D%220.9%22%3E%20%3C!--%20Arbustos%20bajos%20--%3E%20%3Ccircle%20cx%3D%2280%22%20cy%3D%22330%22%20r%3D%2222%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Ccircle%20cx%3D%22105%22%20cy%3D%22325%22%20r%3D%2226%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3Ccircle%20cx%3D%22130%22%20cy%3D%22335%22%20r%3D%2220%22%20fill%3D%22%2316a34a%22%20%2F%3E%20%3Ccircle%20cx%3D%22620%22%20cy%3D%22325%22%20r%3D%2220%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Ccircle%20cx%3D%22645%22%20cy%3D%22320%22%20r%3D%2224%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3Ccircle%20cx%3D%22670%22%20cy%3D%22328%22%20r%3D%2218%22%20fill%3D%22%2316a34a%22%20%2F%3E%20%3Ccircle%20cx%3D%221120%22%20cy%3D%22310%22%20r%3D%2224%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Ccircle%20cx%3D%221150%22%20cy%3D%22305%22%20r%3D%2228%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3C!--%20Flores%20amarillas%20y%20blancas%20salpicadas%20--%3E%20%3Ccircle%20cx%3D%22150%22%20cy%3D%22360%22%20r%3D%223.5%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Ccircle%20cx%3D%22156%22%20cy%3D%22358%22%20r%3D%223.5%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Ccircle%20cx%3D%22280%22%20cy%3D%22350%22%20r%3D%223.5%22%20fill%3D%22%23ffffff%22%20%2F%3E%20%3Ccircle%20cx%3D%22340%22%20cy%3D%22365%22%20r%3D%223.5%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Ccircle%20cx%3D%22450%22%20cy%3D%22340%22%20r%3D%224%22%20fill%3D%22%23f472b6%22%20%2F%3E%20%3Ccircle%20cx%3D%22520%22%20cy%3D%22355%22%20r%3D%223.5%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Ccircle%20cx%3D%22720%22%20cy%3D%22345%22%20r%3D%224%22%20fill%3D%22%23ffffff%22%20%2F%3E%20%3Ccircle%20cx%3D%22820%22%20cy%3D%22360%22%20r%3D%223.5%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Ccircle%20cx%3D%22930%22%20cy%3D%22340%22%20r%3D%224%22%20fill%3D%22%23f472b6%22%20%2F%3E%20%3Ccircle%20cx%3D%221050%22%20cy%3D%22355%22%20r%3D%223.5%22%20fill%3D%22%23ffffff%22%20%2F%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E");
+  background-size: 1200px 320px;
+}
+
+.math-game--style-pixel[class*="math-game--realm-"]::before {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20200%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20shape-rendering%3D%22crispEdges%22%3E%20%3C!--%20Silueta%20de%20Monta%C3%B1as%20Lejanas%20en%20Pixel%20Art%2016-bit%20--%3E%20%3Cpath%20d%3D%22M%200%20140%20L%2040%20110%20L%2080%20140%20L%20140%2090%20L%20200%20130%20L%20280%2080%20L%20360%20130%20L%20440%2090%20L%20520%20140%20L%20600%20100%20L%20600%20200%20L%200%20200%20Z%22%20fill%3D%22%23475569%22%20opacity%3D%220.4%22%20%2F%3E%20%3Cpath%20d%3D%22M%200%20150%20L%2060%20120%20L%20120%20150%20L%20220%20110%20L%20320%20150%20L%20420%20115%20L%20500%20150%20L%20600%20125%20L%20600%20200%20L%200%20200%20Z%22%20fill%3D%22%23334155%22%20opacity%3D%220.5%22%20%2F%3E%20%3C!--%20Castillo%20Pixel%20Art%2016-bit%20JRPG%20--%3E%20%3Cg%3E%20%3C!--%20Muralla%20Izquierda%20--%3E%20%3Crect%20x%3D%2270%22%20y%3D%2290%22%20width%3D%22180%22%20height%3D%22110%22%20fill%3D%22%23475569%22%20%2F%3E%20%3Crect%20x%3D%2270%22%20y%3D%2294%22%20width%3D%22180%22%20height%3D%222%22%20fill%3D%22%2364748b%22%20%2F%3E%20%3C!--%20Almenas%20Cuadradas%20Muralla%20Izquierda%20--%3E%20%3Crect%20x%3D%2270%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%2294%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22118%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22142%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22166%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22190%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22214%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22236%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3C!--%20Muralla%20Derecha%20--%3E%20%3Crect%20x%3D%22350%22%20y%3D%2290%22%20width%3D%22180%22%20height%3D%22110%22%20fill%3D%22%23475569%22%20%2F%3E%20%3Crect%20x%3D%22350%22%20y%3D%2294%22%20width%3D%22180%22%20height%3D%222%22%20fill%3D%22%2364748b%22%20%2F%3E%20%3C!--%20Almenas%20Muralla%20Derecha%20--%3E%20%3Crect%20x%3D%22350%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22374%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22398%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22422%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22446%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22470%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22494%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22516%22%20y%3D%2280%22%20width%3D%2214%22%20height%3D%2210%22%20fill%3D%22%23334155%22%20%2F%3E%20%3C!--%20Torre%20Basti%C3%B3n%20Izquierda%20--%3E%20%3Crect%20x%3D%2230%22%20y%3D%2260%22%20width%3D%2246%22%20height%3D%22140%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%2228%22%20y%3D%2256%22%20width%3D%2250%22%20height%3D%226%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3C!--%20Almenas%20Torre%20Izquierda%20--%3E%20%3Crect%20x%3D%2228%22%20y%3D%2248%22%20width%3D%2210%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%2248%22%20y%3D%2248%22%20width%3D%2210%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%2268%22%20y%3D%2248%22%20width%3D%2210%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3C!--%20Tejado%20C%C3%B3nico%20Pixel%20Torre%20Izquierda%20--%3E%20%3Cpolygon%20points%3D%2253%2C16%2026%2C48%2080%2C48%22%20fill%3D%22%232563eb%22%20%2F%3E%20%3C!--%20Bandera%20Pixel%20--%3E%20%3Crect%20x%3D%2252%22%20y%3D%224%22%20width%3D%222%22%20height%3D%2212%22%20fill%3D%22%23d97706%22%20%2F%3E%20%3Cpolygon%20points%3D%2254%2C4%2066%2C8%2054%2C12%22%20fill%3D%22%23facc15%22%20%2F%3E%20%3C!--%20Ventana%20Pixel%20iluminada%20--%3E%20%3Crect%20x%3D%2248%22%20y%3D%2274%22%20width%3D%2210%22%20height%3D%2214%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%2250%22%20y%3D%2276%22%20width%3D%226%22%20height%3D%2210%22%20fill%3D%22%23ca8a04%22%20%2F%3E%20%3C!--%20Torre%20Basti%C3%B3n%20Derecha%20--%3E%20%3Crect%20x%3D%22524%22%20y%3D%2260%22%20width%3D%2246%22%20height%3D%22140%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22522%22%20y%3D%2256%22%20width%3D%2250%22%20height%3D%226%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3C!--%20Almenas%20Torre%20Derecha%20--%3E%20%3Crect%20x%3D%22522%22%20y%3D%2248%22%20width%3D%2210%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22542%22%20y%3D%2248%22%20width%3D%2210%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22562%22%20y%3D%2248%22%20width%3D%2210%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3C!--%20Tejado%20Torre%20Derecha%20--%3E%20%3Cpolygon%20points%3D%22547%2C16%20520%2C48%20574%2C48%22%20fill%3D%22%232563eb%22%20%2F%3E%20%3C!--%20Bandera%20Pixel%20--%3E%20%3Crect%20x%3D%22546%22%20y%3D%224%22%20width%3D%222%22%20height%3D%2212%22%20fill%3D%22%23d97706%22%20%2F%3E%20%3Cpolygon%20points%3D%22548%2C4%20560%2C8%20548%2C12%22%20fill%3D%22%23facc15%22%20%2F%3E%20%3C!--%20Ventana%20Pixel%20iluminada%20--%3E%20%3Crect%20x%3D%22542%22%20y%3D%2274%22%20width%3D%2210%22%20height%3D%2214%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%22544%22%20y%3D%2276%22%20width%3D%226%22%20height%3D%2210%22%20fill%3D%22%23ca8a04%22%20%2F%3E%20%3C!--%20Torre%C3%B3n%20Central%20Principal%20(Gran%20Fortaleza%2016-bit)%20--%3E%20%3Crect%20x%3D%22240%22%20y%3D%2246%22%20width%3D%22120%22%20height%3D%22154%22%20fill%3D%22%23334155%22%20%2F%3E%20%3Crect%20x%3D%22236%22%20y%3D%2242%22%20width%3D%22128%22%20height%3D%226%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3C!--%20Almenas%20Centrales%20--%3E%20%3Crect%20x%3D%22236%22%20y%3D%2234%22%20width%3D%2214%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22258%22%20y%3D%2234%22%20width%3D%2214%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22280%22%20y%3D%2234%22%20width%3D%2214%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22306%22%20y%3D%2234%22%20width%3D%2214%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22328%22%20y%3D%2234%22%20width%3D%2214%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Crect%20x%3D%22350%22%20y%3D%2234%22%20width%3D%2214%22%20height%3D%228%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3C!--%20Torre%20Central%20Elevada%20con%20Gran%20Aguja%20--%3E%20%3Crect%20x%3D%22274%22%20y%3D%2218%22%20width%3D%2252%22%20height%3D%2220%22%20fill%3D%22%231e293b%22%20%2F%3E%20%3Cpolygon%20points%3D%22300%2C-6%20266%2C20%20334%2C20%22%20fill%3D%22%23dc2626%22%20%2F%3E%20%3C!--%20Gran%20Estandarte%20Real%20--%3E%20%3Crect%20x%3D%22299%22%20y%3D%22-20%22%20width%3D%222%22%20height%3D%2214%22%20fill%3D%22%23facc15%22%20%2F%3E%20%3Cpolygon%20points%3D%22301%2C-20%20318%2C-15%20301%2C-10%22%20fill%3D%22%23f87171%22%20%2F%3E%20%3C!--%20Ventanales%20del%20Gran%20Sal%C3%B3n%20--%3E%20%3Crect%20x%3D%22264%22%20y%3D%2258%22%20width%3D%2214%22%20height%3D%2222%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%22293%22%20y%3D%2254%22%20width%3D%2214%22%20height%3D%2226%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%22322%22%20y%3D%2258%22%20width%3D%2214%22%20height%3D%2222%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3C!--%20Gran%20Port%C3%B3n%20con%20Rastrillo%20--%3E%20%3Cpath%20d%3D%22M%20280%20200%20L%20280%20150%20L%20320%20150%20L%20320%20200%20Z%22%20fill%3D%22%230f172a%22%20%2F%3E%20%3Cline%20x1%3D%22288%22%20y1%3D%22150%22%20x2%3D%22288%22%20y2%3D%22200%22%20stroke%3D%22%23facc15%22%20stroke-width%3D%222%22%20%2F%3E%20%3Cline%20x1%3D%22300%22%20y1%3D%22150%22%20x2%3D%22300%22%20y2%3D%22200%22%20stroke%3D%22%23facc15%22%20stroke-width%3D%222%22%20%2F%3E%20%3Cline%20x1%3D%22312%22%20y1%3D%22150%22%20x2%3D%22312%22%20y2%3D%22200%22%20stroke%3D%22%23facc15%22%20stroke-width%3D%222%22%20%2F%3E%20%3Cline%20x1%3D%22280%22%20y1%3D%22165%22%20x2%3D%22320%22%20y2%3D%22165%22%20stroke%3D%22%23facc15%22%20stroke-width%3D%222%22%20%2F%3E%20%3Cline%20x1%3D%22280%22%20y1%3D%22185%22%20x2%3D%22320%22%20y2%3D%22185%22%20stroke%3D%22%23facc15%22%20stroke-width%3D%222%22%20%2F%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E");
+  background-size: 600px 200px;
+  image-rendering: pixelated;
+}
+
+.math-game--style-pixel[class*="math-game--realm-"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20200%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20shape-rendering%3D%22crispEdges%22%3E%20%3C!--%20Colinas%20escalonadas%20de%20fondo%20(Verde%20Pino%20%2F%20Tr%C3%A9bol)%20--%3E%20%3Cpath%20d%3D%22M%200%20110%20L%2080%2085%20L%20180%20105%20L%20300%2075%20L%20420%20100%20L%20520%2080%20L%20600%2095%20L%20600%20200%20L%200%20200%20Z%22%20fill%3D%22%2315803d%22%20%2F%3E%20%3C!--%20Pinos%20Pixel%20Art%2016-bit%20en%20el%20horizonte%20--%3E%20%3Cg%20fill%3D%22%23166534%22%3E%20%3C!--%20Pinos%20Izquierda%20--%3E%20%3Cpolygon%20points%3D%2220%2C70%2010%2C105%2030%2C105%22%20%2F%3E%20%3Cpolygon%20points%3D%2220%2C55%2012%2C80%2028%2C80%22%20%2F%3E%20%3Cpolygon%20points%3D%2220%2C40%2015%2C62%2025%2C62%22%20%2F%3E%20%3Cpolygon%20points%3D%2245%2C75%2032%2C110%2058%2C110%22%20%2F%3E%20%3Cpolygon%20points%3D%2245%2C60%2036%2C88%2054%2C88%22%20%2F%3E%20%3Cpolygon%20points%3D%2245%2C46%2039%2C70%2051%2C70%22%20%2F%3E%20%3Cpolygon%20points%3D%2275%2C80%2064%2C115%2086%2C115%22%20%2F%3E%20%3Cpolygon%20points%3D%2275%2C66%2067%2C92%2083%2C92%22%20%2F%3E%20%3C!--%20Pinos%20Derecha%20--%3E%20%3Cpolygon%20points%3D%22380%2C75%20368%2C110%20392%2C110%22%20%2F%3E%20%3Cpolygon%20points%3D%22380%2C60%20371%2C88%20389%2C88%22%20%2F%3E%20%3Cpolygon%20points%3D%22410%2C70%20395%2C108%20425%2C108%22%20%2F%3E%20%3Cpolygon%20points%3D%22410%2C54%20400%2C82%20420%2C82%22%20%2F%3E%20%3Cpolygon%20points%3D%22410%2C40%20404%2C64%20416%2C64%22%20%2F%3E%20%3Cpolygon%20points%3D%22560%2C78%20548%2C114%20572%2C114%22%20%2F%3E%20%3Cpolygon%20points%3D%22560%2C62%20552%2C90%20568%2C90%22%20%2F%3E%20%3C%2Fg%3E%20%3C!--%20Colina%20Intermedia%20(Verde%20Esmeralda%20Vibrante)%20--%3E%20%3Cpath%20d%3D%22M%200%20130%20L%20120%20105%20L%20260%20125%20L%20390%20100%20L%20500%20120%20L%20600%20105%20L%20600%20200%20L%200%20200%20Z%22%20fill%3D%22%2316a34a%22%20%2F%3E%20%3C!--%20%C3%81rboles%20Frondosos%20Pixel%20Art%20(Estilo%20SNES%2FGBA%20RPG)%20--%3E%20%3Cg%3E%20%3C!--%20Gran%20%C3%81rbol%20Izquierdo%20--%3E%20%3Crect%20x%3D%22115%22%20y%3D%22125%22%20width%3D%2210%22%20height%3D%2275%22%20fill%3D%22%2378350f%22%20%2F%3E%20%3C!--%20Copa%20escalonada%20en%20verde%20brillante%20y%20sombra%20--%3E%20%3Crect%20x%3D%2285%22%20y%3D%2265%22%20width%3D%2270%22%20height%3D%2260%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Crect%20x%3D%2295%22%20y%3D%2255%22%20width%3D%2250%22%20height%3D%2215%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Crect%20x%3D%22105%22%20y%3D%2248%22%20width%3D%2230%22%20height%3D%2210%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3Crect%20x%3D%2290%22%20y%3D%2270%22%20width%3D%2230%22%20height%3D%2225%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3Crect%20x%3D%2295%22%20y%3D%2265%22%20width%3D%2220%22%20height%3D%2210%22%20fill%3D%22%2386efac%22%20%2F%3E%20%3Crect%20x%3D%22125%22%20y%3D%2295%22%20width%3D%2230%22%20height%3D%2230%22%20fill%3D%22%2315803d%22%20%2F%3E%20%3C!--%20%C3%81rbol%20Secundario%20--%3E%20%3Crect%20x%3D%22185%22%20y%3D%22135%22%20width%3D%228%22%20height%3D%2265%22%20fill%3D%22%2378350f%22%20%2F%3E%20%3Crect%20x%3D%22165%22%20y%3D%2285%22%20width%3D%2248%22%20height%3D%2250%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Crect%20x%3D%22173%22%20y%3D%2275%22%20width%3D%2232%22%20height%3D%2214%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3Crect%20x%3D%22178%22%20y%3D%2272%22%20width%3D%2220%22%20height%3D%226%22%20fill%3D%22%2386efac%22%20%2F%3E%20%3Crect%20x%3D%22193%22%20y%3D%22110%22%20width%3D%2220%22%20height%3D%2225%22%20fill%3D%22%2315803d%22%20%2F%3E%20%3C!--%20Gran%20%C3%81rbol%20Derecho%20--%3E%20%3Crect%20x%3D%22495%22%20y%3D%22125%22%20width%3D%2210%22%20height%3D%2275%22%20fill%3D%22%2378350f%22%20%2F%3E%20%3Crect%20x%3D%22465%22%20y%3D%2260%22%20width%3D%2270%22%20height%3D%2265%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Crect%20x%3D%22475%22%20y%3D%2250%22%20width%3D%2250%22%20height%3D%2215%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Crect%20x%3D%22485%22%20y%3D%2244%22%20width%3D%2230%22%20height%3D%2210%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3Crect%20x%3D%22470%22%20y%3D%2265%22%20width%3D%2230%22%20height%3D%2225%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3Crect%20x%3D%22475%22%20y%3D%2260%22%20width%3D%2220%22%20height%3D%2210%22%20fill%3D%22%2386efac%22%20%2F%3E%20%3Crect%20x%3D%22505%22%20y%3D%2295%22%20width%3D%2230%22%20height%3D%2230%22%20fill%3D%22%2315803d%22%20%2F%3E%20%3C!--%20%C3%81rbol%20Derecho%20Secundario%20--%3E%20%3Crect%20x%3D%22440%22%20y%3D%22135%22%20width%3D%228%22%20height%3D%2265%22%20fill%3D%22%2378350f%22%20%2F%3E%20%3Crect%20x%3D%22420%22%20y%3D%2285%22%20width%3D%2248%22%20height%3D%2250%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3Crect%20x%3D%22428%22%20y%3D%2275%22%20width%3D%2232%22%20height%3D%2214%22%20fill%3D%22%234ade80%22%20%2F%3E%20%3Crect%20x%3D%22432%22%20y%3D%2270%22%20width%3D%2220%22%20height%3D%228%22%20fill%3D%22%2386efac%22%20%2F%3E%20%3Crect%20x%3D%22448%22%20y%3D%22110%22%20width%3D%2220%22%20height%3D%2225%22%20fill%3D%22%2315803d%22%20%2F%3E%20%3C%2Fg%3E%20%3C!--%20Colina%20Delantera%20(Pradera%20Verde%20Sol%20con%20Flores%20Pixel)%20--%3E%20%3Cpath%20d%3D%22M%200%20155%20L%20140%20135%20L%20300%20150%20L%20460%20130%20L%20600%20145%20L%20600%20200%20L%200%20200%20Z%22%20fill%3D%22%2322c55e%22%20%2F%3E%20%3C!--%20P%C3%ADxeles%20de%20Flores%20y%20c%C3%A9sped%20--%3E%20%3Cg%3E%20%3C!--%20Flores%20amarillas%20--%3E%20%3Crect%20x%3D%2260%22%20y%3D%22165%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%22140%22%20y%3D%22155%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%22230%22%20y%3D%22170%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%22350%22%20y%3D%22160%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%22430%22%20y%3D%22150%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3Crect%20x%3D%22540%22%20y%3D%22165%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23fef08a%22%20%2F%3E%20%3C!--%20Flores%20rosas%20y%20blancas%20--%3E%20%3Crect%20x%3D%2290%22%20y%3D%22170%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23f472b6%22%20%2F%3E%20%3Crect%20x%3D%22280%22%20y%3D%22165%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23ffffff%22%20%2F%3E%20%3Crect%20x%3D%22390%22%20y%3D%22172%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23f472b6%22%20%2F%3E%20%3Crect%20x%3D%22480%22%20y%3D%22160%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22%23ffffff%22%20%2F%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E");
+  background-size: 600px 200px;
+  image-rendering: pixelated;
+}
+
+/* 10 Cielos diurnos y luminosos llenos de vida (NO oscuros) */
 .math-game--realm-slime {
   background:
-    radial-gradient(ellipse at 18% 75%, rgba(190, 242, 100, 0.38), transparent 22%),
-    radial-gradient(ellipse at 82% 82%, rgba(101, 163, 13, 0.45), transparent 28%),
-    linear-gradient(180deg, #17394a 0%, #315d46 48%, #718a3a 100%);
-}
-
-.math-game--realm-slime::before {
-  background:
-    radial-gradient(ellipse at 15% 100%, #25451d 0 20%, transparent 21%),
-    radial-gradient(ellipse at 48% 105%, #315526 0 28%, transparent 29%),
-    radial-gradient(ellipse at 86% 100%, #203d1a 0 24%, transparent 25%);
+    radial-gradient(circle at 50% 12%, #fffbeb 0 6%, rgba(254, 240, 138, 0.6) 7% 20%, transparent 35%),
+    linear-gradient(180deg, #0284c7 0%, #38bdf8 38%, #7dd3fc 68%, #dcfce7 100%);
 }
 
 .math-game--realm-werewolf {
   background:
-    radial-gradient(circle at 78% 14%, #fff4c7 0 4%, rgba(255, 244, 199, 0.2) 4.5% 9%, transparent 10%),
-    radial-gradient(ellipse at 50% 72%, rgba(77, 124, 99, 0.44), transparent 38%),
-    linear-gradient(180deg, #111827 0%, #1e3a46 48%, #253f2f 100%);
-}
-
-.math-game--realm-werewolf::before {
-  background:
-    linear-gradient(78deg, transparent 0 8%, #0c2119 8.5% 11%, transparent 11.5% 22%, #10271e 22.5% 26%, transparent 26.5% 72%, #0b1e17 72.5% 76%, transparent 76.5% 88%, #10271e 88.5% 92%, transparent 92.5%),
-    linear-gradient(180deg, transparent 0 62%, #0b1d17 63%);
-  clip-path: polygon(0 15%, 8% 31%, 16% 10%, 25% 35%, 36% 6%, 46% 30%, 58% 12%, 69% 34%, 80% 8%, 90% 28%, 100% 13%, 100% 100%, 0 100%);
+    radial-gradient(circle at 75% 18%, #ffffff 0 5%, #fef08a 6% 16%, rgba(251, 146, 60, 0.45) 17% 30%, transparent 40%),
+    linear-gradient(180deg, #2563eb 0%, #60a5fa 32%, #fed7aa 64%, #fb923c 88%, #fef08a 100%);
 }
 
 .math-game--realm-goblin {
   background:
-    radial-gradient(circle at 22% 24%, rgba(163, 230, 53, 0.25), transparent 14%),
-    radial-gradient(ellipse at 68% 66%, rgba(63, 98, 18, 0.55), transparent 38%),
-    linear-gradient(180deg, #162f28 0%, #294d2e 48%, #524725 100%);
-}
-
-.math-game--realm-goblin::before {
-  background:
-    repeating-linear-gradient(100deg, transparent 0 12%, rgba(18, 47, 32, 0.9) 12.5% 15%, transparent 15.5% 24%),
-    linear-gradient(180deg, transparent 0 58%, #172e20 59%);
-  clip-path: polygon(0 30%, 12% 10%, 25% 34%, 39% 4%, 52% 28%, 66% 9%, 79% 35%, 91% 12%, 100% 26%, 100% 100%, 0 100%);
+    radial-gradient(circle at 25% 15%, #fef08a 0 6%, rgba(254, 240, 138, 0.4) 7% 20%, transparent 30%),
+    linear-gradient(180deg, #0284c7 0%, #06b6d4 38%, #5eead4 70%, #bbf7d0 100%);
 }
 
 .math-game--realm-troll {
   background:
-    radial-gradient(circle at 18% 14%, rgba(226, 232, 240, 0.55), transparent 8%),
-    linear-gradient(145deg, transparent 0 55%, rgba(51, 65, 85, 0.58) 56% 70%, transparent 71%),
-    linear-gradient(180deg, #46637a 0%, #78909c 48%, #64748b 100%);
-}
-
-.math-game--realm-troll::before {
-  background: linear-gradient(135deg, transparent 0 18%, #334155 18.5% 36%, #475569 36.5% 55%, #293548 55.5%);
-  clip-path: polygon(0 65%, 16% 32%, 27% 58%, 48% 8%, 67% 54%, 82% 24%, 100% 61%, 100% 100%, 0 100%);
+    radial-gradient(ellipse at 35% 20%, rgba(255, 255, 255, 0.7) 0 16%, transparent 26%),
+    linear-gradient(180deg, #1d4ed8 0%, #3b82f6 42%, #93c5fd 76%, #e0f2fe 100%);
 }
 
 .math-game--realm-dragon {
   background:
-    radial-gradient(circle at 50% 84%, rgba(251, 146, 60, 0.8), transparent 17%),
-    radial-gradient(circle at 18% 18%, rgba(239, 68, 68, 0.28), transparent 14%),
-    linear-gradient(180deg, #2b1724 0%, #5b2423 52%, #8a341c 100%);
-}
-
-.math-game--realm-dragon::before {
-  background:
-    linear-gradient(112deg, transparent 0 34%, #22131a 34.5% 52%, transparent 52.5%),
-    linear-gradient(70deg, transparent 0 46%, #321719 46.5% 64%, transparent 64.5%),
-    linear-gradient(180deg, transparent 0 76%, #251315 77%);
-  clip-path: polygon(0 70%, 24% 44%, 38% 65%, 50% 12%, 64% 65%, 78% 39%, 100% 73%, 100% 100%, 0 100%);
+    radial-gradient(circle at 50% 24%, #ffffff 0 7%, #fef08a 8% 20%, rgba(251, 146, 60, 0.5) 21% 38%, transparent 45%),
+    linear-gradient(180deg, #e11d48 0%, #ea580c 35%, #f97316 65%, #fde047 100%);
 }
 
 .math-game--realm-cyclops {
   background:
-    radial-gradient(circle at 72% 18%, rgba(221, 214, 254, 0.55), transparent 9%),
-    linear-gradient(160deg, transparent 0 58%, rgba(76, 29, 149, 0.36) 59%),
-    linear-gradient(180deg, #28335f 0%, #53458a 50%, #7c5b68 100%);
-}
-
-.math-game--realm-cyclops::before {
-  background: linear-gradient(150deg, transparent 0 32%, #3f355b 32.5% 56%, #2f2d48 56.5%);
-  clip-path: polygon(0 68%, 18% 45%, 34% 63%, 52% 28%, 68% 58%, 85% 38%, 100% 64%, 100% 100%, 0 100%);
+    radial-gradient(circle at 72% 18%, #fef08a 0 7%, rgba(233, 213, 255, 0.5) 8% 22%, transparent 34%),
+    linear-gradient(180deg, #4f46e5 0%, #7c3aed 38%, #c084fc 70%, #fed7aa 100%);
 }
 
 .math-game--realm-griffin {
   background:
-    radial-gradient(circle at 76% 16%, #fff0b2 0 4%, rgba(255, 240, 178, 0.2) 5% 11%, transparent 12%),
-    radial-gradient(ellipse at 20% 38%, rgba(255, 255, 255, 0.6), transparent 14%),
-    radial-gradient(ellipse at 70% 46%, rgba(255, 255, 255, 0.42), transparent 18%),
-    linear-gradient(180deg, #39779f 0%, #7fb0c8 58%, #c9964b 100%);
-}
-
-.math-game--realm-griffin::before {
-  background: linear-gradient(145deg, transparent 0 38%, #72542d 38.5% 57%, #4b3c2b 57.5%);
-  clip-path: polygon(0 80%, 25% 53%, 42% 70%, 60% 30%, 76% 67%, 90% 48%, 100% 63%, 100% 100%, 0 100%);
+    radial-gradient(circle at 50% 15%, #ffffff 0 7%, #fef08a 8% 18%, rgba(254, 240, 138, 0.45) 19% 32%, transparent 40%),
+    linear-gradient(180deg, #0369a1 0%, #0284c7 38%, #38bdf8 70%, #fef08a 100%);
 }
 
 .math-game--realm-minotaur {
   background:
-    linear-gradient(90deg, rgba(120, 53, 15, 0.22) 2px, transparent 2px),
-    linear-gradient(rgba(120, 53, 15, 0.22) 2px, transparent 2px),
-    radial-gradient(circle at 50% 20%, rgba(253, 230, 138, 0.38), transparent 18%),
-    linear-gradient(180deg, #59452f 0%, #8d6841 54%, #4f3827 100%);
-  background-size: 48px 48px, 48px 48px, auto, auto;
-}
-
-.math-game--realm-minotaur::before {
-  background:
-    repeating-linear-gradient(90deg, #3d291d 0 5%, transparent 5% 10%),
-    linear-gradient(180deg, transparent 0 68%, #3d291d 69%);
-  clip-path: polygon(0 36%, 8% 36%, 8% 18%, 19% 18%, 19% 54%, 31% 54%, 31% 28%, 44% 28%, 44% 8%, 57% 8%, 57% 48%, 70% 48%, 70% 22%, 82% 22%, 82% 56%, 92% 56%, 92% 30%, 100% 30%, 100% 100%, 0 100%);
+    radial-gradient(circle at 50% 18%, #ffffff 0 7%, #fef08a 8% 20%, rgba(254, 240, 138, 0.4) 21% 36%, transparent 44%),
+    linear-gradient(180deg, #0284c7 0%, #38bdf8 44%, #fed7aa 76%, #fef08a 100%);
 }
 
 .math-game--realm-kraken {
   background:
-    radial-gradient(ellipse at 50% 18%, rgba(94, 234, 212, 0.34), transparent 22%),
-    repeating-radial-gradient(ellipse at 50% 108%, rgba(45, 212, 191, 0.28) 0 10px, transparent 11px 34px),
-    linear-gradient(180deg, #082f49 0%, #0e7490 52%, #134e4a 100%);
-}
-
-.math-game--realm-kraken::before {
-  background:
-    radial-gradient(ellipse at 10% 100%, #0b3941 0 28%, transparent 29%),
-    radial-gradient(ellipse at 50% 110%, #0c4650 0 34%, transparent 35%),
-    radial-gradient(ellipse at 90% 100%, #0b3941 0 28%, transparent 29%);
+    radial-gradient(ellipse at 50% 16%, #ffffff 0 8%, #a5f3fc 9% 22%, transparent 32%),
+    linear-gradient(180deg, #0284c7 0%, #0891b2 38%, #06b6d4 68%, #67e8f9 100%);
 }
 
 .math-game--realm-phoenix {
   background:
-    radial-gradient(circle at 50% 18%, #fde047 0 5%, rgba(253, 224, 71, 0.35) 6% 15%, transparent 16%),
-    radial-gradient(ellipse at 50% 74%, rgba(251, 146, 60, 0.55), transparent 30%),
-    linear-gradient(180deg, #7c2d5b 0%, #ea580c 54%, #f59e0b 100%);
-}
-
-.math-game--realm-phoenix::before {
-  background:
-    linear-gradient(90deg, transparent 0 15%, #5b2b22 15.5% 19%, transparent 19.5% 81%, #5b2b22 81.5% 85%, transparent 85.5%),
-    linear-gradient(180deg, transparent 0 72%, #6b3020 73%);
-  clip-path: polygon(0 76%, 14% 76%, 14% 34%, 22% 24%, 30% 34%, 30% 76%, 43% 76%, 43% 52%, 50% 42%, 57% 52%, 57% 76%, 70% 76%, 70% 34%, 78% 24%, 86% 34%, 86% 76%, 100% 76%, 100% 100%, 0 100%);
+    radial-gradient(circle at 50% 16%, #ffffff 0 9%, #fef08a 10% 24%, rgba(251, 146, 60, 0.5) 25% 42%, transparent 50%),
+    linear-gradient(180deg, #be185d 0%, #e11d48 32%, #f97316 65%, #fde047 100%);
 }
 
 .math-game--centered {
@@ -467,196 +438,186 @@
 }
 
 /* =========================================================================
-   ESCENARIOS FANTASÍA MEDIEVAL ILUSTRADA (10 Reinos atmosféricos)
+   ESCENARIOS FANTASÍA MEDIEVAL ILUSTRADA - CASTILLOS Y BOSQUES VIBRANTES
    ========================================================================= */
 .math-game--style-fantasy.math-game--realm-slime {
   background:
-    radial-gradient(circle at 50% 12%, rgba(217, 249, 157, 0.35), transparent 28%),
-    radial-gradient(ellipse at 20% 70%, rgba(101, 163, 13, 0.45), transparent 35%),
-    radial-gradient(ellipse at 80% 75%, rgba(132, 204, 22, 0.4), transparent 30%),
-    linear-gradient(180deg, #0d2818 0%, #1d432b 45%, #466728 100%);
+    radial-gradient(circle at 50% 12%, #fffbeb 0 6%, rgba(254, 240, 138, 0.6) 7% 20%, transparent 35%),
+    radial-gradient(ellipse at 20% 50%, rgba(255, 255, 255, 0.6) 0 12%, transparent 22%),
+    linear-gradient(180deg, #0284c7 0%, #38bdf8 38%, #7dd3fc 68%, #dcfce7 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-werewolf {
   background:
-    radial-gradient(circle at 82% 16%, #f8fafc 0 5%, rgba(241, 245, 249, 0.35) 6% 12%, rgba(148, 163, 184, 0.15) 13% 24%, transparent 26%),
-    radial-gradient(ellipse at 50% 75%, rgba(30, 41, 59, 0.6), transparent 45%),
-    linear-gradient(180deg, #090d16 0%, #151d30 45%, #182a24 100%);
+    radial-gradient(circle at 75% 18%, #ffffff 0 5%, #fef08a 6% 16%, rgba(251, 146, 60, 0.45) 17% 30%, transparent 40%),
+    radial-gradient(ellipse at 40% 45%, rgba(255, 255, 255, 0.5) 0 10%, transparent 20%),
+    linear-gradient(180deg, #2563eb 0%, #60a5fa 32%, #fed7aa 64%, #fb923c 88%, #fef08a 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-goblin {
   background:
-    radial-gradient(circle at 25% 20%, rgba(163, 230, 53, 0.3), transparent 20%),
-    radial-gradient(circle at 75% 30%, rgba(234, 179, 8, 0.25), transparent 18%),
-    radial-gradient(ellipse at 50% 80%, rgba(54, 83, 20, 0.5), transparent 40%),
-    linear-gradient(180deg, #112017 0%, #1f3824 50%, #3e3318 100%);
+    radial-gradient(circle at 25% 15%, #fef08a 0 6%, rgba(254, 240, 138, 0.4) 7% 20%, transparent 30%),
+    radial-gradient(ellipse at 70% 35%, rgba(255, 255, 255, 0.55) 0 12%, transparent 22%),
+    linear-gradient(180deg, #0284c7 0%, #06b6d4 38%, #5eead4 70%, #bbf7d0 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-troll {
   background:
-    radial-gradient(circle at 50% 15%, rgba(241, 245, 249, 0.45), transparent 22%),
-    radial-gradient(ellipse at 25% 65%, rgba(71, 85, 105, 0.5), transparent 32%),
-    linear-gradient(180deg, #1e293b 0%, #334155 45%, #64748b 100%);
+    radial-gradient(ellipse at 35% 20%, rgba(255, 255, 255, 0.8) 0 16%, transparent 26%),
+    radial-gradient(ellipse at 75% 25%, rgba(255, 255, 255, 0.6) 0 12%, transparent 22%),
+    linear-gradient(180deg, #1d4ed8 0%, #3b82f6 42%, #93c5fd 76%, #e0f2fe 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-dragon {
   background:
-    radial-gradient(circle at 50% 86%, rgba(251, 146, 60, 0.85) 0%, rgba(239, 68, 68, 0.45) 25%, transparent 45%),
-    radial-gradient(circle at 20% 20%, rgba(220, 38, 38, 0.35), transparent 22%),
-    linear-gradient(180deg, #240b15 0%, #450a0a 48%, #782613 100%);
+    radial-gradient(circle at 50% 24%, #ffffff 0 7%, #fef08a 8% 20%, rgba(251, 146, 60, 0.5) 21% 38%, transparent 45%),
+    radial-gradient(ellipse at 20% 35%, rgba(254, 240, 138, 0.4) 0 10%, transparent 20%),
+    linear-gradient(180deg, #e11d48 0%, #ea580c 35%, #f97316 65%, #fde047 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-cyclops {
   background:
-    radial-gradient(circle at 75% 18%, rgba(233, 213, 255, 0.55), transparent 20%),
-    radial-gradient(ellipse at 30% 70%, rgba(107, 33, 168, 0.45), transparent 35%),
-    linear-gradient(180deg, #1e153b 0%, #3b1d6e 48%, #5c3558 100%);
+    radial-gradient(circle at 72% 18%, #fef08a 0 7%, rgba(233, 213, 255, 0.55) 8% 22%, transparent 34%),
+    radial-gradient(ellipse at 25% 40%, rgba(254, 240, 138, 0.45) 0 12%, transparent 24%),
+    linear-gradient(180deg, #4f46e5 0%, #7c3aed 38%, #c084fc 70%, #fed7aa 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-griffin {
   background:
-    radial-gradient(circle at 50% 18%, #fef08a 0 6%, rgba(253, 224, 71, 0.45) 7% 16%, rgba(254, 240, 138, 0.2) 17% 30%, transparent 32%),
-    radial-gradient(ellipse at 20% 50%, rgba(255, 255, 255, 0.55), transparent 20%),
-    radial-gradient(ellipse at 80% 55%, rgba(255, 255, 255, 0.45), transparent 24%),
-    linear-gradient(180deg, #1e3a8a 0%, #3b82f6 40%, #f59e0b 100%);
+    radial-gradient(circle at 50% 15%, #ffffff 0 7%, #fef08a 8% 18%, rgba(254, 240, 138, 0.45) 19% 32%, transparent 40%),
+    radial-gradient(ellipse at 20% 45%, rgba(255, 255, 255, 0.7) 0 14%, transparent 25%),
+    linear-gradient(180deg, #0369a1 0%, #0284c7 38%, #38bdf8 70%, #fef08a 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-minotaur {
   background:
-    radial-gradient(circle at 50% 22%, rgba(253, 230, 138, 0.4), transparent 25%),
-    radial-gradient(ellipse at 50% 78%, rgba(120, 53, 15, 0.45), transparent 42%),
-    linear-gradient(180deg, #271a0e 0%, #452b18 50%, #2e1d12 100%);
+    radial-gradient(circle at 50% 18%, #ffffff 0 7%, #fef08a 8% 20%, rgba(254, 240, 138, 0.4) 21% 36%, transparent 44%),
+    radial-gradient(ellipse at 80% 35%, rgba(255, 255, 255, 0.5) 0 10%, transparent 20%),
+    linear-gradient(180deg, #0284c7 0%, #38bdf8 44%, #fed7aa 76%, #fef08a 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-kraken {
   background:
-    radial-gradient(ellipse at 50% 12%, rgba(153, 246, 228, 0.45), transparent 26%),
-    radial-gradient(ellipse at 20% 65%, rgba(13, 148, 136, 0.5), transparent 35%),
-    radial-gradient(ellipse at 80% 70%, rgba(20, 184, 166, 0.45), transparent 35%),
-    linear-gradient(180deg, #031e2e 0%, #064e62 48%, #082f49 100%);
+    radial-gradient(ellipse at 50% 16%, #ffffff 0 8%, #a5f3fc 9% 22%, transparent 32%),
+    radial-gradient(ellipse at 25% 45%, rgba(255, 255, 255, 0.6) 0 12%, transparent 22%),
+    linear-gradient(180deg, #0284c7 0%, #0891b2 38%, #06b6d4 68%, #67e8f9 100%);
 }
 
 .math-game--style-fantasy.math-game--realm-phoenix {
   background:
-    radial-gradient(circle at 50% 16%, #fef08a 0 6%, rgba(250, 204, 21, 0.55) 7% 18%, rgba(249, 115, 22, 0.3) 19% 34%, transparent 36%),
-    radial-gradient(ellipse at 50% 76%, rgba(249, 115, 22, 0.6), transparent 38%),
-    linear-gradient(180deg, #4a044e 0%, #9a1750 42%, #ea580c 100%);
+    radial-gradient(circle at 50% 16%, #ffffff 0 9%, #fef08a 10% 24%, rgba(251, 146, 60, 0.5) 25% 42%, transparent 50%),
+    radial-gradient(ellipse at 78% 38%, rgba(254, 240, 138, 0.5) 0 12%, transparent 24%),
+    linear-gradient(180deg, #be185d 0%, #e11d48 32%, #f97316 65%, #fde047 100%);
 }
 
 /* =========================================================================
-   ESCENARIOS PIXEL ART RETRO (10 Reinos JRPG 16-bit)
+   ESCENARIOS PIXEL ART RETRO - CASTILLOS Y BOSQUES 16-BIT JRPG
    ========================================================================= */
 .math-game--style-pixel.math-game--realm-slime {
   background:
-    radial-gradient(circle at 80% 15%, #a3e635 0 3px, transparent 4px),
-    radial-gradient(circle at 20% 25%, #a3e635 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 15%, #fef08a 0 16px, #fde047 17px 26px, transparent 28px),
+    radial-gradient(circle at 20% 25%, #ffffff 0 12px, transparent 14px),
+    radial-gradient(circle at 35% 22%, #ffffff 0 16px, transparent 18px),
     linear-gradient(180deg,
-      #061a12 0%, #061a12 25%,
-      #0e3820 25%, #0e3820 50%,
-      #1b5e34 50%, #1b5e34 75%,
-      #2f854c 75%, #2f854c 100%);
+      #0284c7 0%, #0284c7 25%,
+      #38bdf8 25%, #38bdf8 50%,
+      #7dd3fc 50%, #7dd3fc 75%,
+      #bbf7d0 75%, #bbf7d0 100%);
 }
 
 .math-game--style-pixel.math-game--realm-werewolf {
   background:
-    radial-gradient(circle at 78% 18%, #f8fafc 0 16px, #cbd5e1 17px 22px, transparent 23px),
-    radial-gradient(circle at 15% 15%, #ffffff 0 2px, transparent 3px),
-    radial-gradient(circle at 35% 28%, #ffffff 0 2px, transparent 3px),
-    radial-gradient(circle at 60% 10%, #ffffff 0 3px, transparent 4px),
+    radial-gradient(circle at 76% 18%, #ffffff 0 14px, #fef08a 15px 26px, transparent 28px),
+    radial-gradient(circle at 25% 30%, #ffffff 0 12px, transparent 14px),
     linear-gradient(180deg,
-      #020617 0%, #020617 25%,
-      #0f172a 25%, #0f172a 50%,
-      #1e293b 50%, #1e293b 75%,
-      #0f281e 75%, #0f281e 100%);
+      #2563eb 0%, #2563eb 25%,
+      #60a5fa 25%, #60a5fa 50%,
+      #fb923c 50%, #fb923c 75%,
+      #fef08a 75%, #fef08a 100%);
 }
 
 .math-game--style-pixel.math-game--realm-goblin {
   background:
-    radial-gradient(circle at 75% 20%, #facc15 0 4px, transparent 5px),
-    radial-gradient(circle at 20% 35%, #bef264 0 3px, transparent 4px),
+    radial-gradient(circle at 75% 20%, #fef08a 0 14px, transparent 16px),
+    radial-gradient(circle at 20% 35%, #ffffff 0 12px, transparent 14px),
     linear-gradient(180deg,
-      #0a140a 0%, #0a140a 25%,
-      #142814 25%, #142814 50%,
-      #24401a 50%, #24401a 75%,
-      #3f3512 75%, #3f3512 100%);
+      #0284c7 0%, #0284c7 25%,
+      #06b6d4 25%, #06b6d4 50%,
+      #34d399 50%, #34d399 75%,
+      #a7f3d0 75%, #a7f3d0 100%);
 }
 
 .math-game--style-pixel.math-game--realm-troll {
   background:
-    radial-gradient(circle at 25% 15%, #ffffff 0 3px, transparent 4px),
-    radial-gradient(circle at 70% 25%, #ffffff 0 2px, transparent 3px),
+    radial-gradient(circle at 25% 20%, #ffffff 0 16px, transparent 18px),
+    radial-gradient(circle at 70% 30%, #ffffff 0 14px, transparent 16px),
     linear-gradient(180deg,
-      #0f172a 0%, #0f172a 25%,
-      #1e293b 25%, #1e293b 50%,
-      #334155 50%, #334155 75%,
-      #475569 75%, #475569 100%);
+      #1d4ed8 0%, #1d4ed8 25%,
+      #3b82f6 25%, #3b82f6 50%,
+      #60a5fa 50%, #60a5fa 75%,
+      #bae6fd 75%, #bae6fd 100%);
 }
 
 .math-game--style-pixel.math-game--realm-dragon {
   background:
-    radial-gradient(circle at 50% 88%, #f97316 0 24px, #ea580c 25px 50px, transparent 55px),
-    radial-gradient(circle at 20% 20%, #f87171 0 3px, transparent 4px),
-    radial-gradient(circle at 80% 30%, #f87171 0 3px, transparent 4px),
+    radial-gradient(circle at 50% 28%, #ffffff 0 18px, #fef08a 19px 36px, transparent 38px),
+    radial-gradient(circle at 20% 20%, #fef08a 0 10px, transparent 12px),
     linear-gradient(180deg,
-      #1c0505 0%, #1c0505 25%,
-      #450a0a 25%, #450a0a 50%,
-      #7f1d1d 50%, #7f1d1d 75%,
-      #991b1b 75%, #991b1b 100%);
+      #dc2626 0%, #dc2626 25%,
+      #ea580c 25%, #ea580c 50%,
+      #f97316 50%, #f97316 75%,
+      #fde047 75%, #fde047 100%);
 }
 
 .math-game--style-pixel.math-game--realm-cyclops {
   background:
-    radial-gradient(circle at 75% 16%, #e9d5ff 0 12px, transparent 14px),
-    radial-gradient(circle at 18% 22%, #c084fc 0 3px, transparent 4px),
+    radial-gradient(circle at 75% 18%, #fef08a 0 16px, transparent 18px),
+    radial-gradient(circle at 18% 28%, #ffffff 0 10px, transparent 12px),
     linear-gradient(180deg,
-      #120826 0%, #120826 25%,
-      #240e4f 25%, #240e4f 50%,
-      #3b1875 50%, #3b1875 75%,
-      #581c87 75%, #581c87 100%);
+      #4f46e5 0%, #4f46e5 25%,
+      #7c3aed 25%, #7c3aed 50%,
+      #c084fc 50%, #c084fc 75%,
+      #fed7aa 75%, #fed7aa 100%);
 }
 
 .math-game--style-pixel.math-game--realm-griffin {
   background:
-    radial-gradient(circle at 50% 20%, #fef08a 0 18px, #facc15 19px 28px, transparent 30px),
+    radial-gradient(circle at 50% 20%, #ffffff 0 16px, #fef08a 17px 28px, transparent 30px),
     linear-gradient(180deg,
-      #1e3a8a 0%, #1e3a8a 25%,
-      #2563eb 25%, #2563eb 50%,
-      #60a5fa 50%, #60a5fa 75%,
-      #d97706 75%, #d97706 100%);
+      #0369a1 0%, #0369a1 25%,
+      #0284c7 25%, #0284c7 50%,
+      #38bdf8 50%, #38bdf8 75%,
+      #fef08a 75%, #fef08a 100%);
 }
 
 .math-game--style-pixel.math-game--realm-minotaur {
   background:
-    radial-gradient(circle at 50% 24%, #fde047 0 6px, transparent 7px),
+    radial-gradient(circle at 50% 20%, #ffffff 0 16px, #fef08a 17px 28px, transparent 30px),
     linear-gradient(180deg,
-      #1c1208 0%, #1c1208 25%,
-      #332010 25%, #332010 50%,
-      #52341b 50%, #52341b 75%,
-      #382415 75%, #382415 100%);
+      #0284c7 0%, #0284c7 25%,
+      #38bdf8 25%, #38bdf8 50%,
+      #fed7aa 50%, #fed7aa 75%,
+      #fef08a 75%, #fef08a 100%);
 }
 
 .math-game--style-pixel.math-game--realm-kraken {
   background:
-    radial-gradient(circle at 50% 15%, #67e8f9 0 6px, transparent 8px),
-    radial-gradient(circle at 25% 40%, #22d3ee 0 3px, transparent 4px),
-    radial-gradient(circle at 75% 55%, #22d3ee 0 3px, transparent 4px),
+    radial-gradient(circle at 50% 18%, #ffffff 0 16px, #ccfbf1 17px 28px, transparent 30px),
     linear-gradient(180deg,
-      #021824 0%, #021824 25%,
-      #083344 25%, #083344 50%,
-      #0e7490 50%, #0e7490 75%,
-      #155e75 75%, #155e75 100%);
+      #0284c7 0%, #0284c7 25%,
+      #0891b2 25%, #0891b2 50%,
+      #06b6d4 50%, #06b6d4 75%,
+      #67e8f9 75%, #67e8f9 100%);
 }
 
 .math-game--style-pixel.math-game--realm-phoenix {
   background:
-    radial-gradient(circle at 50% 18%, #fef08a 0 16px, #fbbf24 17px 26px, transparent 28px),
-    radial-gradient(circle at 20% 30%, #fde047 0 3px, transparent 4px),
-    radial-gradient(circle at 80% 30%, #fde047 0 3px, transparent 4px),
+    radial-gradient(circle at 50% 18%, #ffffff 0 18px, #fef08a 19px 34px, transparent 36px),
     linear-gradient(180deg,
-      #2e0436 0%, #2e0436 25%,
-      #58084a 25%, #58084a 50%,
-      #9d174d 50%, #9d174d 75%,
-      #c2410c 75%, #c2410c 100%);
+      #be185d 0%, #be185d 25%,
+      #e11d48 25%, #e11d48 50%,
+      #f97316 50%, #f97316 75%,
+      #fde047 75%, #fde047 100%);
 }
 
 .math-game__hero {
