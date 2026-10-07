@@ -1,11 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap");
 
 .math-game {
-  --game-ink: #183153;
-  --game-muted: #61708a;
-  --game-purple: #7257e9;
-  --game-purple-dark: #583acb;
-  --game-yellow: #ffcf4a;
+  --game-ink: #3a2415;
+  --game-muted: #7a624c;
+  --game-purple: #9a3412;
+  --game-purple-dark: #7c2d12;
+  --game-yellow: #e8b84a;
   width: 100%;
   max-width: 100%;
   min-height: 100dvh;
@@ -14,17 +14,26 @@
   padding-bottom: max(clamp(28px, 6vh, 64px), env(safe-area-inset-bottom));
   box-sizing: border-box;
   overflow-x: clip;
-  color: var(--game-ink);
+  color: #f8f1e3;
   background:
-    radial-gradient(circle at 10% 15%, rgba(255, 207, 74, 0.24), transparent 24%),
-    radial-gradient(circle at 85% 20%, rgba(114, 87, 233, 0.18), transparent 28%),
-    linear-gradient(145deg, #faf8ff 0%, #f3f7ff 50%, #fffaf0 100%);
+    radial-gradient(circle at 50% 0%, rgba(232, 184, 74, 0.28), transparent 26%),
+    radial-gradient(circle at 12% 80%, rgba(61, 107, 79, 0.45), transparent 28%),
+    linear-gradient(180deg, #1e3a5f 0%, #3d6b4f 46%, #c4a574 100%);
   font-family: "Nunito", sans-serif;
 }
 
 .math-game--centered {
   display: grid;
   place-items: center;
+  padding-inline: clamp(12px, 4vw, 24px);
+}
+
+.math-game--stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe center;
+  gap: 14px;
   padding-inline: clamp(12px, 4vw, 24px);
 }
 
@@ -225,9 +234,39 @@
   border: 1px solid rgba(114, 87, 233, 0.13);
   border-radius: 30px;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.94);
+  overflow: hidden;
+  color: var(--game-ink);
+  background: rgba(255, 248, 236, 0.96);
   box-shadow: 0 24px 70px rgba(49, 41, 94, 0.14);
   text-align: center;
+}
+
+.slide-panel--exit {
+  animation: slide-out-left 800ms ease forwards;
+  pointer-events: none;
+}
+
+.slide-panel--enter {
+  animation: slide-in-right 800ms ease both;
+  pointer-events: none;
+}
+
+@keyframes slide-out-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-105%, 0, 0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translate3d(105%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .question-card__header,
@@ -275,7 +314,7 @@
 .progress-track div {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--game-purple), #9a7ff5);
+  background: linear-gradient(90deg, #e8b84a, var(--game-purple));
   transition: width 250ms ease;
 }
 
@@ -563,7 +602,7 @@
   }
 
   .score-card__actions {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -572,8 +611,311 @@
   .answer-grid button,
   .score-card button,
   .progress-track div,
-  .timer--urgent {
+  .timer--urgent,
+  .slide-panel--exit,
+  .slide-panel--enter,
+  .hero-slot--jump,
+  .demon-figure--hit,
+  .demon-figure--dodge,
+  .hero-slot--attack,
+  .combat-callout,
+  .demon-figure--defeated,
+  .hero-slot--gone {
     animation: none;
     transition: none;
+  }
+}
+
+.adventure-scene {
+  position: relative;
+  width: min(100%, 640px);
+}
+
+.adventure-scene--select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-choices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  align-items: end;
+}
+
+.hero-choice {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 8px 4px 4px;
+  border: 3px solid transparent;
+  border-radius: 22px;
+  color: #f8f1e3;
+  background: rgba(20, 16, 12, 0.28);
+  cursor: pointer;
+  font-family: "Baloo 2", sans-serif;
+  min-width: 0;
+  font-size: clamp(0.85rem, 3.2vw, 1.05rem);
+  font-weight: 800;
+}
+
+.hero-choice svg,
+.hero-slot svg {
+  width: min(100%, 108px);
+  height: auto;
+}
+
+.hero-choice--selected {
+  border-color: var(--game-yellow);
+  background: rgba(232, 184, 74, 0.22);
+}
+
+.adventure-scene--select .demon-slot {
+  position: relative;
+  z-index: 2;
+  width: 132px;
+  margin-top: -18px;
+}
+
+.adventure-scene--battle,
+.adventure-scene--victory,
+.adventure-scene--defeat {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: min(100%, 460px);
+  min-height: 190px;
+}
+
+.hero-slot {
+  width: 128px;
+  z-index: 1;
+  transition: transform 700ms ease;
+}
+
+.adventure-scene--battle .demon-slot,
+.adventure-scene--victory .demon-slot,
+.adventure-scene--defeat .demon-slot {
+  width: 168px;
+  z-index: 2;
+  margin-left: -36px;
+}
+
+.demon-slot {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.demon-figure svg {
+  width: 100%;
+  height: auto;
+}
+
+.adventure-scene__name {
+  margin: -6px 0 0;
+  color: #f8f1e3;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.demon-health {
+  width: 100%;
+  height: 12px;
+  margin-top: 6px;
+  overflow: hidden;
+  border: 2px solid #3a2415;
+  border-radius: 999px;
+  background: rgba(255, 248, 236, 0.8);
+}
+
+.demon-health span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
+}
+
+.demon-speech {
+  margin: 0 0 -8px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  color: var(--game-ink);
+  background: #fff8ec;
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 800;
+}
+
+.demon-speech::after {
+  content: "";
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: -2px auto -10px;
+  background: #fff8ec;
+  transform: rotate(45deg);
+}
+
+.hero-slot--jump {
+  animation: hero-jump 0.7s ease-in-out infinite;
+}
+
+.hero-slot--gone {
+  transform: translateX(-120vw);
+}
+
+.demon-figure--defeated {
+  transform-origin: 70% 90%;
+  animation: demon-fall 0.7s ease forwards;
+}
+
+.hero-slot--attack {
+  animation: hero-lunge 800ms ease;
+}
+
+.demon-figure--dodge {
+  animation: werewolf-dodge 800ms ease;
+}
+
+.combat-callout {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 3;
+  margin: 0;
+  padding: 2px 12px;
+  border-radius: 999px;
+  color: #fff8ec;
+  background: #9a3412;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  font-weight: 800;
+  transform: translateX(-50%);
+  animation: miss-pop 800ms ease;
+}
+
+.demon-figure--hit {
+  animation: demon-hit 0.45s ease 0.28s;
+}
+
+@keyframes hero-lunge {
+  0% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(46px) rotate(-8deg);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes werewolf-dodge {
+  0% {
+    transform: translate(0, 0);
+  }
+  35% {
+    transform: translate(40px, -18px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes miss-pop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes hero-jump {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-22px);
+  }
+}
+
+@keyframes demon-fall {
+  to {
+    transform: rotate(78deg) translateY(10px);
+  }
+}
+
+@keyframes demon-hit {
+  0% {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+  30% {
+    transform: translateX(10px);
+    filter: brightness(1.8);
+  }
+  60% {
+    transform: translateX(-8px);
+  }
+  100% {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-choice svg,
+  .hero-slot svg {
+    width: min(100%, 84px);
+  }
+
+  .adventure-scene--select .demon-slot {
+    width: 108px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .adventure-scene--select {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 12px;
+    width: min(100%, 760px);
+  }
+
+  .hero-choices {
+    flex: 1;
+  }
+
+  .hero-choice {
+    padding-bottom: 4px;
+  }
+
+  .hero-choice svg,
+  .hero-slot svg {
+    width: 72px;
+  }
+
+  .adventure-scene--select .demon-slot,
+  .adventure-scene--battle .demon-slot,
+  .adventure-scene--victory .demon-slot,
+  .adventure-scene--defeat .demon-slot {
+    width: 96px;
+  }
+
+  .adventure-scene--battle,
+  .adventure-scene--victory,
+  .adventure-scene--defeat {
+    min-height: 120px;
   }
 }

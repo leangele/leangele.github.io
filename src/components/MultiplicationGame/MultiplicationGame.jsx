@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   passedChallenge,
   playBetweenQuestions,
@@ -6,7 +6,19 @@ import {
   playVictory,
   unlockGameAudio,
 } from "./gameAudio";
+import AdventureScene from "./AdventureScene";
 import "./MultiplicationGame.css";
+
+const SLIDE_MS = 800;
+
+const slideDuration = () => {
+  if (typeof window.matchMedia !== "function") {
+    return SLIDE_MS;
+  }
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? 0
+    : SLIDE_MS;
+};
 
 const shuffle = (items) => {
   const result = [...items];
@@ -64,6 +76,10 @@ const MultiplicationGame = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [missedQuestions, setMissedQuestions] = useState([]);
+  const [slidePhase, setSlidePhase] = useState("shown");
+  const [heroId, setHeroId] = useState("warrior");
+  const [combat, setCombat] = useState(null);
+  const pendingAdvance = useRef(null);
 
   useEffect(() => {
     const configUrl = `${
@@ -87,6 +103,7 @@ const MultiplicationGame = () => {
   }, []);
 
   const currentQuestion = questions[questionIndex];
+  const demonHp = Math.max(0, (config?.questionsPerLevel || 0) - score);
 
   const finishOrAdvance = useCallback(
     (wasCorrect) => {
@@ -137,13 +154,47 @@ const MultiplicationGame = () => {
     [config, currentQuestion, level, questionIndex, questions.length, score]
   );
 
+  const beginAdvance = useCallback((wasCorrect) => {
+    if (pendingAdvance.current !== null) {
+      return;
+    }
+    pendingAdvance.current = wasCorrect;
+    setCombat(wasCorrect ? "hit" : "miss");
+    setSlidePhase("exit");
+  }, []);
+
   useEffect(() => {
-    if (!hasStarted || !level || isFinished || !currentQuestion) {
+    if (slidePhase !== "exit") {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      const wasCorrect = pendingAdvance.current;
+      pendingAdvance.current = null;
+      finishOrAdvance(wasCorrect);
+      setCombat(null);
+      setSlidePhase("enter");
+    }, slideDuration());
+
+    return () => window.clearTimeout(timer);
+  }, [slidePhase, finishOrAdvance]);
+
+  useEffect(() => {
+    if (slidePhase !== "enter") {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => setSlidePhase("shown"), slideDuration());
+    return () => window.clearTimeout(timer);
+  }, [slidePhase]);
+
+  useEffect(() => {
+    if (!hasStarted || !level || isFinished || !currentQuestion || slidePhase !== "shown") {
       return undefined;
     }
 
     if (secondsLeft === 0) {
-      finishOrAdvance(false);
+      beginAdvance(false);
       return undefined;
     }
 
@@ -158,7 +209,8 @@ const MultiplicationGame = () => {
     level,
     isFinished,
     currentQuestion,
-    finishOrAdvance,
+    slidePhase,
+    beginAdvance,
   ]);
 
   const progress = useMemo(() => {
@@ -178,6 +230,23 @@ const MultiplicationGame = () => {
     setIsFinished(false);
     setHasStarted(true);
     setMissedQuestions([]);
+    pendingAdvance.current = null;
+    setSlidePhase("shown");
+    setCombat(null);
+  };
+
+  const returnToHeroSelect = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setQuestions([]);
+    setQuestionIndex(0);
+    setScore(0);
+    setSecondsLeft(0);
+    setIsFinished(false);
+    setHasStarted(false);
+    setMissedQuestions([]);
+    pendingAdvance.current = null;
+    setSlidePhase("shown");
+    setCombat(null);
   };
 
   const revealMissedAnswer = (index) => {
@@ -189,7 +258,7 @@ const MultiplicationGame = () => {
   };
 
   const answerQuestion = (option) => {
-    finishOrAdvance(option === currentQuestion.answer);
+    beginAdvance(option === currentQuestion.answer);
   };
 
   if (error) {
@@ -212,10 +281,16 @@ const MultiplicationGame = () => {
 
   if (!hasStarted) {
     return (
-      <main className="math-game math-game--centered">
+      <main className="math-game math-game--stage">
+        <AdventureScene
+          mode="select"
+          selectedHero={heroId}
+          onSelect={setHeroId}
+        />
         <section className="score-card">
           <span>Level {level.id}</span>
           <h1>{level.label}</h1>
+          <p>Choose a hero, then face the Werewolf.</p>
           <p>
             {config.questionsPerLevel} questions · {config.secondsPerQuestion}{" "}
             seconds
@@ -237,8 +312,14 @@ const MultiplicationGame = () => {
     );
     const answersStillHidden = missedQuestions.some((item) => !item.revealed);
     return (
-      <main className="math-game math-game--centered">
-        <section className="score-card">
+      <main className="math-game math-game--stage">
+        <AdventureScene
+          mode={won ? "victory" : "defeat"}
+          heroId={heroId}
+          hp={demonHp}
+          maxHp={config.questionsPerLevel}
+        />
+        <section className={`score-card slide-panel slide-panel--${slidePhase}`}>
           <div className="score-card__icon" aria-hidden="true">
             {won ? "★" : "♪"}
           </div>
@@ -272,7 +353,7 @@ const MultiplicationGame = () => {
             </div>
           )}
           <div className="score-card__actions">
-            <button onClick={startLevel} disabled={answersStillHidden}>
+            <button onClick={returnToHeroSelect} disabled={answersStillHidden}>
               Play again
             </button>
           </div>
@@ -282,7 +363,14 @@ const MultiplicationGame = () => {
   }
 
   return (
-    <main className="math-game math-game--centered">
+    <main className="math-game math-game--stage">
+      <AdventureScene
+        mode="battle"
+        heroId={heroId}
+        hp={demonHp}
+        maxHp={config.questionsPerLevel}
+        combat={combat}
+      />
       <section className="question-card">
         <div className="question-card__header">
           <span>{level.label}</span>
@@ -298,7 +386,7 @@ const MultiplicationGame = () => {
           <div style={{ width: `${progress}%` }} />
         </div>
 
-        <div className="question-card__body">
+        <div className={`question-card__body slide-panel slide-panel--${slidePhase}`}>
           <div className="question-card__prompt">
             <div
               className={`timer ${secondsLeft <= 2 ? "timer--urgent" : ""}`}
@@ -314,7 +402,11 @@ const MultiplicationGame = () => {
 
           <div className="answer-grid">
           {currentQuestion.options.map((option) => (
-            <button key={option} onClick={() => answerQuestion(option)}>
+            <button
+              key={option}
+              onClick={() => answerQuestion(option)}
+              disabled={slidePhase !== "shown"}
+            >
               {option}
             </button>
           ))}
