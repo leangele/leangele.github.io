@@ -147,10 +147,12 @@ test("shows the times table requested in the URL", async () => {
 
   expect(await screen.findByRole("heading", { name: "Times Table 7" })).toBeInTheDocument();
   expect(screen.getByText(/face the Griffin/)).toBeInTheDocument();
+  expect(document.querySelector(".math-game--realm-griffin")).not.toBeNull();
 
   fireEvent.click(screen.getByRole("button", { name: "Start" }));
 
   expect(await screen.findByText(/7 × \d+/)).toBeInTheDocument();
+  expect(document.querySelector(".math-game--realm-griffin")).not.toBeNull();
 });
 
 test("turns sound off and remembers that choice", async () => {
@@ -318,7 +320,7 @@ test("keeps Play again disabled until every missed answer is revealed", async ()
 test("lets the player choose a hero and damages the creature on a correct answer", async () => {
   render(<MultiplicationGame />);
 
-  expect(await screen.findByRole("button", { name: "Warrior" })).toBeInTheDocument();
+  expect(await screen.findByRole("button", { name: "Hunter" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Knight" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Mage" })).toBeInTheDocument();
   expect(screen.getByText("Werewolf")).toBeInTheDocument();
@@ -365,9 +367,12 @@ test("shows Miss and dodges when the answer is wrong", async () => {
   );
 
   expect(screen.getByText("Miss")).toBeInTheDocument();
+  expect(document.querySelector(".answer-button--wrong")).not.toBeNull();
+  expect(document.querySelector(".answer-button--correct")).not.toBeNull();
   expect(document.querySelector(".demon-figure--dodge")).not.toBeNull();
+  expect(document.querySelector(".arrow-shot--miss")).not.toBeNull();
+  expect(document.querySelector(".hero-slot--shoot")).not.toBeNull();
   expect(document.querySelector(".hero-slot--attack")).toBeNull();
-  expect(document.querySelector(".hero-slot--miss")).not.toBeNull();
 });
 
 test("slides the current question out before showing the next one", async () => {
@@ -379,7 +384,9 @@ test("slides the current question out before showing the next one", async () => 
   fireEvent.click(screen.getByRole("button", { name: String(left * right) }));
 
   expect(document.querySelector(".slide-panel--exit")).not.toBeNull();
-  expect(document.querySelector(".hero-slot--attack")).not.toBeNull();
+  expect(document.querySelector(".hero-slot--shoot")).not.toBeNull();
+  expect(document.querySelector(".arrow-shot")).not.toBeNull();
+  expect(document.querySelector(".hero-slot--attack")).toBeNull();
   expect(document.querySelector(".demon-figure--hit")).not.toBeNull();
   expect(screen.getByText(expression)).toBeInTheDocument();
 

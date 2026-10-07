@@ -1,7 +1,7 @@
 import React from "react";
 
 export const HEROES = [
-  { id: "warrior", name: "Warrior" },
+  { id: "hunter", name: "Hunter" },
   { id: "knight", name: "Knight" },
   { id: "mage", name: "Mage" },
 ];
@@ -102,7 +102,7 @@ export const HeroSvg = ({ id, action = "idle" }) => {
 
   return (
     <svg
-      className={`character-svg hero-svg hero-svg--warrior hero-svg--${action}`}
+      className={`character-svg hero-svg hero-svg--hunter hero-svg--${action}`}
       viewBox="0 0 80 120"
       aria-hidden="true"
     >
@@ -110,15 +110,24 @@ export const HeroSvg = ({ id, action = "idle" }) => {
       <g className="svg-character-body">
         <rect x="30" y="80" width="8" height="24" rx="3" fill="#6b3f24" />
         <rect x="42" y="80" width="8" height="24" rx="3" fill="#6b3f24" />
-        <rect x="26" y="50" width="28" height="34" rx="8" fill="#9a3412" />
-        <rect x="26" y="66" width="28" height="5" fill="#e8b84a" />
-        <circle cx="40" cy="38" r="14" fill="#f3c7a1" />
-        <path d="M26 36c2-16 26-18 30-4-6-8-22-8-30 4z" fill="#5c3317" />
+        <path d="M22 48c4-10 32-10 36 0v36H22z" fill="#3f6212" />
+        <path d="M26 66h28" stroke="#e8b84a" strokeWidth="4" />
+        <path d="M24 34c2-16 30-18 32 0-8-8-24-8-32 0z" fill="#365314" />
+        <circle cx="40" cy="40" r="12" fill="#f3c7a1" />
         <HeroFace expression={expression} />
-        <g className="svg-hero-tool" transform="rotate(-28 62 50)">
-          <rect x="58" y="18" width="5" height="38" rx="1" fill="#e5e7eb" />
-          <rect x="53" y="52" width="15" height="4" rx="1" fill="#e8b84a" />
-          <rect x="59" y="56" width="3" height="8" fill="#6b3f24" />
+        <g className="svg-hero-tool">
+          <path
+            d="M64 26c12 12 12 30 0 42"
+            fill="none"
+            stroke="#6b3f24"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <path d="M64 28v38" fill="none" stroke="#f5f5f4" strokeWidth="1.5" />
+          <g className="svg-nocked-arrow">
+            <line x1="30" y1="47" x2="62" y2="47" stroke="#d6d3d1" strokeWidth="2" />
+            <polygon points="66,47 58,43 58,51" fill="#e8b84a" />
+          </g>
         </g>
       </g>
     </svg>

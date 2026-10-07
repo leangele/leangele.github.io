@@ -6,21 +6,28 @@ import {
   HeroSvg,
 } from "./CharacterSvg";
 
+const attackClass = (id, combat) => {
+  if (id === "hunter" && (combat === "hit" || combat === "miss")) {
+    return "hero-slot--shoot";
+  }
+  if (combat === "hit") {
+    return id === "mage" ? "hero-slot--cast" : "hero-slot--attack";
+  }
+  if (combat === "miss") {
+    return "hero-slot--miss";
+  }
+  return "";
+};
+
 const HeroSlot = ({ id, pose, combat }) => (
   <div
-    className={`hero-slot hero-slot--${pose} ${
-      combat === "hit"
-        ? id === "mage"
-          ? "hero-slot--cast"
-          : "hero-slot--attack"
-        : ""
-    } ${combat === "miss" ? "hero-slot--miss" : ""}`}
+    className={`hero-slot hero-slot--${pose} ${attackClass(id, combat)}`}
     data-pose={pose}
   >
     <HeroSvg
       id={id}
       action={
-        combat === "hit"
+        combat === "hit" || (id === "hunter" && combat === "miss")
           ? "attack"
           : combat === "miss"
             ? "miss"
@@ -123,6 +130,14 @@ const AdventureScene = ({
       {mode === "battle" && heroId === "mage" && combat === "hit" && (
         <span className="magic-bolt" aria-hidden="true" />
       )}
+      {mode === "battle" &&
+        heroId === "hunter" &&
+        (combat === "hit" || combat === "miss") && (
+          <span
+            className={`arrow-shot ${combat === "miss" ? "arrow-shot--miss" : ""}`}
+            aria-hidden="true"
+          />
+        )}
       <CreatureSlot
         levelId={levelId}
         mood={demonMood}

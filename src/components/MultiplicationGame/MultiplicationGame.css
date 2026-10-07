@@ -22,6 +22,162 @@
   font-family: "Nunito", sans-serif;
 }
 
+.math-game[class*="math-game--realm-"] {
+  position: relative;
+  isolation: isolate;
+  background-attachment: fixed;
+}
+
+.math-game[class*="math-game--realm-"]::before {
+  content: "";
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  height: 42vh;
+  min-height: 220px;
+  pointer-events: none;
+}
+
+.math-game--realm-slime {
+  background:
+    radial-gradient(ellipse at 18% 75%, rgba(190, 242, 100, 0.38), transparent 22%),
+    radial-gradient(ellipse at 82% 82%, rgba(101, 163, 13, 0.45), transparent 28%),
+    linear-gradient(180deg, #17394a 0%, #315d46 48%, #718a3a 100%);
+}
+
+.math-game--realm-slime::before {
+  background:
+    radial-gradient(ellipse at 15% 100%, #25451d 0 20%, transparent 21%),
+    radial-gradient(ellipse at 48% 105%, #315526 0 28%, transparent 29%),
+    radial-gradient(ellipse at 86% 100%, #203d1a 0 24%, transparent 25%);
+}
+
+.math-game--realm-werewolf {
+  background:
+    radial-gradient(circle at 78% 14%, #fff4c7 0 4%, rgba(255, 244, 199, 0.2) 4.5% 9%, transparent 10%),
+    radial-gradient(ellipse at 50% 72%, rgba(77, 124, 99, 0.44), transparent 38%),
+    linear-gradient(180deg, #111827 0%, #1e3a46 48%, #253f2f 100%);
+}
+
+.math-game--realm-werewolf::before {
+  background:
+    linear-gradient(78deg, transparent 0 8%, #0c2119 8.5% 11%, transparent 11.5% 22%, #10271e 22.5% 26%, transparent 26.5% 72%, #0b1e17 72.5% 76%, transparent 76.5% 88%, #10271e 88.5% 92%, transparent 92.5%),
+    linear-gradient(180deg, transparent 0 62%, #0b1d17 63%);
+  clip-path: polygon(0 15%, 8% 31%, 16% 10%, 25% 35%, 36% 6%, 46% 30%, 58% 12%, 69% 34%, 80% 8%, 90% 28%, 100% 13%, 100% 100%, 0 100%);
+}
+
+.math-game--realm-goblin {
+  background:
+    radial-gradient(circle at 22% 24%, rgba(163, 230, 53, 0.25), transparent 14%),
+    radial-gradient(ellipse at 68% 66%, rgba(63, 98, 18, 0.55), transparent 38%),
+    linear-gradient(180deg, #162f28 0%, #294d2e 48%, #524725 100%);
+}
+
+.math-game--realm-goblin::before {
+  background:
+    repeating-linear-gradient(100deg, transparent 0 12%, rgba(18, 47, 32, 0.9) 12.5% 15%, transparent 15.5% 24%),
+    linear-gradient(180deg, transparent 0 58%, #172e20 59%);
+  clip-path: polygon(0 30%, 12% 10%, 25% 34%, 39% 4%, 52% 28%, 66% 9%, 79% 35%, 91% 12%, 100% 26%, 100% 100%, 0 100%);
+}
+
+.math-game--realm-troll {
+  background:
+    radial-gradient(circle at 18% 14%, rgba(226, 232, 240, 0.55), transparent 8%),
+    linear-gradient(145deg, transparent 0 55%, rgba(51, 65, 85, 0.58) 56% 70%, transparent 71%),
+    linear-gradient(180deg, #46637a 0%, #78909c 48%, #64748b 100%);
+}
+
+.math-game--realm-troll::before {
+  background: linear-gradient(135deg, transparent 0 18%, #334155 18.5% 36%, #475569 36.5% 55%, #293548 55.5%);
+  clip-path: polygon(0 65%, 16% 32%, 27% 58%, 48% 8%, 67% 54%, 82% 24%, 100% 61%, 100% 100%, 0 100%);
+}
+
+.math-game--realm-dragon {
+  background:
+    radial-gradient(circle at 50% 84%, rgba(251, 146, 60, 0.8), transparent 17%),
+    radial-gradient(circle at 18% 18%, rgba(239, 68, 68, 0.28), transparent 14%),
+    linear-gradient(180deg, #2b1724 0%, #5b2423 52%, #8a341c 100%);
+}
+
+.math-game--realm-dragon::before {
+  background:
+    linear-gradient(112deg, transparent 0 34%, #22131a 34.5% 52%, transparent 52.5%),
+    linear-gradient(70deg, transparent 0 46%, #321719 46.5% 64%, transparent 64.5%),
+    linear-gradient(180deg, transparent 0 76%, #251315 77%);
+  clip-path: polygon(0 70%, 24% 44%, 38% 65%, 50% 12%, 64% 65%, 78% 39%, 100% 73%, 100% 100%, 0 100%);
+}
+
+.math-game--realm-cyclops {
+  background:
+    radial-gradient(circle at 72% 18%, rgba(221, 214, 254, 0.55), transparent 9%),
+    linear-gradient(160deg, transparent 0 58%, rgba(76, 29, 149, 0.36) 59%),
+    linear-gradient(180deg, #28335f 0%, #53458a 50%, #7c5b68 100%);
+}
+
+.math-game--realm-cyclops::before {
+  background: linear-gradient(150deg, transparent 0 32%, #3f355b 32.5% 56%, #2f2d48 56.5%);
+  clip-path: polygon(0 68%, 18% 45%, 34% 63%, 52% 28%, 68% 58%, 85% 38%, 100% 64%, 100% 100%, 0 100%);
+}
+
+.math-game--realm-griffin {
+  background:
+    radial-gradient(circle at 76% 16%, #fff0b2 0 4%, rgba(255, 240, 178, 0.2) 5% 11%, transparent 12%),
+    radial-gradient(ellipse at 20% 38%, rgba(255, 255, 255, 0.6), transparent 14%),
+    radial-gradient(ellipse at 70% 46%, rgba(255, 255, 255, 0.42), transparent 18%),
+    linear-gradient(180deg, #39779f 0%, #7fb0c8 58%, #c9964b 100%);
+}
+
+.math-game--realm-griffin::before {
+  background: linear-gradient(145deg, transparent 0 38%, #72542d 38.5% 57%, #4b3c2b 57.5%);
+  clip-path: polygon(0 80%, 25% 53%, 42% 70%, 60% 30%, 76% 67%, 90% 48%, 100% 63%, 100% 100%, 0 100%);
+}
+
+.math-game--realm-minotaur {
+  background:
+    linear-gradient(90deg, rgba(120, 53, 15, 0.22) 2px, transparent 2px),
+    linear-gradient(rgba(120, 53, 15, 0.22) 2px, transparent 2px),
+    radial-gradient(circle at 50% 20%, rgba(253, 230, 138, 0.38), transparent 18%),
+    linear-gradient(180deg, #59452f 0%, #8d6841 54%, #4f3827 100%);
+  background-size: 48px 48px, 48px 48px, auto, auto;
+}
+
+.math-game--realm-minotaur::before {
+  background:
+    repeating-linear-gradient(90deg, #3d291d 0 5%, transparent 5% 10%),
+    linear-gradient(180deg, transparent 0 68%, #3d291d 69%);
+  clip-path: polygon(0 36%, 8% 36%, 8% 18%, 19% 18%, 19% 54%, 31% 54%, 31% 28%, 44% 28%, 44% 8%, 57% 8%, 57% 48%, 70% 48%, 70% 22%, 82% 22%, 82% 56%, 92% 56%, 92% 30%, 100% 30%, 100% 100%, 0 100%);
+}
+
+.math-game--realm-kraken {
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(94, 234, 212, 0.34), transparent 22%),
+    repeating-radial-gradient(ellipse at 50% 108%, rgba(45, 212, 191, 0.28) 0 10px, transparent 11px 34px),
+    linear-gradient(180deg, #082f49 0%, #0e7490 52%, #134e4a 100%);
+}
+
+.math-game--realm-kraken::before {
+  background:
+    radial-gradient(ellipse at 10% 100%, #0b3941 0 28%, transparent 29%),
+    radial-gradient(ellipse at 50% 110%, #0c4650 0 34%, transparent 35%),
+    radial-gradient(ellipse at 90% 100%, #0b3941 0 28%, transparent 29%);
+}
+
+.math-game--realm-phoenix {
+  background:
+    radial-gradient(circle at 50% 18%, #fde047 0 5%, rgba(253, 224, 71, 0.35) 6% 15%, transparent 16%),
+    radial-gradient(ellipse at 50% 74%, rgba(251, 146, 60, 0.55), transparent 30%),
+    linear-gradient(180deg, #7c2d5b 0%, #ea580c 54%, #f59e0b 100%);
+}
+
+.math-game--realm-phoenix::before {
+  background:
+    linear-gradient(90deg, transparent 0 15%, #5b2b22 15.5% 19%, transparent 19.5% 81%, #5b2b22 81.5% 85%, transparent 85.5%),
+    linear-gradient(180deg, transparent 0 72%, #6b3020 73%);
+  clip-path: polygon(0 76%, 14% 76%, 14% 34%, 22% 24%, 30% 34%, 30% 76%, 43% 76%, 43% 52%, 50% 42%, 57% 52%, 57% 76%, 70% 76%, 70% 34%, 78% 24%, 86% 34%, 86% 76%, 100% 76%, 100% 100%, 0 100%);
+}
+
 .math-game--centered {
   display: grid;
   place-items: center;
@@ -180,9 +336,8 @@
   }
 
   .answer-grid button:hover,
-  .score-card button:hover {
+  .score-card button:hover:not(.secondary-button) {
     background: var(--game-purple-dark);
-    transform: translateY(-2px);
   }
 }
 
@@ -255,13 +410,15 @@
 .score-card {
   width: min(100%, 620px);
   padding: clamp(24px, 5vw, 46px);
-  border: 1px solid rgba(114, 87, 233, 0.13);
-  border-radius: 30px;
+  border: 1px solid rgba(255, 248, 236, 0.28);
+  border-radius: 24px;
   box-sizing: border-box;
   overflow: hidden;
   color: var(--game-ink);
   background: rgba(255, 248, 236, 0.96);
-  box-shadow: 0 24px 70px rgba(49, 41, 94, 0.14);
+  box-shadow:
+    0 20px 30px -10px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
   text-align: center;
 }
 
@@ -383,8 +540,9 @@
 
 .answer-grid button,
 .score-card button {
-  min-height: 48px;
-  border: 0;
+  min-height: 52px;
+  border: 2px solid var(--game-purple-dark);
+  border-bottom: 5px solid #5c1d0c;
   border-radius: 16px;
   color: white;
   background: var(--game-purple);
@@ -392,7 +550,32 @@
   font-family: "Baloo 2", sans-serif;
   font-size: clamp(1.15rem, 4vw, 1.45rem);
   font-weight: 800;
-  transition: background 150ms ease, transform 150ms ease;
+  user-select: none;
+  transition: transform 0.1s ease;
+}
+
+.answer-grid button:active:not(:disabled),
+.score-card button:active:not(:disabled) {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+}
+
+.answer-grid button.answer-button--correct,
+.answer-grid button.answer-button--correct:hover,
+.answer-grid button.answer-button--correct:disabled {
+  background: #15803d;
+  border-color: #166534;
+  border-bottom-color: #14532d;
+  animation: answer-bounce 0.4s ease;
+}
+
+.answer-grid button.answer-button--wrong,
+.answer-grid button.answer-button--wrong:hover,
+.answer-grid button.answer-button--wrong:disabled {
+  background: #dc2626;
+  border-color: #b91c1c;
+  border-bottom-color: #7f1d1d;
+  animation: answer-shake 0.3s ease;
 }
 
 .score-card__icon {
@@ -453,11 +636,36 @@
 
 .score-card .secondary-button {
   color: var(--game-purple);
-  background: #eeebff;
+  background: #fff8ec;
+  border-color: #d6c4a8;
+  border-bottom-color: #b08968;
 }
 
 .score-card .secondary-button:hover {
-  background: #e2ddff;
+  background: #fff1d6;
+}
+
+@keyframes answer-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes answer-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
 }
 
 @keyframes timer-pulse {
@@ -653,6 +861,8 @@
 @media (prefers-reduced-motion: reduce) {
   .level-card,
   .answer-grid button,
+  .answer-grid button.answer-button--correct,
+  .answer-grid button.answer-button--wrong,
   .score-card button,
   .progress-track div,
   .timer--urgent,
@@ -663,7 +873,9 @@
   .demon-figure--dodge,
   .hero-slot--attack,
   .hero-slot--cast,
+  .hero-slot--shoot,
   .magic-bolt,
+  .arrow-shot,
   .hero-slot--miss,
   .combat-callout,
   .demon-figure--defeated,
@@ -730,8 +942,8 @@
   transform-origin: center;
 }
 
-.hero-svg--warrior.hero-svg--selected .svg-character-body {
-  animation: warrior-selected 0.75s ease;
+.hero-svg--hunter.hero-svg--selected .svg-character-body {
+  animation: hunter-selected 0.75s ease;
   transform-origin: 40px 104px;
 }
 
@@ -758,6 +970,15 @@
 .hero-svg--mage.hero-svg--attack .svg-hero-tool {
   animation: mage-staff 0.7s ease;
   transform-origin: 14px 92px;
+}
+
+.hero-svg--hunter.hero-svg--attack .svg-hero-tool {
+  animation: bow-draw 0.7s ease;
+  transform-origin: 64px 47px;
+}
+
+.hero-svg--hunter.hero-svg--attack .svg-nocked-arrow {
+  opacity: 0;
 }
 
 .hero-svg--miss .svg-character-body {
@@ -900,6 +1121,45 @@
   animation: mage-cast 800ms ease;
 }
 
+.hero-slot--shoot {
+  animation: hunter-shoot 800ms ease;
+}
+
+.arrow-shot {
+  position: absolute;
+  left: 24%;
+  top: 42%;
+  z-index: 4;
+  width: 34px;
+  height: 8px;
+  pointer-events: none;
+  animation: arrow-shot 800ms ease-out forwards;
+}
+
+.arrow-shot::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 3px;
+  width: 24px;
+  height: 2px;
+  background: #f5f5f4;
+}
+
+.arrow-shot::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 10px solid #e8b84a;
+}
+
+.arrow-shot--miss {
+  animation-name: arrow-miss;
+}
+
 .magic-bolt {
   position: absolute;
   left: 24%;
@@ -941,6 +1201,56 @@
 
 .demon-figure--hit {
   animation: demon-hit 0.45s ease 0.28s;
+}
+
+@keyframes hunter-shoot {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  35% {
+    transform: translateX(-6px);
+  }
+}
+
+@keyframes bow-draw {
+  40% {
+    transform: translateX(-8px);
+  }
+}
+
+@keyframes arrow-shot {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  16% {
+    opacity: 1;
+    transform: translateX(24px);
+  }
+  72% {
+    opacity: 1;
+    transform: translateX(170px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(210px);
+  }
+}
+
+@keyframes arrow-miss {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0);
+  }
+  16% {
+    opacity: 1;
+    transform: translate(24px, -8px) rotate(-10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(210px, -78px) rotate(-22deg);
+  }
 }
 
 @keyframes mage-cast {
@@ -1004,7 +1314,7 @@
   }
 }
 
-@keyframes warrior-selected {
+@keyframes hunter-selected {
   0%,
   100% {
     transform: rotate(0);

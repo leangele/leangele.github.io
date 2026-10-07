@@ -177,7 +177,8 @@ const MultiplicationGame = () => {
   const [playMode, setPlayMode] = useState("battle");
   const [missedQuestions, setMissedQuestions] = useState([]);
   const [slidePhase, setSlidePhase] = useState("shown");
-  const [heroId, setHeroId] = useState("warrior");
+  const [chosenOption, setChosenOption] = useState(null);
+  const [heroId, setHeroId] = useState("hunter");
   const [combat, setCombat] = useState(null);
   const [soundOn, setSoundOn] = useState(true);
   const [roundTimeMs, setRoundTimeMs] = useState(0);
@@ -278,6 +279,7 @@ const MultiplicationGame = () => {
         return;
       }
 
+      setChosenOption(null);
       setQuestionIndex((current) => current + 1);
       setSecondsLeft(config.secondsPerQuestion);
     },
@@ -390,6 +392,7 @@ const MultiplicationGame = () => {
     pendingAdvance.current = null;
     answerElapsedRef.current = 0;
     questionShownAtRef.current = performance.now();
+    setChosenOption(null);
     setRoundTimeMs(0);
     setBeatRecord(false);
     setPreviousBestMs(null);
@@ -470,6 +473,7 @@ const MultiplicationGame = () => {
   };
 
   const answerQuestion = (option) => {
+    setChosenOption(option);
     beginAdvance(option === currentQuestion.answer);
   };
 
@@ -504,10 +508,11 @@ const MultiplicationGame = () => {
       </button>
     </div>
   );
+  const stageClass = `math-game math-game--stage math-game--realm-${creature.id}`;
 
   if (!hasStarted) {
     return (
-      <main className="math-game math-game--stage" onPointerDown={playSelectMusic}>
+      <main className={stageClass} onPointerDown={playSelectMusic}>
         {soundToggle}
         <AdventureScene
           mode="select"
@@ -544,7 +549,7 @@ const MultiplicationGame = () => {
     const practicing = playMode === "practice";
     const answersStillHidden = missedQuestions.some((item) => !item.revealed);
     return (
-      <main className="math-game math-game--stage">
+      <main className={stageClass}>
         {soundToggle}
         <AdventureScene
           mode={won ? "victory" : "defeat"}
@@ -614,7 +619,7 @@ const MultiplicationGame = () => {
   }
 
   return (
-    <main className="math-game math-game--stage">
+    <main className={stageClass}>
       {soundToggle}
       <AdventureScene
         mode="battle"
@@ -658,15 +663,26 @@ const MultiplicationGame = () => {
           </div>
 
           <div className="answer-grid">
-          {currentQuestion.options.map((option) => (
-            <button
-              key={option}
-              onClick={() => answerQuestion(option)}
-              disabled={slidePhase !== "shown"}
-            >
-              {option}
-            </button>
-          ))}
+          {currentQuestion.options.map((option) => {
+            const feedbackClass =
+              chosenOption == null
+                ? ""
+                : option === currentQuestion.answer
+                  ? "answer-button--correct"
+                  : option === chosenOption
+                    ? "answer-button--wrong"
+                    : "";
+            return (
+              <button
+                key={option}
+                className={feedbackClass}
+                onClick={() => answerQuestion(option)}
+                disabled={slidePhase !== "shown"}
+              >
+                {option}
+              </button>
+            );
+          })}
           </div>
         </div>
       </section>
