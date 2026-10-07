@@ -2,7 +2,12 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 jest.setTimeout(20000);
 import { getCreature } from "./CharacterSvg";
-import MultiplicationGame from "./MultiplicationGame";
+import MultiplicationGame, {
+  createOrderedQuestions,
+  formatRoundTime,
+  levelFromTableQuery,
+  nextBestTime,
+} from "./MultiplicationGame";
 
 const config = {
   title: "Multiplication Challenge",
@@ -21,6 +26,9 @@ const config = {
 };
 
 beforeEach(() => {
+  window.history.pushState({}, "", "/");
+  window.localStorage.removeItem("multiplication-game-sound");
+  window.localStorage.removeItem("multiplication-game-best-times");
   window.scrollTo = jest.fn();
   global.fetch = jest.fn().mockResolvedValue({
     ok: true,
@@ -32,12 +40,139 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
+test("opens another times table from the query without editing the configuration", () => {
+  expect(levelFromTableQuery(config, "?table=7")).toEqual({
+    id: 7,
+    label: "Times Table 7",
+    multiplier: 7,
+    minFactor: 1,
+    maxFactor: 10,
+  });
+  expect(levelFromTableQuery(config, "?tabla=5").multiplier).toBe(5);
+  expect(levelFromTableQuery(config, "?table=2")).toBe(config.levels[0]);
+  expect(levelFromTableQuery(config, "")).toBe(config.levels[0]);
+  expect(levelFromTableQuery(config, "?table=11")).toBe(config.levels[0]);
+});
+
+test("keeps a faster winning time and ignores a slower or losing round", () => {
+  expect(formatRoundTime(10400)).toBe("10.4s");
+  expect(nextBestTime(null, 5000, true)).toEqual({
+    bestMs: 5000,
+    beatRecord: false,
+  });
+  expect(nextBestTime(5000, 4000, true)).toEqual({
+    bestMs: 4000,
+    beatRecord: true,
+  });
+  expect(nextBestTime(5000, 6000, true)).toEqual({
+    bestMs: 5000,
+    beatRecord: false,
+  });
+  expect(nextBestTime(5000, 1000, false)).toEqual({
+    bestMs: 5000,
+    beatRecord: false,
+  });
+});
+
+test("shows the total answer time and announces a faster replay", async () => {
+  let clock = 1000;
+  jest.spyOn(performance, "now").mockImplementation(() => clock);
+
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Start" }));
+  await screen.findByText(/2 × \d+/);
+
+  for (let question = 0; question < 5; question += 1) {
+    clock += 2000;
+    await answerCurrentQuestion();
+  }
+
+  expect(screen.getByText("Time: 10.0s")).toBeInTheDocument();
+  expect(screen.getByText("Best: 10.0s")).toBeInTheDocument();
+  expect(screen.queryByText(/New best time/)).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Play again" }));
+  fireEvent.click(screen.getByRole("button", { name: "Start" }));
+  await screen.findByText(/2 × \d+/);
+
+  for (let question = 0; question < 5; question += 1) {
+    clock += 1000;
+    await answerCurrentQuestion();
+  }
+
+  expect(screen.getByText("Time: 5.0s")).toBeInTheDocument();
+  expect(screen.getByText("New best time! You beat 10.0s.")).toBeInTheDocument();
+});
+
+test("lists a times table in factor order for practice", () => {
+  const questions = createOrderedQuestions(config.levels[0]);
+
+  expect(questions.map((question) => question.factor)).toEqual([
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+  ]);
+  expect(questions.map((question) => question.answer)).toEqual([
+    2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
+  ]);
+});
+
+test("advances practice questions in order after each answer", async () => {
+  render(<MultiplicationGame />);
+  fireEvent.click(await screen.findByRole("button", { name: "Practice" }));
+
+  expect(await screen.findByRole("heading", { name: "2 × 1" })).toBeInTheDocument();
+  expect(screen.getByText("Practice · Times Table 2")).toBeInTheDocument();
+  expect(screen.queryByLabelText(/seconds left/)).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "2" }));
+  await waitForNextArea("2 × 1");
+  expect(screen.getByRole("heading", { name: "2 × 2" })).toBeInTheDocument();
+
+  fireEvent.click(
+    [...document.querySelectorAll(".answer-grid button")].find(
+      (button) => button.textContent !== "4"
+    )
+  );
+  await waitForNextArea("2 × 2");
+  expect(screen.getByRole("heading", { name: "2 × 3" })).toBeInTheDocument();
+});
+
+test("shows the times table requested in the URL", async () => {
+  window.history.pushState({}, "", "/?table=7");
+  render(<MultiplicationGame />);
+
+  expect(await screen.findByRole("heading", { name: "Times Table 7" })).toBeInTheDocument();
+  expect(screen.getByText(/face the Griffin/)).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Start" }));
+
+  expect(await screen.findByText(/7 × \d+/)).toBeInTheDocument();
+});
+
+test("turns sound off and remembers that choice", async () => {
+  render(<MultiplicationGame />);
+
+  fireEvent.click(await screen.findByRole("button", { name: "Turn sound off" }));
+
+  expect(screen.getByRole("button", { name: "Turn sound on" })).toHaveAttribute(
+    "aria-pressed",
+    "false"
+  );
+  expect(window.localStorage.getItem("multiplication-game-sound")).toBe("off");
+
+  fireEvent.click(screen.getByRole("button", { name: "Turn sound on" }));
+
+  expect(screen.getByRole("button", { name: "Turn sound off" })).toHaveAttribute(
+    "aria-pressed",
+    "true"
+  );
+});
+
 test("waits for Start and then uses the configured times table", async () => {
   render(<MultiplicationGame />);
 
   expect(await screen.findByRole("button", { name: "Start" })).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "Times Table 2" })).toBeInTheDocument();
-  expect(screen.queryByText(/2 × \d+/)).not.toBeInTheDocument();
+  expect(screen.queryByRole("heading", { name: /2 × \d+/ })).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: "Start" }));
 
@@ -90,9 +225,9 @@ const missCurrentQuestion = async () => {
   const [left, right] = expression.split(" × ").map(Number);
   const correct = String(left * right);
   fireEvent.click(
-    screen
-      .getAllByRole("button")
-      .find((button) => button.textContent !== correct)
+    [...document.querySelectorAll(".answer-grid button")].find(
+      (button) => button.textContent !== correct
+    )
   );
   await waitForNextArea(expression);
   return { expression, correct };
@@ -197,7 +332,15 @@ test("lets the player choose a hero and damages the creature on a correct answer
   expect(health).toHaveAttribute("aria-valuenow", "5");
   expect(document.querySelector("[data-hero='mage']")).not.toBeNull();
 
-  await answerCurrentQuestion();
+  const expression = screen.getByText(/2 × \d+/).textContent;
+  const [left, right] = expression.split(" × ").map(Number);
+  fireEvent.click(screen.getByRole("button", { name: String(left * right) }));
+
+  expect(document.querySelector(".hero-slot--cast")).not.toBeNull();
+  expect(document.querySelector(".magic-bolt")).not.toBeNull();
+  expect(document.querySelector(".hero-slot--attack")).toBeNull();
+
+  await waitForNextArea(expression);
   expect(screen.getByRole("meter", { name: "Werewolf health" })).toHaveAttribute(
     "aria-valuenow",
     "4"
@@ -211,7 +354,9 @@ test("shows Miss and dodges when the answer is wrong", async () => {
   const [left, right] = expression.split(" × ").map(Number);
   const correct = String(left * right);
   fireEvent.click(
-    screen.getAllByRole("button").find((button) => button.textContent !== correct)
+    [...document.querySelectorAll(".answer-grid button")].find(
+      (button) => button.textContent !== correct
+    )
   );
 
   expect(screen.getByText("Miss")).toBeInTheDocument();

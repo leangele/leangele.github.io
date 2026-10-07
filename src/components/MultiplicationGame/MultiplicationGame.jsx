@@ -14,6 +14,94 @@ import { getCreature } from "./CharacterSvg";
 import "./MultiplicationGame.css";
 
 const SLIDE_MS = 800;
+const SOUND_STORAGE_KEY = "multiplication-game-sound";
+const BEST_TIME_KEY = "multiplication-game-best-times";
+
+export const formatRoundTime = (milliseconds) => {
+  const seconds = Math.max(0, Number(milliseconds) || 0) / 1000;
+  return `${seconds.toFixed(1)}s`;
+};
+
+export const nextBestTime = (previousMs, roundMs, won) => {
+  if (!won) {
+    return { bestMs: previousMs ?? null, beatRecord: false };
+  }
+  if (previousMs == null || roundMs < previousMs) {
+    return {
+      bestMs: roundMs,
+      beatRecord: previousMs != null,
+    };
+  }
+  return { bestMs: previousMs, beatRecord: false };
+};
+
+const readBestTimes = () => {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(BEST_TIME_KEY) || "{}");
+    if (!parsed || typeof parsed !== "object") {
+      return {};
+    }
+    return parsed;
+  } catch (error) {
+    return {};
+  }
+};
+
+const readBestTime = (multiplier) => {
+  const value = Number(readBestTimes()[multiplier]);
+  return Number.isFinite(value) ? value : null;
+};
+
+const writeBestTime = (multiplier, milliseconds) => {
+  const times = readBestTimes();
+  times[multiplier] = milliseconds;
+  try {
+    window.localStorage.setItem(BEST_TIME_KEY, JSON.stringify(times));
+  } catch (error) {
+    // The score still shows this round when storage is blocked.
+  }
+};
+
+export const levelFromTableQuery = (gameConfig, search = "") => {
+  const configured = gameConfig.levels?.[0] ?? null;
+  const params = new URLSearchParams(search);
+  const raw = params.get("table") ?? params.get("tabla");
+  const table = Number(raw);
+
+  if (!raw || !Number.isInteger(table) || table < 1 || table > 10) {
+    return configured;
+  }
+
+  const match = gameConfig.levels?.find(
+    (item) => item.multiplier === table || item.id === table
+  );
+  if (match) {
+    return match;
+  }
+
+  return {
+    id: table,
+    label: `Times Table ${table}`,
+    multiplier: table,
+    minFactor: configured?.minFactor ?? 1,
+    maxFactor: configured?.maxFactor ?? 10,
+  };
+};
+
+const readStoredSound = (configSounds) => {
+  try {
+    const saved = window.localStorage.getItem(SOUND_STORAGE_KEY);
+    if (saved === "on") {
+      return true;
+    }
+    if (saved === "off") {
+      return false;
+    }
+  } catch (error) {
+    // Private browsing can block storage.
+  }
+  return configSounds !== false;
+};
 
 const slideDuration = () => {
   if (typeof window.matchMedia !== "function") {
@@ -51,23 +139,30 @@ const createOptions = (answer, multiplier) => {
   return shuffle([...options].slice(0, 4));
 };
 
-const createQuestions = (level, count) => {
-  const factors = Array.from(
+const levelFactors = (level) =>
+  Array.from(
     { length: level.maxFactor - level.minFactor + 1 },
     (_, index) => level.minFactor + index
   );
 
+const questionFromFactor = (level, factor) => {
+  const answer = level.multiplier * factor;
+  return {
+    factor,
+    answer,
+    options: createOptions(answer, level.multiplier),
+  };
+};
+
+const createQuestions = (level, count) => {
+  const factors = levelFactors(level);
   return shuffle(factors)
     .slice(0, Math.min(count, factors.length))
-    .map((factor) => {
-      const answer = level.multiplier * factor;
-      return {
-        factor,
-        answer,
-        options: createOptions(answer, level.multiplier),
-      };
-    });
+    .map((factor) => questionFromFactor(level, factor));
 };
+
+export const createOrderedQuestions = (level) =>
+  levelFactors(level).map((factor) => questionFromFactor(level, factor));
 
 const MultiplicationGame = () => {
   const [config, setConfig] = useState(null);
@@ -79,11 +174,23 @@ const MultiplicationGame = () => {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [playMode, setPlayMode] = useState("battle");
   const [missedQuestions, setMissedQuestions] = useState([]);
   const [slidePhase, setSlidePhase] = useState("shown");
   const [heroId, setHeroId] = useState("warrior");
   const [combat, setCombat] = useState(null);
+  const [soundOn, setSoundOn] = useState(true);
+  const [roundTimeMs, setRoundTimeMs] = useState(0);
+  const [bestTimeMs, setBestTimeMs] = useState(null);
+  const [beatRecord, setBeatRecord] = useState(false);
+  const [previousBestMs, setPreviousBestMs] = useState(null);
+  const soundOnRef = useRef(true);
+  const playModeRef = useRef("battle");
   const pendingAdvance = useRef(null);
+  const answerElapsedRef = useRef(0);
+  const questionShownAtRef = useRef(0);
+  soundOnRef.current = soundOn;
+  playModeRef.current = playMode;
 
   useEffect(() => {
     const configUrl = `${
@@ -98,8 +205,11 @@ const MultiplicationGame = () => {
         return response.json();
       })
       .then((gameConfig) => {
+        const enabled = readStoredSound(gameConfig.sounds);
+        soundOnRef.current = enabled;
+        setSoundOn(enabled);
         setConfig(gameConfig);
-        setLevel(gameConfig.levels?.[0] ?? null);
+        setLevel(levelFromTableQuery(gameConfig, window.location.search));
       })
       .catch(() =>
         setError("Could not load the game configuration.")
@@ -109,7 +219,11 @@ const MultiplicationGame = () => {
   useEffect(() => () => stopCombatMusic(), []);
 
   const currentQuestion = questions[questionIndex];
-  const demonHp = Math.max(0, (config?.questionsPerLevel || 0) - score);
+  const roundTotal =
+    playMode === "practice" && questions.length
+      ? questions.length
+      : config?.questionsPerLevel || 0;
+  const demonHp = Math.max(0, roundTotal - score);
   const creature = getCreature(level?.multiplier || level?.id || 1);
 
   const finishOrAdvance = useCallback(
@@ -130,16 +244,14 @@ const MultiplicationGame = () => {
         setScore(nextScore);
       }
 
-      const soundsEnabled = config.sounds !== false;
+      const soundsEnabled = soundOnRef.current;
+      const practicing = playModeRef.current === "practice";
+      const total = practicing ? questions.length : config.questionsPerLevel;
       const isLastQuestion = questionIndex >= questions.length - 1;
 
       if (soundsEnabled) {
         if (isLastQuestion) {
-          const won = passedChallenge(
-            nextScore,
-            config.questionsPerLevel,
-            config.passPercent
-          );
+          const won = passedChallenge(nextScore, total, config.passPercent);
           if (won) {
             playVictory();
           } else {
@@ -151,6 +263,17 @@ const MultiplicationGame = () => {
       }
 
       if (isLastQuestion) {
+        const roundMs = Math.round(answerElapsedRef.current);
+        const won = passedChallenge(nextScore, total, config.passPercent);
+        const previous = practicing ? null : readBestTime(level.multiplier);
+        const result = nextBestTime(previous, roundMs, won && !practicing);
+        if (!practicing && won && result.bestMs === roundMs) {
+          writeBestTime(level.multiplier, roundMs);
+        }
+        setRoundTimeMs(roundMs);
+        setBestTimeMs(practicing ? null : result.bestMs);
+        setBeatRecord(!practicing && result.beatRecord);
+        setPreviousBestMs(!practicing && result.beatRecord ? previous : null);
         setIsFinished(true);
         return;
       }
@@ -165,6 +288,7 @@ const MultiplicationGame = () => {
     if (pendingAdvance.current !== null) {
       return;
     }
+    answerElapsedRef.current += performance.now() - questionShownAtRef.current;
     pendingAdvance.current = wasCorrect;
     setCombat(wasCorrect ? "hit" : "miss");
     setSlidePhase("exit");
@@ -191,12 +315,22 @@ const MultiplicationGame = () => {
       return undefined;
     }
 
-    const timer = window.setTimeout(() => setSlidePhase("shown"), slideDuration());
+    const timer = window.setTimeout(() => {
+      questionShownAtRef.current = performance.now();
+      setSlidePhase("shown");
+    }, slideDuration());
     return () => window.clearTimeout(timer);
   }, [slidePhase]);
 
   useEffect(() => {
-    if (!hasStarted || !level || isFinished || !currentQuestion || slidePhase !== "shown") {
+    if (
+      playMode === "practice" ||
+      !hasStarted ||
+      !level ||
+      isFinished ||
+      !currentQuestion ||
+      slidePhase !== "shown"
+    ) {
       return undefined;
     }
 
@@ -218,6 +352,7 @@ const MultiplicationGame = () => {
     currentQuestion,
     slidePhase,
     beginAdvance,
+    playMode,
   ]);
 
   const progress = useMemo(() => {
@@ -227,13 +362,25 @@ const MultiplicationGame = () => {
     return ((questionIndex + 1) / questions.length) * 100;
   }, [questionIndex, questions.length]);
 
-  const startLevel = () => {
+  const startRound = (mode) => {
     unlockGameAudio();
-    if (config.sounds !== false) {
-      startCombatMusic();
+    if (soundOnRef.current) {
+      if (mode === "practice") {
+        startSelectMusic();
+      } else {
+        startCombatMusic();
+      }
+    } else {
+      stopCombatMusic();
     }
+    playModeRef.current = mode;
+    setPlayMode(mode);
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setQuestions(createQuestions(level, config.questionsPerLevel));
+    setQuestions(
+      mode === "practice"
+        ? createOrderedQuestions(level)
+        : createQuestions(level, config.questionsPerLevel)
+    );
     setQuestionIndex(0);
     setScore(0);
     setSecondsLeft(config.secondsPerQuestion);
@@ -241,17 +388,59 @@ const MultiplicationGame = () => {
     setHasStarted(true);
     setMissedQuestions([]);
     pendingAdvance.current = null;
+    answerElapsedRef.current = 0;
+    questionShownAtRef.current = performance.now();
+    setRoundTimeMs(0);
+    setBeatRecord(false);
+    setPreviousBestMs(null);
     setSlidePhase("shown");
     setCombat(null);
   };
 
   const playSelectMusic = (event) => {
-    if (event?.target?.closest?.(".score-card__actions")) {
+    if (event?.target?.closest?.(".score-card__actions, .sound-toggle")) {
       return;
     }
     unlockGameAudio();
-    if (config.sounds !== false) {
+    if (soundOnRef.current) {
       startSelectMusic();
+    }
+  };
+
+  const toggleSound = () => {
+    const next = !soundOnRef.current;
+    soundOnRef.current = next;
+    setSoundOn(next);
+    try {
+      window.localStorage.setItem(SOUND_STORAGE_KEY, next ? "on" : "off");
+    } catch (error) {
+      // The button still works when storage is blocked.
+    }
+
+    if (!next) {
+      stopCombatMusic();
+      return;
+    }
+
+    unlockGameAudio();
+    if (!hasStarted || playModeRef.current === "practice") {
+      startSelectMusic();
+      return;
+    }
+    if (!isFinished) {
+      startCombatMusic();
+      return;
+    }
+
+    const won = passedChallenge(
+      score,
+      config.questionsPerLevel,
+      config.passPercent
+    );
+    if (won) {
+      playVictory();
+    } else {
+      playDefeat();
     }
   };
 
@@ -264,6 +453,8 @@ const MultiplicationGame = () => {
     setSecondsLeft(0);
     setIsFinished(false);
     setHasStarted(false);
+    playModeRef.current = "battle";
+    setPlayMode("battle");
     setMissedQuestions([]);
     pendingAdvance.current = null;
     setSlidePhase("shown");
@@ -300,9 +491,24 @@ const MultiplicationGame = () => {
     );
   }
 
+  const soundToggle = (
+    <div className="sound-bar">
+      <button
+        type="button"
+        className={`sound-toggle ${soundOn ? "sound-toggle--on" : "sound-toggle--off"}`}
+        aria-pressed={soundOn}
+        aria-label={soundOn ? "Turn sound off" : "Turn sound on"}
+        onClick={toggleSound}
+      >
+        {soundOn ? "Sound on" : "Sound off"}
+      </button>
+    </div>
+  );
+
   if (!hasStarted) {
     return (
       <main className="math-game math-game--stage" onPointerDown={playSelectMusic}>
+        {soundToggle}
         <AdventureScene
           mode="select"
           selectedHero={heroId}
@@ -317,8 +523,20 @@ const MultiplicationGame = () => {
             {config.questionsPerLevel} questions · {config.secondsPerQuestion}{" "}
             seconds
           </p>
+          <p className="practice-note">
+            Or practice in order: {level.multiplier} × {level.minFactor},{" "}
+            {level.multiplier} × {level.minFactor + 1}, {level.multiplier} ×{" "}
+            {level.minFactor + 2}.
+          </p>
           <div className="score-card__actions">
-            <button onClick={startLevel}>Start</button>
+            <button onClick={() => startRound("battle")}>Start</button>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => startRound("practice")}
+            >
+              Practice
+            </button>
           </div>
         </section>
       </main>
@@ -326,31 +544,46 @@ const MultiplicationGame = () => {
   }
 
   if (isFinished) {
-    const percentage = Math.round((score / config.questionsPerLevel) * 100);
-    const won = passedChallenge(
-      score,
-      config.questionsPerLevel,
-      config.passPercent
-    );
+    const percentage = Math.round((score / roundTotal) * 100);
+    const won = passedChallenge(score, roundTotal, config.passPercent);
+    const practicing = playMode === "practice";
     const answersStillHidden = missedQuestions.some((item) => !item.revealed);
     return (
       <main className="math-game math-game--stage">
+        {soundToggle}
         <AdventureScene
           mode={won ? "victory" : "defeat"}
           heroId={heroId}
           hp={demonHp}
-          maxHp={config.questionsPerLevel}
+          maxHp={roundTotal}
           levelId={level.multiplier}
         />
         <section className={`score-card slide-panel slide-panel--${slidePhase}`}>
           <div className="score-card__icon" aria-hidden="true">
             {won ? "★" : "♪"}
           </div>
-          <span>{won ? "Victory!" : "Try again"}</span>
+          <span>
+            {practicing
+              ? won
+                ? "Practice complete"
+                : "Keep practicing"
+              : won
+                ? "Victory!"
+                : "Try again"}
+          </span>
           <h1>
-            {score} / {config.questionsPerLevel}
+            {score} / {roundTotal}
           </h1>
           <p>Your score was {percentage}%.</p>
+          <p className="round-time">Time: {formatRoundTime(roundTimeMs)}</p>
+          {beatRecord && (
+            <p className="round-time__record">
+              New best time! You beat {formatRoundTime(previousBestMs)}.
+            </p>
+          )}
+          {bestTimeMs != null && !beatRecord && (
+            <p className="round-time__best">Best: {formatRoundTime(bestTimeMs)}</p>
+          )}
           {missedQuestions.length > 0 && (
             <div className="missed-questions">
               <h2>Missed questions</h2>
@@ -387,17 +620,20 @@ const MultiplicationGame = () => {
 
   return (
     <main className="math-game math-game--stage">
+      {soundToggle}
       <AdventureScene
         mode="battle"
         heroId={heroId}
         hp={demonHp}
-        maxHp={config.questionsPerLevel}
+        maxHp={roundTotal}
         combat={combat}
         levelId={level.multiplier}
       />
       <section className="question-card">
         <div className="question-card__header">
-          <span>{level.label}</span>
+          <span>
+            {playMode === "practice" ? `Practice · ${level.label}` : level.label}
+          </span>
         </div>
 
         <div className="progress-label">
@@ -412,12 +648,14 @@ const MultiplicationGame = () => {
 
         <div className={`question-card__body slide-panel slide-panel--${slidePhase}`}>
           <div className="question-card__prompt">
-            <div
-              className={`timer ${secondsLeft <= 2 ? "timer--urgent" : ""}`}
-              aria-label={`${secondsLeft} seconds left`}
-            >
-              {secondsLeft}
-            </div>
+            {playMode === "battle" && (
+              <div
+                className={`timer ${secondsLeft <= 2 ? "timer--urgent" : ""}`}
+                aria-label={`${secondsLeft} seconds left`}
+              >
+                {secondsLeft}
+              </div>
+            )}
             <p>What is</p>
             <h1>
               {level.multiplier} × {currentQuestion.factor}

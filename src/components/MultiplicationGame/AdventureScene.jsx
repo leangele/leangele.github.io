@@ -9,7 +9,11 @@ import {
 const HeroSlot = ({ id, pose, combat }) => (
   <div
     className={`hero-slot hero-slot--${pose} ${
-      combat === "hit" ? "hero-slot--attack" : ""
+      combat === "hit"
+        ? id === "mage"
+          ? "hero-slot--cast"
+          : "hero-slot--attack"
+        : ""
     } ${combat === "miss" ? "hero-slot--miss" : ""}`}
     data-pose={pose}
   >
@@ -116,6 +120,9 @@ const AdventureScene = ({
         pose={pose}
         combat={mode === "battle" ? combat : null}
       />
+      {mode === "battle" && heroId === "mage" && combat === "hit" && (
+        <span className="magic-bolt" aria-hidden="true" />
+      )}
       <CreatureSlot
         levelId={levelId}
         mood={demonMood}
