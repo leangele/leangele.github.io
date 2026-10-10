@@ -453,7 +453,7 @@ const ScoresPage = ({ history, category, onCategory, onBack }) => {
   );
 };
 
-const MultiplicationGame = () => {
+const MultiplicationGame = ({ onExit } = {}) => {
   const [config, setConfig] = useState(null);
   const [error, setError] = useState("");
   const [level, setLevel] = useState(null);
@@ -1033,6 +1033,11 @@ const MultiplicationGame = () => {
                 {soundOn ? "Sound on" : "Sound off"}
               </button>
             </div>
+            {onExit && (
+              <button type="button" className="game-menu__records" onClick={onExit}>
+                Games
+              </button>
+            )}
             <h2>Records</h2>
             <button
               type="button"

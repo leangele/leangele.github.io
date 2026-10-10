@@ -6,6 +6,8 @@ import Registro from "./components/Registro/Registro"; // Registration component
 import ResetPopup from "./components/ResetPopup/ResetPopup";
 import NavigationMenu from "./components/NavigationMenu/NavigationMenu";
 import MultiplicationGame from "./components/MultiplicationGame/MultiplicationGame";
+import DivisionGame from "./components/DivisionGame/DivisionGame";
+import GameSelect from "./components/GameSelect/GameSelect";
 import "./App.css";
 
 // Helper function to read a cookie
@@ -201,12 +203,55 @@ const HuntApp = () => {
   );
 };
 
-const App = () => {
-  const pistasId = getPistasId();
-  if (!pistasId) {
-    return <MultiplicationGame />;
+export const gameFromSearch = (search = "") => {
+  const params = new URLSearchParams(search);
+  if (params.get("pistas")?.trim()) {
+    return "hunt";
   }
-  return <HuntApp />;
+  const game = params.get("game");
+  if (game === "division" || game === "multiplication") {
+    return game;
+  }
+  if (params.has("table") || params.has("tabla")) {
+    return "multiplication";
+  }
+  return "select";
+};
+
+const App = () => {
+  const [route, setRoute] = useState(() => gameFromSearch(window.location.search));
+
+  useEffect(() => {
+    const syncRoute = () => setRoute(gameFromSearch(window.location.search));
+    window.addEventListener("popstate", syncRoute);
+    return () => window.removeEventListener("popstate", syncRoute);
+  }, []);
+
+  const chooseGame = (next) => {
+    const params = new URLSearchParams(window.location.search);
+    ["game", "table", "tabla", "level"].forEach((key) => params.delete(key));
+    if (next) {
+      params.set("game", next);
+    }
+    const query = params.toString();
+    window.history.pushState(
+      {},
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}`
+    );
+    setRoute(next || "select");
+  };
+
+  if (route === "hunt") {
+    return <HuntApp />;
+  }
+  if (route === "division") {
+    return <DivisionGame onExit={() => chooseGame(null)} />;
+  }
+  if (route === "multiplication") {
+    return <MultiplicationGame onExit={() => chooseGame(null)} />;
+  }
+  return <GameSelect onSelect={chooseGame} />;
 };
 
 export default App;
