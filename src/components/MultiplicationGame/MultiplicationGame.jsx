@@ -956,6 +956,13 @@ const MultiplicationGame = ({ onExit } = {}) => {
   );
   const gameMenu = (
     <div className="game-menu">
+      {onExit && (
+        <button type="button" className="home-button" aria-label="Home" onClick={onExit}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 2 12h3v8h5v-5h4v5h5v-8h3z" />
+          </svg>
+        </button>
+      )}
       <button
         type="button"
         className="menu-button"

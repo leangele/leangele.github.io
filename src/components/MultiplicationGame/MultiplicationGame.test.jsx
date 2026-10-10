@@ -58,6 +58,18 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
+test("shows the Home button only when the game can return home", async () => {
+  const onExit = jest.fn();
+  const { unmount } = render(<MultiplicationGame onExit={onExit} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Home" }));
+  expect(onExit).toHaveBeenCalledTimes(1);
+  unmount();
+
+  render(<MultiplicationGame />);
+  await screen.findByRole("button", { name: "Open menu" });
+  expect(screen.queryByRole("button", { name: "Home" })).not.toBeInTheDocument();
+});
+
 test("opens another times table from the query without editing the configuration", () => {
   expect(levelFromTableQuery(config, "?table=7")).toEqual({
     id: 7,

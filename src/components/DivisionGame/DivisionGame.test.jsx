@@ -57,6 +57,13 @@ test("explains a wrong long-division step and keeps the problem moving", async (
   );
 });
 
+test("returns home from the Home button", async () => {
+  const onExit = jest.fn();
+  render(<DivisionGame onExit={onExit} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Home" }));
+  expect(onExit).toHaveBeenCalledTimes(1);
+});
+
 test("disables Advance on the first division level", async () => {
   render(<DivisionGame />);
   expect(await screen.findByRole("button", { name: "Advance" })).toBeDisabled();
