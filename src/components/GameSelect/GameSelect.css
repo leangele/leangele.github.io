@@ -1,0 +1,9 @@
+.game-select__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-select__actions button {
+  width: 100%;
+}

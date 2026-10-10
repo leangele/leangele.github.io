@@ -1,0 +1,63 @@
+{
+  "title": "Division Challenge",
+  "subtitle": "Divide one step at a time.",
+  "questionsPerLevel": 6,
+  "secondsPerQuestion": 20,
+  "passPercent": 70,
+  "slideMs": 400,
+  "answerChoices": 4,
+  "practiceAnswerChoices": 2,
+  "minLevel": 1,
+  "maxLevel": 5,
+  "graphicStyle": "pixel",
+  "sounds": true,
+  "levels": [
+    {
+      "id": 1,
+      "label": "Division Facts",
+      "facts": true,
+      "dividendDigits": 2,
+      "divisorMin": 2,
+      "divisorMax": 9,
+      "quotientMin": 1,
+      "quotientMax": 10,
+      "remainders": false
+    },
+    {
+      "id": 2,
+      "label": "Two-Digit Dividends",
+      "facts": false,
+      "dividendDigits": 2,
+      "divisorMin": 2,
+      "divisorMax": 9,
+      "remainders": false
+    },
+    {
+      "id": 3,
+      "label": "Three-Digit Dividends",
+      "facts": false,
+      "dividendDigits": 3,
+      "divisorMin": 2,
+      "divisorMax": 9,
+      "remainders": false
+    },
+    {
+      "id": 4,
+      "label": "Four-Digit Dividends",
+      "facts": false,
+      "dividendDigits": 4,
+      "divisorMin": 2,
+      "divisorMax": 9,
+      "remainders": false
+    },
+    {
+      "id": 5,
+      "label": "Remainders",
+      "facts": false,
+      "dividendDigits": 3,
+      "divisorMin": 2,
+      "divisorMax": 9,
+      "remainders": true
+    }
+  ]
+}
