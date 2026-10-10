@@ -18,14 +18,6 @@ const getCookie = (name) => {
   return null;
 };
 
-const getPistasId = () => {
-  const value = new URLSearchParams(window.location.search).get("pistas");
-  if (!value || !value.trim()) {
-    return null;
-  }
-  return value.trim();
-};
-
 const HuntApp = () => {
   // 'pistas', 'admin', or 'map'
   const [currentView, setCurrentView] = useState("pistas"); // 'pistas', 'admin', 'map', 'registro'
