@@ -11,6 +11,13 @@
   "maxLevel": 5,
   "graphicStyle": "pixel",
   "sounds": true,
+  "advance": {
+    "dividendDigitsMin": 2,
+    "dividendDigitsMax": 4,
+    "divisorMin": 2,
+    "divisorMax": 9,
+    "includeRemainders": true
+  },
   "levels": [
     {
       "id": 1,
