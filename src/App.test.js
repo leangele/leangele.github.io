@@ -14,6 +14,9 @@ jest.mock(
   () => () => <div>Multiplication game</div>
 );
 jest.mock("./components/DivisionGame/DivisionGame", () => () => <div>Division game</div>);
+jest.mock("./components/MotivationCards/MotivationCards", () => () => (
+  <div>Motivation cards</div>
+));
 
 afterEach(() => {
   window.history.pushState({}, "", "/");
@@ -24,6 +27,9 @@ test("opens a game from the selector and keeps direct links", () => {
   render(<App />);
   expect(screen.getByRole("button", { name: "Multiplication" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Division" })).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: "Level Up Your Hero" })
+  ).toBeInTheDocument();
   expect(screen.queryByText("Multiplication game")).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: "Division" }));
@@ -45,6 +51,7 @@ test("keeps a times-table link on the multiplication game", () => {
 test("chooses a route from the query string", () => {
   expect(gameFromSearch("")).toBe("select");
   expect(gameFromSearch("?game=division")).toBe("division");
+  expect(gameFromSearch("?game=motivation")).toBe("motivation");
   expect(gameFromSearch("?tabla=4")).toBe("multiplication");
   expect(gameFromSearch("?pistas=gs145ka")).toBe("hunt");
 });

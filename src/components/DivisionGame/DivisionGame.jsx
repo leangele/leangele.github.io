@@ -21,17 +21,20 @@ import {
   digitHint,
   digitOptions,
   factOptions,
+  lessonLogEntry,
+  lessonSteps,
   levelFromSearch,
+  nearbyOptions,
   practicePrompts,
   remainderMeaning,
   remainderOptions,
   topDivisionScores,
+  usedDividendIndexes,
 } from "./divisionProblems";
 
 const SOUND_KEY = "division-game-sound";
 const STYLE_KEY = "division-game-style";
 const BEST_TIME_KEY = "division-game-best-times";
-const ADVANCE_BEST_TIME_KEY = "division-game-advance-best-times";
 
 const SCORE_CATEGORIES = [
   { id: "score", label: "Highest score" },
@@ -124,6 +127,7 @@ const DivisionGame = ({ onExit } = {}) => {
   const [chosen, setChosen] = useState(null);
   const [locked, setLocked] = useState(false);
   const [doneSteps, setDoneSteps] = useState([]);
+  const [actionLog, setActionLog] = useState([]);
   const [meaning, setMeaning] = useState("");
   const [combat, setCombat] = useState(null);
   const [missedQuestions, setMissedQuestions] = useState([]);
@@ -131,7 +135,6 @@ const DivisionGame = ({ onExit } = {}) => {
   const [liveMs, setLiveMs] = useState(0);
   const [bestTimeMs, setBestTimeMs] = useState(null);
   const [beatRecord, setBeatRecord] = useState(false);
-  const [bestSetAt, setBestSetAt] = useState("");
   const soundRef = useRef(true);
   const missedRef = useRef(false);
   const lockedRef = useRef(false);
@@ -164,8 +167,13 @@ const DivisionGame = ({ onExit } = {}) => {
   useEffect(() => () => stopCombatMusic(), []);
 
   const question = questions[questionIndex];
-  const prompts = question ? practicePrompts(question) : [];
-  const prompt = playMode === "practice" ? prompts[stepIndex] : null;
+  const isGuided = playMode === "practice" || playMode === "advance";
+  const prompts = question
+    ? playMode === "advance"
+      ? lessonSteps(question)
+      : practicePrompts(question)
+    : [];
+  const prompt = isGuided ? prompts[stepIndex] : null;
   const roundTotal = questions.length || config?.questionsPerLevel || 0;
   const isAdvanceMode = playMode === "advance";
   const alien = getAlien(level?.id || 1, isAdvanceMode);
@@ -175,52 +183,49 @@ const DivisionGame = ({ onExit } = {}) => {
     if (!current || !config) {
       return;
     }
-    if (playMode !== "practice") {
+    if (playMode !== "practice" && playMode !== "advance") {
       setChoices(current.options || []);
       return;
     }
-    const currentPrompt = practicePrompts(current)[stepIndex];
+    const currentPrompt =
+      playMode === "advance"
+        ? lessonSteps(current)[stepIndex]
+        : practicePrompts(current)[stepIndex];
     if (!currentPrompt) {
       return;
     }
     const count = config.practiceAnswerChoices;
-    if (currentPrompt.kind === "digit") {
-      setChoices(digitOptions(currentPrompt.answer, count).map(String));
-    } else if (currentPrompt.kind === "remainder") {
-      setChoices(
-        remainderOptions(currentPrompt.answer, current.divisor, count).map(String)
-      );
-    } else {
-      setChoices(factOptions(currentPrompt.answer, count).map(String));
-    }
+    const nextChoices =
+      currentPrompt.kind === "digit" || currentPrompt.kind === "divide"
+        ? digitOptions(currentPrompt.answer, count)
+        : currentPrompt.kind === "remainder"
+          ? remainderOptions(currentPrompt.answer, current.divisor, count)
+          : currentPrompt.kind === "multiply" || currentPrompt.kind === "subtract"
+            ? nearbyOptions(currentPrompt.answer, count)
+            : factOptions(currentPrompt.answer, count);
+    setChoices(nextChoices.map(String));
   }, [config, playMode, questionIndex, questions, stepIndex]);
 
   const finishRound = (nextScore, total) => {
     const roundMs = Math.round(performance.now() - startedAtRef.current);
     const won = passedChallenge(nextScore, total, config.passPercent);
     const mode = playMode;
-    if (mode !== "practice" && won) {
-      const key = mode === "advance" ? ADVANCE_BEST_TIME_KEY : BEST_TIME_KEY;
-      const records = readJson(key, {});
+    if (mode === "battle" && won) {
+      const records = readJson(BEST_TIME_KEY, {});
       const previous = Number(records[level.id]);
       const previousMs = Number.isFinite(previous) ? previous : null;
       const faster = previousMs == null || roundMs < previousMs;
       if (faster) {
-        const setAt = formatStamp(new Date());
         records[level.id] = roundMs;
-        writeJson(key, records);
-        if (mode === "advance") writeJson(`${key}-set`, { ...(readJson(`${key}-set`, {})), [level.id]: setAt });
-        setBestSetAt(mode === "advance" ? setAt : "");
+        writeJson(BEST_TIME_KEY, records);
         setBeatRecord(previousMs != null);
       } else {
         setBeatRecord(false);
-        setBestSetAt(mode === "advance" ? readJson(`${ADVANCE_BEST_TIME_KEY}-set`, {})[level.id] || "" : "");
       }
       setBestTimeMs(faster ? roundMs : previousMs);
     } else {
       setBestTimeMs(null);
       setBeatRecord(false);
-      setBestSetAt("");
     }
     const played = appendDivisionGame(readJson(HISTORY_KEY, []), {
       id: `${Date.now()}-${(gameSeq += 1)}`,
@@ -247,12 +252,13 @@ const DivisionGame = ({ onExit } = {}) => {
       finishRound(nextScore, total);
       return;
     }
-    if (soundRef.current && playMode !== "practice") {
+    if (soundRef.current && playMode === "battle") {
       playBetweenQuestions(graphicStyle);
     }
     setQuestionIndex((current) => current + 1);
     setStepIndex(0);
     setDoneSteps([]);
+    setActionLog([]);
     setHint("");
     setChosen(null);
     setMeaning("");
@@ -272,7 +278,7 @@ const DivisionGame = ({ onExit } = {}) => {
     if (wasCorrect) audioEngine.playAttackHit();
     else audioEngine.playMissSound();
 
-    if (playMode !== "practice") {
+    if (playMode === "battle") {
       const nextScore = wasCorrect ? score + 1 : score;
       if (wasCorrect) setScore(nextScore);
       else {
@@ -287,8 +293,14 @@ const DivisionGame = ({ onExit } = {}) => {
 
     if (!wasCorrect) {
       missedRef.current = true;
-      if (prompt?.kind === "digit") {
+      if (prompt?.kind === "digit" || prompt?.kind === "divide") {
         setHint(digitHint(question.divisor, prompt.into, Number(label)));
+      } else if (prompt?.kind === "multiply") {
+        setHint(
+          `${question.divisor} × ${prompt.step.quotientDigit} = ${prompt.step.product}.`
+        );
+      } else if (prompt?.kind === "subtract") {
+        setHint(`${prompt.step.into} − ${prompt.step.product} = ${prompt.step.remainder}.`);
       } else if (prompt?.kind === "fact") {
         setHint(
           digitHint(question.divisor, question.dividend, Number(label))
@@ -301,12 +313,19 @@ const DivisionGame = ({ onExit } = {}) => {
     }
 
     window.setTimeout(() => {
-      const step = question.steps[stepIndex];
-      if (prompt?.kind === "digit" && step) {
-        setDoneSteps((current) => [...current, step]);
-      }
-      if (prompt?.kind === "remainder") {
-        setMeaning(remainderMeaning(question));
+      if (playMode === "advance" && prompt) {
+        setActionLog((current) => [...current, lessonLogEntry(question, prompt)]);
+        if (prompt.kind === "subtract" && prompt.step) {
+          setDoneSteps((current) => [...current, prompt.step]);
+        }
+      } else {
+        const step = question.steps[stepIndex];
+        if (prompt?.kind === "digit" && step) {
+          setDoneSteps((current) => [...current, step]);
+        }
+        if (prompt?.kind === "remainder") {
+          setMeaning(remainderMeaning(question));
+        }
       }
       const lastPrompt = stepIndex >= prompts.length - 1;
       if (!lastPrompt) {
@@ -333,7 +352,7 @@ const DivisionGame = ({ onExit } = {}) => {
   answerRef.current = () => resolveAnswer(false, null);
 
   useEffect(() => {
-    if (playMode === "practice" || !hasStarted || isFinished || locked) {
+    if (playMode === "practice" || playMode === "advance" || !hasStarted || isFinished || locked) {
       return undefined;
     }
     if (secondsLeft === 0) {
@@ -345,7 +364,9 @@ const DivisionGame = ({ onExit } = {}) => {
   }, [secondsLeft, hasStarted, isFinished, playMode, locked, questionIndex]);
 
   useEffect(() => {
-    if (!hasStarted || isFinished || playMode === "practice") return undefined;
+    if (!hasStarted || isFinished || playMode === "practice" || playMode === "advance") {
+      return undefined;
+    }
     const timer = window.setInterval(() => {
       setLiveMs(performance.now() - startedAtRef.current);
     }, 200);
@@ -353,12 +374,11 @@ const DivisionGame = ({ onExit } = {}) => {
   }, [hasStarted, isFinished, playMode]);
 
   const startRound = (mode) => {
-    if (mode === "advance" && level.id <= config.minLevel) return;
     setMenuOpen(false);
     setMenuPage("main");
     unlockGameAudio();
     if (soundRef.current) {
-      if (mode === "practice") startSelectMusic();
+      if (mode === "practice" || mode === "advance") startSelectMusic();
       else audioEngine.playBattleTheme();
     } else {
       stopCombatMusic();
@@ -366,8 +386,7 @@ const DivisionGame = ({ onExit } = {}) => {
     const nextQuestions =
       mode === "advance"
         ? createAdvanceDivisionQuestions(
-            level,
-            config.levels,
+            config.advance,
             config.questionsPerLevel,
             config.answerChoices
           )
@@ -386,6 +405,7 @@ const DivisionGame = ({ onExit } = {}) => {
     setMissedQuestions([]);
     setStepIndex(0);
     setDoneSteps([]);
+    setActionLog([]);
     setHint("");
     setChosen(null);
     lockedRef.current = false;
@@ -396,7 +416,6 @@ const DivisionGame = ({ onExit } = {}) => {
     setLiveMs(0);
     setBeatRecord(false);
     setBestTimeMs(null);
-    setBestSetAt("");
     missedRef.current = false;
     startedAtRef.current = performance.now();
   };
@@ -416,7 +435,7 @@ const DivisionGame = ({ onExit } = {}) => {
       return;
     }
     unlockGameAudio();
-    if (!hasStarted || playMode === "practice") startSelectMusic();
+    if (!hasStarted || playMode === "practice" || playMode === "advance") startSelectMusic();
     else if (!isFinished) startCombatMusic();
     else if (passedChallenge(score, roundTotal, config.passPercent)) audioEngine.playVictoryTheme();
     else audioEngine.playDefeatTheme();
@@ -432,7 +451,7 @@ const DivisionGame = ({ onExit } = {}) => {
       // Storage might be blocked.
     }
     if (!soundRef.current) return;
-    if (!hasStarted || playMode === "practice") startSelectMusic(next);
+    if (!hasStarted || playMode === "practice" || playMode === "advance") startSelectMusic(next);
     else if (!isFinished) startCombatMusic(next);
     else if (passedChallenge(score, roundTotal, config.passPercent)) audioEngine.playVictoryTheme(next);
     else audioEngine.playDefeatTheme(next);
@@ -606,6 +625,7 @@ const DivisionGame = ({ onExit } = {}) => {
           <p>
             {config.questionsPerLevel} questions · {config.secondsPerQuestion} seconds
           </p>
+          <p>Advance teaches fourth-grade division, up to 4 digits divided by 1 digit.</p>
           <div className="score-card__actions">
             <div className="mode-row">
               <button type="button" className="start-button" onClick={() => startRound("battle")}>
@@ -615,7 +635,6 @@ const DivisionGame = ({ onExit } = {}) => {
                 type="button"
                 className="advance-button"
                 onClick={() => startRound("advance")}
-                disabled={level.id <= config.minLevel}
               >
                 Advance
               </button>
@@ -651,10 +670,11 @@ const DivisionGame = ({ onExit } = {}) => {
             {score} / {roundTotal}
           </h1>
           <p>Your combat score was {Math.round((score / roundTotal) * 100)}%.</p>
-          <p className="round-time">Time: {formatRoundTime(roundTimeMs)}</p>
+          {playMode !== "advance" && (
+            <p className="round-time">Time: {formatRoundTime(roundTimeMs)}</p>
+          )}
           {beatRecord && <p className="round-time__record">New galaxy record!</p>}
           {bestTimeMs != null && <p className="round-time__best">Best: {formatRoundTime(bestTimeMs)}</p>}
-          {playMode === "advance" && bestSetAt && <p className="round-time__set">Set {bestSetAt}</p>}
           {missedQuestions.length > 0 && (
             <div className="missed-questions">
               <h2>Missed questions</h2>
@@ -706,10 +726,36 @@ const DivisionGame = ({ onExit } = {}) => {
     );
   }
 
-  const quotientDigits = [
-    ...doneSteps.map((step) => step.quotientDigit),
-    prompt?.kind === "digit" ? "?" : "",
-  ].join(" ");
+  const workingDigit =
+    prompt?.kind === "divide"
+      ? "?"
+      : prompt?.kind === "multiply" || prompt?.kind === "subtract"
+        ? prompt.step.quotientDigit
+        : prompt?.kind === "digit"
+          ? "?"
+          : "";
+  const quotientTokens = [
+    ...doneSteps.map((step) => String(step.quotientDigit)),
+    workingDigit === "" ? null : String(workingDigit),
+  ].filter(Boolean);
+  const activeStepIndex =
+    prompt?.stepIndex ?? (prompt?.kind === "digit" ? doneSteps.length : -1);
+  const digitRange =
+    question && activeStepIndex >= 0
+      ? usedDividendIndexes(question.dividend, question.steps, activeStepIndex)
+      : { start: -1, end: -1 };
+  const highlightDivisor = ["divide", "multiply", "digit", "remainder"].includes(
+    prompt?.kind
+  );
+  const activeQuotientIndex =
+    prompt?.kind === "divide" ||
+    prompt?.kind === "digit" ||
+    prompt?.kind === "multiply" ||
+    prompt?.kind === "subtract"
+      ? quotientTokens.length - 1
+      : -1;
+  const digitClass = (active) =>
+    active ? "division-digit division-digit--active" : "division-digit";
 
   return (
     <main className={stageClass} style={{ "--slide-ms": `${config.slideMs}ms` }}>
@@ -737,7 +783,7 @@ const DivisionGame = ({ onExit } = {}) => {
           </span>
           <strong>{score} correct</strong>
         </div>
-        {playMode !== "practice" && (
+        {playMode === "battle" && (
           <>
             <p className="global-timer">Total {formatRoundTime(liveMs)}</p>
             <div
@@ -750,19 +796,45 @@ const DivisionGame = ({ onExit } = {}) => {
         )}
         {question && (
           <>
-            {playMode === "practice" && !question.facts ? (
-              <div className="division-work">
-                <div className="division-work__quotient">{quotientDigits}</div>
+            {isGuided && !question.facts ? (
+              <div className="division-work" aria-label="Division in progress">
+                <div className="division-work__quotient">
+                  {quotientTokens.map((digit, index) => (
+                    <span key={`${digit}-${index}`} className={digitClass(index === activeQuotientIndex)}>
+                      {digit}
+                    </span>
+                  ))}
+                </div>
                 <div className="division-work__bracket">
-                  <span className="division-work__divisor">{question.divisor}</span>
-                  <span className="division-work__dividend">{question.dividend}</span>
+                  <span className="division-work__divisor">
+                    {String(question.divisor)
+                      .split("")
+                      .map((digit, index) => (
+                        <span key={`${digit}-${index}`} className={digitClass(highlightDivisor)}>
+                          {digit}
+                        </span>
+                      ))}
+                  </span>
+                  <span className="division-work__dividend">
+                    {String(question.dividend)
+                      .split("")
+                      .map((digit, index) => (
+                        <span
+                          key={`${digit}-${index}`}
+                          className={digitClass(index >= digitRange.start && index <= digitRange.end)}
+                        >
+                          {digit}
+                        </span>
+                      ))}
+                  </span>
                 </div>
                 <div className="division-work__steps">
-                  {doneSteps.map((step) => (
-                    <p key={`${step.into}-${step.quotientDigit}`}>
-                      {question.divisor} × {step.quotientDigit} = {step.product}. {step.into} − {step.product} = {step.remainder}.
-                    </p>
-                  ))}
+                  {playMode !== "advance" &&
+                    doneSteps.map((step) => (
+                      <p key={`${step.into}-${step.quotientDigit}`}>
+                        {question.divisor} × {step.quotientDigit} = {step.product}. {step.into} − {step.product} = {step.remainder}.
+                      </p>
+                    ))}
                 </div>
               </div>
             ) : (
@@ -770,7 +842,24 @@ const DivisionGame = ({ onExit } = {}) => {
                 <h1>{question.prompt}</h1>
               </div>
             )}
-            <p>{prompt ? prompt.prompt : "What is the quotient?"}</p>
+            {playMode === "advance" && actionLog.length > 0 && (
+              <section className="division-log" aria-label="Steps already done">
+                <p className="division-log__title">Steps so far</p>
+                <ol>
+                  {actionLog.map((entry, index) => (
+                    <li key={`${entry}-${index}`}>{entry}</li>
+                  ))}
+                </ol>
+              </section>
+            )}
+            <p className={playMode === "advance" ? "division-phase" : undefined}>
+              {playMode === "advance" && prompt
+                ? `Step ${stepIndex + 1} of ${prompts.length}: ${prompt.phase}`
+                : prompt
+                  ? prompt.prompt
+                  : "What is the quotient?"}
+            </p>
+            {playMode === "advance" && prompt && <p>{prompt.prompt}</p>}
             {hint && <p className="division-hint">{hint}</p>}
             {meaning && <p className="division-meaning">{meaning}</p>}
             <div className="answer-grid">

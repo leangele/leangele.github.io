@@ -8,6 +8,7 @@ import NavigationMenu from "./components/NavigationMenu/NavigationMenu";
 import MultiplicationGame from "./components/MultiplicationGame/MultiplicationGame";
 import DivisionGame from "./components/DivisionGame/DivisionGame";
 import GameSelect from "./components/GameSelect/GameSelect";
+import MotivationCards from "./components/MotivationCards/MotivationCards";
 import "./App.css";
 
 // Helper function to read a cookie
@@ -201,7 +202,11 @@ export const gameFromSearch = (search = "") => {
     return "hunt";
   }
   const game = params.get("game");
-  if (game === "division" || game === "multiplication") {
+  if (
+    game === "division" ||
+    game === "multiplication" ||
+    game === "motivation"
+  ) {
     return game;
   }
   if (params.has("table") || params.has("tabla")) {
@@ -242,6 +247,9 @@ const App = () => {
   }
   if (route === "multiplication") {
     return <MultiplicationGame onExit={() => chooseGame(null)} />;
+  }
+  if (route === "motivation") {
+    return <MotivationCards onExit={() => chooseGame(null)} />;
   }
   return <GameSelect onSelect={chooseGame} />;
 };

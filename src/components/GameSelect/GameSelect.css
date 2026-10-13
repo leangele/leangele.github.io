@@ -7,3 +7,10 @@
 .game-select__actions button {
   width: 100%;
 }
+
+.game-select__actions .game-select__motivation {
+  border-color: #6d3f76;
+  color: #ffffff;
+  background: #9d5aa7;
+  box-shadow: 0 6px 0 #6d3f76;
+}

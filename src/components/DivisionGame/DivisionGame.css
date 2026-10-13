@@ -245,11 +245,31 @@
 }
 
 .division-work__quotient {
+  display: flex;
+  gap: 4px;
   min-height: 1.4em;
   padding-left: 2.2rem;
   font-family: "Baloo 2", sans-serif;
   font-size: 1.8rem;
-  letter-spacing: 0.35rem;
+}
+
+.division-digit {
+  display: inline-block;
+  min-width: 1.15em;
+  margin: 0 2px;
+  padding: 2px 3px;
+  border-radius: 8px;
+  opacity: 0.38;
+  text-align: center;
+}
+
+.division-digit--active {
+  background: #ffe14a;
+  color: #111827;
+  opacity: 1;
+  outline: 4px solid #ea580c;
+  outline-offset: 1px;
+  font-weight: 900;
 }
 
 .division-work__bracket {
@@ -277,6 +297,41 @@
 
 .division-work__steps p {
   margin: 0 0 4px;
+}
+
+.division-log {
+  margin: 10px 0 8px;
+  padding: 8px 12px 4px;
+  border-radius: 12px;
+  background: rgba(250, 204, 21, 0.18);
+  text-align: left;
+}
+
+.division-log__title {
+  margin: 0 0 4px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.division-log ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.division-log li {
+  margin: 0 0 4px;
+  font-weight: 800;
+}
+
+.division-phase {
+  margin: 8px 0 4px;
+  color: var(--space-gold, #facc15);
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .division-hint {

@@ -7,7 +7,7 @@ const GameSelect = ({ onSelect }) => (
     <section className="score-card">
       <span>Choose a game</span>
       <h1>Math Adventure</h1>
-      <p>Practice multiplication or learn division one step at a time.</p>
+      <p>Practice math or level up your hero.</p>
       <div className="score-card__actions game-select__actions">
         <button type="button" onClick={() => onSelect("multiplication")}>
           Multiplication
@@ -18,6 +18,13 @@ const GameSelect = ({ onSelect }) => (
           onClick={() => onSelect("division")}
         >
           Division
+        </button>
+        <button
+          type="button"
+          className="secondary-button game-select__motivation"
+          onClick={() => onSelect("motivation")}
+        >
+          Level Up Your Hero
         </button>
       </div>
     </section>

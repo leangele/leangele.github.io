@@ -29,8 +29,56 @@ const pickDivisor = (level, random) => {
   return min + Math.floor(random() * (max - min + 1));
 };
 
+const pickDigitWidth = (minDigits, maxDigits, random) => {
+  const min = Math.max(2, Number(minDigits) || 2);
+  const max = Math.max(min, Number(maxDigits) || min);
+  return min + Math.floor(random() * (max - min + 1));
+};
+
+const createFourthGradeProblem = (settings = {}, random) => {
+  const divisorMin = Math.max(2, Number(settings.divisorMin) || 2);
+  const divisorMax = Math.min(9, Math.max(divisorMin, Number(settings.divisorMax) || 9));
+  const divisor =
+    divisorMin + Math.floor(random() * (divisorMax - divisorMin + 1));
+  const dividendDigits = pickDigitWidth(
+    settings.dividendDigitsMin || 2,
+    settings.dividendDigitsMax || 4,
+    random
+  );
+  const withRemainder = settings.includeRemainders !== false && random() < 0.5;
+  const span = digitSpan(dividendDigits);
+  const remainder = withRemainder ? 1 + Math.floor(random() * (divisor - 1)) : 0;
+  const quotientMin = Math.max(2, Math.ceil((span.min - remainder) / divisor));
+  const quotientMax = Math.floor((span.max - remainder) / divisor);
+  if (quotientMax < quotientMin) {
+    return null;
+  }
+  const quotient =
+    quotientMin + Math.floor(random() * (quotientMax - quotientMin + 1));
+  const dividend = divisor * quotient + remainder;
+  if (String(dividend).length !== dividendDigits || divisor < 2 || divisor > 9) {
+    return null;
+  }
+  return { dividend, divisor, quotient, remainder };
+};
+
 export const formatAnswer = (quotient, remainder) =>
   remainder > 0 ? `${quotient} R ${remainder}` : String(quotient);
+
+export const usedDividendIndexes = (dividend, steps, stepIndex) => {
+  if (!steps?.length || stepIndex < 0 || stepIndex >= steps.length) {
+    return { start: -1, end: -1 };
+  }
+  let end = String(steps[0].into).length - 1;
+  for (let index = 1; index <= stepIndex; index += 1) {
+    end += 1;
+  }
+  const last = String(dividend).length - 1;
+  return {
+    start: Math.max(0, Math.min(stepIndex === 0 ? 0 : end, last)),
+    end: Math.max(0, Math.min(end, last)),
+  };
+};
 
 export const buildSteps = (dividend, divisor) => {
   const digits = String(dividend).split("").map(Number);
@@ -243,23 +291,30 @@ export const createDivisionQuestions = (
 };
 
 export const createAdvanceDivisionQuestions = (
-  level,
-  levels,
+  settings,
   count,
   optionCount,
   random = Math.random
 ) => {
-  const lower = (levels || []).filter((item) => item.id < level.id);
-  if (!lower.length) {
-    return [];
+  const questions = [];
+  const seen = new Set();
+  let guard = 0;
+  while (questions.length < count && guard < count * 40) {
+    guard += 1;
+    const problem = createFourthGradeProblem(settings, random);
+    if (!problem) {
+      continue;
+    }
+    const key = `${problem.dividend}÷${problem.divisor}`;
+    if (seen.has(key) || problem.dividend < problem.divisor) {
+      continue;
+    }
+    seen.add(key);
+    questions.push(
+      decorateProblem(problem, { facts: false, remainders: false }, optionCount, random)
+    );
   }
-  const pool = lower.flatMap((item) =>
-    createDivisionQuestions(item, count, optionCount, random).map((question) => ({
-      ...question,
-      sourceLevelId: item.id,
-    }))
-  );
-  return shuffle(pool, random).slice(0, count);
+  return questions;
 };
 
 export const levelFromSearch = (gameConfig, search = "") => {
@@ -299,6 +354,83 @@ export const practicePrompts = (problem) => {
     });
   }
   return prompts;
+};
+
+export const nearbyOptions = (answer, count, random = Math.random) => {
+  const options = [answer];
+  [1, -1, 2, -2, 10, -10, 3, -3].forEach((delta) => {
+    if (options.length >= count) {
+      return;
+    }
+    const value = answer + delta;
+    if (value >= 0 && !options.includes(value)) {
+      options.push(value);
+    }
+  });
+  return shuffle(options.slice(0, count), random);
+};
+
+export const lessonSteps = (problem) => {
+  const steps = problem.steps.flatMap((step, index) => {
+    const opener =
+      index === 0
+        ? String(step.into).length === 1
+          ? `Look at ${step.into}.`
+          : `${problem.divisor} does not fit until you reach ${step.into}.`
+        : `Bring down the next digit. Now you have ${step.into}.`;
+    return [
+      {
+        kind: "divide",
+        phase: "Divide",
+        into: step.into,
+        step,
+        stepIndex: index,
+        prompt: `${opener} How many times does ${problem.divisor} go into ${step.into}?`,
+        answer: step.quotientDigit,
+      },
+      {
+        kind: "multiply",
+        phase: "Multiply",
+        step,
+        stepIndex: index,
+        prompt: `Multiply ${problem.divisor} × ${step.quotientDigit}. What is the product?`,
+        answer: step.product,
+      },
+      {
+        kind: "subtract",
+        phase: "Subtract",
+        step,
+        stepIndex: index,
+        prompt: `Subtract ${step.into} − ${step.product}. What is left?`,
+        answer: step.remainder,
+      },
+    ];
+  });
+  if (problem.remainder > 0) {
+    steps.push({
+      kind: "remainder",
+      phase: "Left over",
+      stepIndex: problem.steps.length - 1,
+      prompt: `${problem.quotient} groups were made. How many are left over?`,
+      answer: problem.remainder,
+    });
+  }
+  return steps;
+};
+
+export const lessonLogEntry = (problem, prompt) => {
+  if (prompt.kind === "remainder") {
+    return `Left over: ${problem.quotient} groups, ${problem.remainder} left over.`;
+  }
+  const step = prompt.step;
+  if (prompt.kind === "divide") {
+    const times = step.quotientDigit === 1 ? "time" : "times";
+    return `Divide: ${problem.divisor} goes into ${step.into} ${step.quotientDigit} ${times}.`;
+  }
+  if (prompt.kind === "multiply") {
+    return `Multiply: ${problem.divisor} × ${step.quotientDigit} = ${step.product}.`;
+  }
+  return `Subtract: ${step.into} − ${step.product} = ${step.remainder}.`;
 };
 
 export const remainderMeaning = (problem) =>
